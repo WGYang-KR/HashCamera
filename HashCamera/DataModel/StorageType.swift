@@ -7,6 +7,6 @@
 
 import Foundation
 
-enum StorageType {
-    case photoLibrary, iCloudDrive, LocalFolder
+enum StorageType: Codable{
+    case photoLibrary, iCloudDrive, localDrive
 }

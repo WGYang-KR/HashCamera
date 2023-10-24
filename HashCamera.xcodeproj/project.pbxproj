@@ -17,12 +17,15 @@
 		6A8B32172AE7A0D900D24E49 /* FileListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B32162AE7A0D900D24E49 /* FileListVC.swift */; };
 		6A8B32192AE7A11D00D24E49 /* BrowserTabVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B32182AE7A11D00D24E49 /* BrowserTabVC.swift */; };
 		6A8B321B2AE7A14600D24E49 /* PhotoViewerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B321A2AE7A14600D24E49 /* PhotoViewerVC.swift */; };
-		6A8B321D2AE7A19A00D24E49 /* StorageBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B321C2AE7A19A00D24E49 /* StorageBarView.swift */; };
+		6A8B321D2AE7A19A00D24E49 /* StorageBarCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B321C2AE7A19A00D24E49 /* StorageBarCollectionView.swift */; };
 		6A8B321F2AE7A1D000D24E49 /* SelectStorageBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B321E2AE7A1D000D24E49 /* SelectStorageBarView.swift */; };
 		6A8B32212AE7A1DD00D24E49 /* EditStorageBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B32202AE7A1DD00D24E49 /* EditStorageBarView.swift */; };
 		6A8B32232AE7A20600D24E49 /* EditStorageBarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B32222AE7A20600D24E49 /* EditStorageBarVC.swift */; };
 		6A8B32262AE7A5EE00D24E49 /* StorageBarItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B32252AE7A5EE00D24E49 /* StorageBarItemCell.swift */; };
 		6A8B322B2AE7AB9300D24E49 /* StorageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B322A2AE7AB9300D24E49 /* StorageType.swift */; };
+		6AA61AC12AE80DC6002E3725 /* StorageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA61AC02AE80DC6002E3725 /* StorageData.swift */; };
+		6AA61AC62AE810F0002E3725 /* HCFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA61AC52AE810F0002E3725 /* HCFileManager.swift */; };
+		6AA61AC82AE81555002E3725 /* AuthorizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA61AC72AE81555002E3725 /* AuthorizationManager.swift */; };
 		8E96DE981426C86DDF08F585 /* Pods_HashCamera.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0BA957B69E5FF8A9B65F19F /* Pods_HashCamera.framework */; };
 /* End PBXBuildFile section */
 
@@ -41,12 +44,15 @@
 		6A8B32162AE7A0D900D24E49 /* FileListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileListVC.swift; sourceTree = "<group>"; };
 		6A8B32182AE7A11D00D24E49 /* BrowserTabVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserTabVC.swift; sourceTree = "<group>"; };
 		6A8B321A2AE7A14600D24E49 /* PhotoViewerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewerVC.swift; sourceTree = "<group>"; };
-		6A8B321C2AE7A19A00D24E49 /* StorageBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageBarView.swift; sourceTree = "<group>"; };
+		6A8B321C2AE7A19A00D24E49 /* StorageBarCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageBarCollectionView.swift; sourceTree = "<group>"; };
 		6A8B321E2AE7A1D000D24E49 /* SelectStorageBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectStorageBarView.swift; sourceTree = "<group>"; };
 		6A8B32202AE7A1DD00D24E49 /* EditStorageBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditStorageBarView.swift; sourceTree = "<group>"; };
 		6A8B32222AE7A20600D24E49 /* EditStorageBarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditStorageBarVC.swift; sourceTree = "<group>"; };
 		6A8B32252AE7A5EE00D24E49 /* StorageBarItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageBarItemCell.swift; sourceTree = "<group>"; };
 		6A8B322A2AE7AB9300D24E49 /* StorageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageType.swift; sourceTree = "<group>"; };
+		6AA61AC02AE80DC6002E3725 /* StorageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageData.swift; sourceTree = "<group>"; };
+		6AA61AC52AE810F0002E3725 /* HCFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HCFileManager.swift; sourceTree = "<group>"; };
+		6AA61AC72AE81555002E3725 /* AuthorizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationManager.swift; sourceTree = "<group>"; };
 		C0BA957B69E5FF8A9B65F19F /* Pods_HashCamera.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HashCamera.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -91,9 +97,9 @@
 		6A8B31F82AE7983E00D24E49 /* HashCamera */ = {
 			isa = PBXGroup;
 			children = (
-				6A8B32112AE79F6500D24E49 /* ServiceModel */,
+				6AA61AC22AE81088002E3725 /* ServiceModule */,
 				6A8B32292AE7AB8400D24E49 /* DataModel */,
-				6A8B32102AE79F5C00D24E49 /* Extensions */,
+				6AA61AC32AE81095002E3725 /* Extensions */,
 				6A8B320D2AE79ED300D24E49 /* Camera */,
 				6A8B320E2AE79F1A00D24E49 /* Browser */,
 				6A8B320F2AE79F1F00D24E49 /* StorageBar */,
@@ -135,25 +141,11 @@
 			path = StorageBar;
 			sourceTree = "<group>";
 		};
-		6A8B32102AE79F5C00D24E49 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Extensions;
-			sourceTree = "<group>";
-		};
-		6A8B32112AE79F6500D24E49 /* ServiceModel */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ServiceModel;
-			sourceTree = "<group>";
-		};
 		6A8B32242AE7A21900D24E49 /* Components */ = {
 			isa = PBXGroup;
 			children = (
 				6A8B32252AE7A5EE00D24E49 /* StorageBarItemCell.swift */,
-				6A8B321C2AE7A19A00D24E49 /* StorageBarView.swift */,
+				6A8B321C2AE7A19A00D24E49 /* StorageBarCollectionView.swift */,
 				6A8B321E2AE7A1D000D24E49 /* SelectStorageBarView.swift */,
 				6A8B32202AE7A1DD00D24E49 /* EditStorageBarView.swift */,
 			);
@@ -164,8 +156,25 @@
 			isa = PBXGroup;
 			children = (
 				6A8B322A2AE7AB9300D24E49 /* StorageType.swift */,
+				6AA61AC02AE80DC6002E3725 /* StorageData.swift */,
 			);
 			path = DataModel;
+			sourceTree = "<group>";
+		};
+		6AA61AC22AE81088002E3725 /* ServiceModule */ = {
+			isa = PBXGroup;
+			children = (
+				6AA61AC72AE81555002E3725 /* AuthorizationManager.swift */,
+				6AA61AC52AE810F0002E3725 /* HCFileManager.swift */,
+			);
+			path = ServiceModule;
+			sourceTree = "<group>";
+		};
+		6AA61AC32AE81095002E3725 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		6B8A5C1B66D8B62E80A1E971 /* Pods */ = {
@@ -293,15 +302,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A8B32232AE7A20600D24E49 /* EditStorageBarVC.swift in Sources */,
+				6AA61AC82AE81555002E3725 /* AuthorizationManager.swift in Sources */,
 				6A8B32212AE7A1DD00D24E49 /* EditStorageBarView.swift in Sources */,
 				6A8B31FE2AE7983E00D24E49 /* ViewController.swift in Sources */,
+				6AA61AC12AE80DC6002E3725 /* StorageData.swift in Sources */,
 				6A8B31FA2AE7983E00D24E49 /* AppDelegate.swift in Sources */,
 				6A8B322B2AE7AB9300D24E49 /* StorageType.swift in Sources */,
 				6A8B32262AE7A5EE00D24E49 /* StorageBarItemCell.swift in Sources */,
 				6A8B31FC2AE7983E00D24E49 /* SceneDelegate.swift in Sources */,
 				6A8B32192AE7A11D00D24E49 /* BrowserTabVC.swift in Sources */,
-				6A8B321D2AE7A19A00D24E49 /* StorageBarView.swift in Sources */,
+				6A8B321D2AE7A19A00D24E49 /* StorageBarCollectionView.swift in Sources */,
 				6A8B32152AE7A03000D24E49 /* CameraVC.swift in Sources */,
+				6AA61AC62AE810F0002E3725 /* HCFileManager.swift in Sources */,
 				6A8B321B2AE7A14600D24E49 /* PhotoViewerVC.swift in Sources */,
 				6A8B32172AE7A0D900D24E49 /* FileListVC.swift in Sources */,
 				6A8B321F2AE7A1D000D24E49 /* SelectStorageBarView.swift in Sources */,
