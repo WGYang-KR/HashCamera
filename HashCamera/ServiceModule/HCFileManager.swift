@@ -11,107 +11,66 @@ import UIKit
 class HCFileManager {
     let fileManager = FileManager.default
     
-    var type: HCFileManagerType
-    enum HCFileManagerType {
-        case iCloudDrive, localDrive
-    }
-    init(type: HCFileManagerType) {
-        self.type = type
-    }
-    
-    //MARK: - 디렉토리 제어
-    private func rootURL() -> URL? {
-        switch type {
-        case .iCloudDrive:
-            return fileManager.url(forUbiquityContainerIdentifier:nil)?.appendingPathComponent("Documents") ?? nil
-        case .localDrive:
-            return fileManager.url(forUbiquityContainerIdentifier:nil)?.appendingPathComponent("Documents") ?? nil
-        }
+    //MARK: - 기초 함수
+    func iCloudBaseURL() -> URL? {
+        guard let baseURL = fileManager.url(forUbiquityContainerIdentifier:nil)?.appendingPathComponent("Documents")
+        else { return nil}
+        return URL(string: "./", relativeTo: baseURL)
     }
     
-    ////////여기까지 작업함.
+    func localBaseURL() -> URL? {
+        guard let baseURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
+        else { return nil}
+        return URL(string: "./", relativeTo: baseURL)
+    }
     
-    ///폴더 목록 가져오기
-    func getFolderList() async -> [URL] {
-        guard let rootURL = fileManager.url(forUbiquityContainerIdentifier:nil)?.appendingPathComponent("Documents") else { return [URL]()}
-        var directoryContents = [URL]()
+
+    ///폴더 내 컨텐츠 가져오기
+    func fetchContentList(source: URL) -> [URL] {
         do {
-            directoryContents = try fileManager.contentsOfDirectory(at: rootURL, includingPropertiesForKeys: nil)
+            return try fileManager.contentsOfDirectory(at: source,
+                                                           includingPropertiesForKeys: nil)
         } catch {
             return [URL]()
         }
-        return directoryContents.filter{$0.isDirectory}
     }
     
-    ///폴더 안의 미디어 파일목록만 가져오기
-    func getMediaFileURLList(of folderURL: URL) -> [URL] {
-        guard folderURL.isDirectory == true else { return [URL]() }
-        var directoryContents = [URL]()
-        do {
-            directoryContents = try fileManager.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: nil)
-        } catch {
-            return [URL]()
-        }
-        
-        return directoryContents.filter({$0.isMedia})
+    ///폴더 내 가장 첫번째 미디어 파일 가져오기
+    func fetchFirstMediaFile(source: URL) -> URL? {
+        return fetchContentList(source: source).filter({$0.isMedia}).first
     }
-    
-    ///폴더 안의 가장 첫번째 미디어 파일 가져오기
-    func getFirstMediaFileURL(in folderURL: URL) -> URL? {
-        self.getMediaFileURLList(of: folderURL).first
-    }
-    ///폴더 안의 가장 첫번째 미디어 파일 가져오기
-    func getFirstMediaFileURL(in folderName: String) -> URL? {
-        guard let folderURL = self.makeFullURL(with: folderName) else { return nil}
-        guard let fileURL = self.getFirstMediaFileURL(in: folderURL) else { return nil }
-        return fileURL
-    }
-    
-    ///새폴더 만들기
-    func makeNewFolder(_ folderName : String ) -> Bool {
-        guard let path = self.rootURL() else { return false}
-        let newFolderPath = path.appendingPathComponent(folderName)
-        guard let uniquePath = makeUniqueFileURL(url: newFolderPath) else { return false}
+  
+    ///새폴더 만들기. 성공시 생성된 URL 반환. 실패시 nil 반환.
+    func makeNewFolder(source: URL, folderName : String ) -> URL? {
+
+        let newFolderURL = source.appendingPathComponent(folderName)
+        guard let uniqueURL = makeUniqueFileURL(url: newFolderURL) else { return nil }
         
         do {
-            try fileManager.createDirectory(atPath: uniquePath.path, withIntermediateDirectories: true, attributes: nil)
-            return true
+            try fileManager.createDirectory(atPath: uniqueURL.path, withIntermediateDirectories: true, attributes: nil)
+            return uniqueURL
         } catch {
             print(error.localizedDescription)
-            return false
+            return nil
         }
     }
     
-    ///폴더 이름바꾸기
-    func renameFolder(from prevName: String, to destName: String) -> Bool {
-        guard let path = self.rootURL() else { return false}
-        let originalPath = path.appendingPathComponent(prevName)
-        guard let destPath = makeUniqueFileURL(url: path.appendingPathComponent(destName)) else { return false}
+    ///폴더 이름바꾸기. 성공시 바뀐 URL 반환. 실패시 nil 반환.
+    func renameFolder(target: URL, newName: String) -> URL? {
+        let newURL = target.deletingLastPathComponent().appendingPathComponent(newName)
         do {
-            _ = try fileManager.replaceItemAt(originalPath, withItemAt: destPath)
-            return true
+            return try fileManager.replaceItemAt(target, withItemAt: newURL)
         }
-        catch { return false}
+        catch { return nil}
     }
     
-    ///데이터를 폴더에 저장
-    func saveFile( data: Data, fileName: String, at folderName: String?) -> Bool {
-        guard let icloudURL = self.rootURL() else { return false }
-        var fileURL = icloudURL
-        if let folderName = folderName { fileURL = fileURL.appendingPathComponent(folderName).appendingPathComponent(fileName)}
-        else { fileURL = fileURL.appendingPathComponent(fileName)}
-
-        guard let destURL = makeUniqueFileURL(url: fileURL) else { return false }
-        return fileManager.createFile(atPath: destURL.path, contents: data)
+    ///데이터를 폴더에 저장.  fileName에 확장자를 포함해야함. 성공시 해당 URL 반환. 실패시 nil 반환.
+    func saveFile(source: URL, data: Data, fileName: String) -> URL? {
+        
+        let newFileURL = source.appendingPathComponent(fileName)
+        guard let uniqueURL = makeUniqueFileURL(url: newFileURL) else { return nil }
+        return fileManager.createFile(atPath: uniqueURL.path, contents: data) ? uniqueURL : nil
     }
-    
-    
-    ///fileName을 iCloud URL을 만들어 반환한다.
-    func makeFullURL(with lastPath:String) -> URL? {
-        return self.rootURL()?.appendingPathComponent(lastPath)
-    }
-    
-
     
     ///이미 같은 이름의 파일이나 폴더가 있는지 검사. 중복일 경우 뒤에 숫자를 덧붙인 url을 반환한다. ex /.././fileName (1).jpg
     private func makeUniqueFileURL(url originURL:URL) -> URL? {
@@ -136,6 +95,8 @@ class HCFileManager {
         return nil
     }
 
+    //여기까지 작업 To do
+    
     //MARK: - 이미지 로드
     ///폴더의 대표파일의 썸네일을 가져온다.
     func fetchFolderThumbnailImage(folderUrl: URL) async -> UIImage? {
