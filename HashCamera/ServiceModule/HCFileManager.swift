@@ -7,9 +7,17 @@
 
 import Foundation
 import UIKit
+import QuickLookThumbnailing
 
 class HCFileManager {
     let fileManager = FileManager.default
+    
+    //MARK: - iClud 로딩 관련 변수
+    var queryNotifications = [UUID: QueryNotification]() //원격저장소 다운로드에 사용되는 Notifcation을 저장.
+    struct QueryNotification {
+        let query: NSMetadataQuery //노티피케이션에 사용된 쿼리
+        let notification: NSObjectProtocol //쿼리가 사용된 노티피케이션
+    }
     
     //MARK: - 기초 함수
     func iCloudBaseURL() -> URL? {
@@ -98,22 +106,117 @@ class HCFileManager {
     //여기까지 작업 To do
     
     //MARK: - 이미지 로드
-    ///폴더의 대표파일의 썸네일을 가져온다.
-    func fetchFolderThumbnailImage(folderUrl: URL) async -> UIImage? {
-        return UIImage()
-    }
     
-    ///특정 파일의 썸네일을 가져온다.
-    func fetchFileThumbnailImage(fileUrl: URL) async -> UIImage? {
+    ///파일의 썸네일을 가져온다. (completion은 여러번 호출 될 수 있다.) lowQuality -> HighQuality
+    func generateThumbnail(url: URL, size: CGSize, completion: @escaping (UIImage?) -> Void ) {
         
-        return UIImage()
+        let size: CGSize = CGSize(width: 60, height: 90)
+        let scale = UIScreen.main.scale
+        
+        // Create the thumbnail request.
+        let request = QLThumbnailGenerator.Request(fileAt: url,
+                                                   size: size,
+                                                   scale: scale,
+                                                   representationTypes: .all)
+        
+        // Retrieve the singleton instance of the thumbnail generator and generate the thumbnails.
+        let generator = QLThumbnailGenerator.shared
+        
+        generator.generateRepresentations(for: request) { thumbnail, type, error in
+            if let thumbnail {
+                completion(thumbnail.uiImage)
+            } else {
+                hcLog("thumnail = nil")
+                completion(nil)
+            }
+        }
+        
     }
     
-    ///특정 파일의 원본 이미지를 가져온다.
-    func fetchFullScaleImage(ofURL: URL) async -> UIImage? {
-        return UIImage()
+    ///폴더의 대표파일의 썸네일을 가져온다.
+    func generateFolderThumbnail(url: URL, size: CGSize, completion: @escaping (UIImage?) -> Void )  {
+        if let firstURL = fetchFirstMediaFile(source: url) {
+            generateThumbnail(url: firstURL, size: size, completion: completion)
+        } else {
+            hcLog("firstURL = nil")
+            completion(nil)
+        }
     }
+
+    ///파일의 원본 이미지를 가져온다. 실패시 nil 반환
+    func fetchBestImage(url: URL, completion: @escaping (UIImage?) -> Void ) {
+        
+        
+        if fileManager.isUbiquitousItem(at: url) {  //iCloud 파일 일때
+            fetchBestImage(iCloudURL: url, completion: completion)
+            
+        } else {    //로컬 파일일때
+            completion(UIImage(contentsOfFile: url.absoluteString) )
+        }
+    }
+    
+    ///iCloud의 사진을 다운로드하여 반환한다. 실패시 nil 반환
+    func fetchBestImage(iCloudURL url: URL, completion: @escaping (UIImage?) -> Void ) {
+        
+        let uuid = UUID()
+        let query = NSMetadataQuery()
+        query.predicate = NSPredicate(format: "%K == %@", NSMetadataItemPathKey, url.absoluteString) // create predicate to search for you files
+        
+        let observer = NotificationCenter.default.addObserver(forName: .NSMetadataQueryDidUpdate, object: query, queue: nil) { [weak self] notification in
+            guard let self else { completion(nil); return }
+            
+            for i in 0..<query.resultCount {
+                if let item = query.result(at: i) as? NSMetadataItem {
+                    let downloadingStatus = item.value(forAttribute: NSMetadataUbiquitousItemDownloadingStatusKey) as! String
+                    hcLog("URL:\(url.relativeString) Downloading Status:\(downloadingStatus)")
+                    
+                    if downloadingStatus == URLUbiquitousItemDownloadingStatus.current.rawValue {
+                        // file is donwloaded, call your function
+                        query.stop() //쿼리 중지
+                        
+                        let image = UIImage(contentsOfFile: url.absoluteString)
+                        completion(image)
+                        
+                        removeQueryNotification()
+                        
+                    }
+                }
+            } //.for
+        } //./NotificationCenter
+        
+        queryNotifications[uuid] = QueryNotification(query: query, notification: observer) //쿼리와 노티피케이션 저장.
+        query.start() // starts the search query, updates will come through notifications
+        
+        // Once we are listening for download updates we can start the downloading process
+        do {
+            try fileManager.startDownloadingUbiquitousItem(at: url)
+        } catch {
+            completion(nil)
+            
+            removeQueryNotification()
+        }
+        
+        func removeQueryNotification() {
+            if let observer = queryNotifications.removeValue(forKey: uuid) { //쿼리 메모리 해제
+                NotificationCenter.default.removeObserver(observer.notification) //노티피케이션 등록해제
+            }
+        }
+    }
+    
+    
+    deinit {
+        
+        //사용하던 QueryNotifcation 제거
+        for ( _ , value) in queryNotifications {
+            value.query.stop() //쿼리 중지
+            NotificationCenter.default.removeObserver(value.notification) //노티피케이션 등록해제
+        }
+        queryNotifications = [:] //목록 할당해제
+    }
+    
+  
 }
+
 
 extension URL {
     var typeIdentifier: String? { (try? resourceValues(forKeys: [.typeIdentifierKey]))?.typeIdentifier }

@@ -26,6 +26,7 @@
 		6AA61AC12AE80DC6002E3725 /* StorageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA61AC02AE80DC6002E3725 /* StorageData.swift */; };
 		6AA61AC62AE810F0002E3725 /* HCFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA61AC52AE810F0002E3725 /* HCFileManager.swift */; };
 		6AA61AC82AE81555002E3725 /* AuthorizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA61AC72AE81555002E3725 /* AuthorizationManager.swift */; };
+		6AA61ACA2AEC9C02002E3725 /* HCLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA61AC92AEC9C02002E3725 /* HCLog.swift */; };
 		8E96DE981426C86DDF08F585 /* Pods_HashCamera.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0BA957B69E5FF8A9B65F19F /* Pods_HashCamera.framework */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +54,7 @@
 		6AA61AC02AE80DC6002E3725 /* StorageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageData.swift; sourceTree = "<group>"; };
 		6AA61AC52AE810F0002E3725 /* HCFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HCFileManager.swift; sourceTree = "<group>"; };
 		6AA61AC72AE81555002E3725 /* AuthorizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationManager.swift; sourceTree = "<group>"; };
+		6AA61AC92AEC9C02002E3725 /* HCLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HCLog.swift; sourceTree = "<group>"; };
 		C0BA957B69E5FF8A9B65F19F /* Pods_HashCamera.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HashCamera.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -110,6 +112,7 @@
 				6A8B32022AE7983F00D24E49 /* Assets.xcassets */,
 				6A8B32042AE7983F00D24E49 /* LaunchScreen.storyboard */,
 				6A8B32072AE7983F00D24E49 /* Info.plist */,
+				6AA61AC92AEC9C02002E3725 /* HCLog.swift */,
 			);
 			path = HashCamera;
 			sourceTree = "<group>";
@@ -316,6 +319,7 @@
 				6AA61AC62AE810F0002E3725 /* HCFileManager.swift in Sources */,
 				6A8B321B2AE7A14600D24E49 /* PhotoViewerVC.swift in Sources */,
 				6A8B32172AE7A0D900D24E49 /* FileListVC.swift in Sources */,
+				6AA61ACA2AEC9C02002E3725 /* HCLog.swift in Sources */,
 				6A8B321F2AE7A1D000D24E49 /* SelectStorageBarView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
