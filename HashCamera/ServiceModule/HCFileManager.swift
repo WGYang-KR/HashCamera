@@ -12,7 +12,7 @@ import QuickLookThumbnailing
 class HCFileManager {
     let fileManager = FileManager.default
     
-    //MARK: - iClud 로딩 관련 변수
+    //MARK: - iClud 다운로드 관련 변수
     var queryNotifications = [UUID: QueryNotification]() //원격저장소 다운로드에 사용되는 Notifcation을 저장.
     struct QueryNotification {
         let query: NSMetadataQuery //노티피케이션에 사용된 쿼리
@@ -172,12 +172,10 @@ class HCFileManager {
                     
                     if downloadingStatus == URLUbiquitousItemDownloadingStatus.current.rawValue {
                         // file is donwloaded, call your function
-                        query.stop() //쿼리 중지
+                        removeQueryNotification(uuid)
                         
                         let image = UIImage(contentsOfFile: url.absoluteString)
                         completion(image)
-                        
-                        removeQueryNotification()
                         
                     }
                 }
@@ -191,18 +189,19 @@ class HCFileManager {
         do {
             try fileManager.startDownloadingUbiquitousItem(at: url)
         } catch {
+            removeQueryNotification(uuid)
             completion(nil)
-            
-            removeQueryNotification()
+          
         }
-        
-        func removeQueryNotification() {
-            if let observer = queryNotifications.removeValue(forKey: uuid) { //쿼리 메모리 해제
-                NotificationCenter.default.removeObserver(observer.notification) //노티피케이션 등록해제
-            }
+      
+    }
+    ///쿼리 노티피케이션을 중지하고 등록해제 한다.
+    func removeQueryNotification(_ uuid: UUID) {
+        if let observer = queryNotifications.removeValue(forKey: uuid) {
+            observer.query.stop() //쿼리 중지
+            NotificationCenter.default.removeObserver(observer.notification) //노티피케이션 등록해제
         }
     }
-    
     
     deinit {
         
