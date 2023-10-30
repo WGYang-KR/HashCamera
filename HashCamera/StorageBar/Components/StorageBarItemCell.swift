@@ -11,18 +11,10 @@ import Photos
 
 class StorageBarItemCell: UICollectionViewCell {
     
-    var storageData: StorageData?
+    var storageType: StorageType = .photoLibrary
     
-    ///icon 표시 뷰
-    var iconImageView:  UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.backgroundColor = .white
-        return imageView
-    }()
-    
-    ///이미지 표시부
-    var thumbnailImageView: UIImageView = {
+    ///스토리지 아이콘 이미지 표시뷰
+    private var thumbnailImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         return imageView
@@ -41,26 +33,17 @@ class StorageBarItemCell: UICollectionViewCell {
     
     private func initView() {
         self.addSubview(thumbnailImageView)
-        self.addSubview(iconImageView)
         
         thumbnailImageView.snp.makeConstraints { make in
             make.edges.equalTo(self)
         }
         
-        iconImageView.snp.makeConstraints { make in
-            make.top.trailing.equalTo(self) //상단우측 정렬
-            make.width.equalTo(iconImageView.snp.height) // 1:1 비율
-            make.width.equalTo(self).multipliedBy(0.25) // superView의 1/4 사이즈
-        }
     }
-    
     //MARK: - configure
     
-    func configure(storageData: StorageData) {
-        self.storageData = storageData
-        self.iconImageView.image = iconImage(storageType: storageData.type)
-        
-        //To do 썸네일 가져오기
+    func configure(storageType: StorageType) {
+        self.storageType = storageType
+        self.thumbnailImageView.image = iconImage(storageType: storageType)
     }
     
     private func iconImage(storageType: StorageType) -> UIImage {
