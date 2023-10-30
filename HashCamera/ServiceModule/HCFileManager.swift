@@ -49,9 +49,9 @@ class HCFileManager {
     }
   
     ///새폴더 만들기. 성공시 생성된 URL 반환. 실패시 nil 반환.
-    func makeNewFolder(source: URL, folderName : String ) -> URL? {
+    func makeNewFolder(destination: URL, folderName : String ) -> URL? {
 
-        let newFolderURL = source.appendingPathComponent(folderName)
+        let newFolderURL = destination.appendingPathComponent(folderName)
         guard let uniqueURL = makeUniqueFileURL(url: newFolderURL) else { return nil }
         
         do {
@@ -73,9 +73,9 @@ class HCFileManager {
     }
     
     ///데이터를 폴더에 저장.  fileName에 확장자를 포함해야함. 성공시 해당 URL 반환. 실패시 nil 반환.
-    func saveFile(source: URL, data: Data, fileName: String) -> URL? {
+    func saveFile(destination: URL, data: Data, fileName: String) -> URL? {
         
-        let newFileURL = source.appendingPathComponent(fileName)
+        let newFileURL = destination.appendingPathComponent(fileName)
         guard let uniqueURL = makeUniqueFileURL(url: newFileURL) else { return nil }
         return fileManager.createFile(atPath: uniqueURL.path, contents: data) ? uniqueURL : nil
     }
