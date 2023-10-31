@@ -9,4 +9,15 @@ import Foundation
 
 enum StorageType: Codable{
     case photoLibrary, iCloudDrive, localDrive
+    
+    var simpleString: String {
+        switch self {
+        case .photoLibrary:
+            return "Library"
+        case .iCloudDrive:
+            return "iCloud"
+        case .localDrive:
+            return "Local Folder"
+        }
+    }
 }

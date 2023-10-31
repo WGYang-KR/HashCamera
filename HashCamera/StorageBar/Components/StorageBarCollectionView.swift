@@ -6,18 +6,56 @@
 //
 
 import UIKit
+import RxSwift
+import RxRelay
 import SnapKit
 
-class StorageBarCollectionView: UICollectionView,UICollectionViewDelegate, UICollectionViewDataSource {
+@IBDesignable
+class StorageBarCollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDataSource {
   
     
-    let cellSize = CGSize(width: 60, height: 60)
-    var storageList: [StorageType] = [.iCloudDrive, .localDrive, .photoLibrary]
+    let seletedStorage = BehaviorRelay<StorageType?>(value: nil) //선택된 저장소
     
+    var storageList: [StorageType] = [.iCloudDrive, .localDrive, .photoLibrary]
 
+    
+    init(frame: CGRect) {
+        super.init(frame: frame, collectionViewLayout: UICollectionViewLayout())
+        initView()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        initView()
+    }
+    
     func initView() {
         self.delegate = self
         self.dataSource = self
+        self.register(StorageBarItemCell.self, forCellWithReuseIdentifier: "\(StorageBarItemCell.self)")
+        self.allowsMultipleSelection = false
+        
+        let layout = UICollectionViewFlowLayout()
+        let spacing: CGFloat = 8 //아이템 사이의 공간 값
+        let cellSize = CGSize(width: 70, height: 70)
+        
+        let itemCount = CGFloat(integerLiteral: storageList.count )
+        let collectionWidth = cellSize.width * itemCount + spacing * ( itemCount + 1 )
+        let collectionHeight = cellSize.height + spacing * 2
+        let collectionViewSize = CGSize(width: collectionWidth,
+                                        height: collectionHeight) //콜렉션뷰 크기
+        self.snp.makeConstraints { make in
+            make.size.equalTo(collectionViewSize)
+        }
+        
+        layout.itemSize = cellSize //아이템 사이즈 초기화
+        layout.scrollDirection = .horizontal // 아이템 스크롤 방향
+        layout.sectionInset = UIEdgeInsets(top: spacing, left: spacing, bottom: spacing, right: spacing) //아이템 상하좌우 사이값 초기화
+        layout.minimumLineSpacing = spacing //아이템 라인 사이값 초기화
+        layout.minimumInteritemSpacing = spacing //아이템 섹션 사이값 초기화
+        
+        self.collectionViewLayout = layout //CollctionView의 Layout 적용
+        self.backgroundColor = UIColor(white: 0.8, alpha: 0.8)
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -26,8 +64,13 @@ class StorageBarCollectionView: UICollectionView,UICollectionViewDelegate, UICol
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "\(StorageBarItemCell.self)", for: indexPath) as? StorageBarItemCell else { return UICollectionViewCell() }
-        
+        cell.configure(storageType: storageList[indexPath.item])
         return cell
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        seletedStorage.accept(storageList[indexPath.item])
+    }
+    
     
 }
