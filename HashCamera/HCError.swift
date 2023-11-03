@@ -12,5 +12,5 @@ enum HCError: Error {
     case cameraUnknown
     case cameraNoAuth
     case cameraNoDevice
-    
+    case camLayoutError
 }

@@ -37,7 +37,9 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     
     //MARK: - 카메라 시작, 설정, 중지
-    private override init() { }
+    private override init() {
+        super.init()
+    }
     init(position: AVCaptureDevice.Position,
          flashMode: AVCaptureDevice.FlashMode,
          aspectRatio: AspectRatioType,
