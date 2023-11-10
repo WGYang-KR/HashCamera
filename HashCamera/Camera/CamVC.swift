@@ -25,6 +25,10 @@ class CamVC: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
 
+        // 바들 높이는 32로 고정. 카메라 버튼은 80으로 고정
+        // 3:4 일때, 167을
+        //프리뷰 제외하고 최소 167 남음 또는 안남거나 145
+        //상단바, 저장소, 촬영, 사진/비디오 제어바
         // 1: 1: 3 : 1
         //상단바:
         //프리뷰 높이: 화면 가로 / 비율
@@ -34,9 +38,7 @@ class CamVC: UIViewController {
     }
     
     func initView() {
-        guard let window = UIApplication.shared.windows.first else { return }
-        let safeAreaSize = CGSize( width: window.safeAreaLayoutGuide.layoutFrame.width,
-                                    height: window.safeAreaLayoutGuide.layoutFrame.height)
+       let safeAreaSize = safeAreaSize()
         let standardPreviewHeight = safeAreaSize.width / AspectRatioType.standard.cgFloat
         let widePreviewHeight = safeAreaSize.width / AspectRatioType.wide.cgFloat
         
@@ -51,6 +53,14 @@ class CamVC: UIViewController {
             storageBtnType = .normal
         }
         
+    }
+    
+    func safeAreaSize() -> CGSize? {
+        guard let window = UIApplication.shared.windows.first else { return nil }
+        let safeAreaSize = CGSize( width: window.safeAreaLayoutGuide.layoutFrame.width,
+                                    height: window.safeAreaLayoutGuide.layoutFrame.height)
+        hcLog("safeAreaSize: \(safeAreaSize)")
+        return safeAreaSize
     }
     
 
