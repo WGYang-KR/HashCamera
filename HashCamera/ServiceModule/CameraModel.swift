@@ -7,7 +7,6 @@
 
 import UIKit
 import AVFoundation
-import CoreMotion
 import RxSwift
 import RxRelay
 
@@ -37,15 +36,15 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     
     //MARK: - 카메라 시작, 설정, 중지
-    private override init() {
-        super.init()
-    }
+//    private override init() {
+//        super.init()
+//    }
+    
     init(position: AVCaptureDevice.Position,
          flashMode: AVCaptureDevice.FlashMode,
          aspectRatio: AspectRatioType,
          fileType: PhotoFileType) {
-        super.init()
-        
+       
         self.isLoading = BehaviorRelay(value: true)
         self.position = BehaviorRelay(value: position)
         self.zoomFactor = BehaviorRelay(value: 1.0)
@@ -53,6 +52,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         self.aspectRatio = BehaviorRelay(value: aspectRatio)
         self.photoOutput = AVCapturePhotoOutput()
         self.captureSession = AVCaptureSession()
+        super.init()
         
     }
 

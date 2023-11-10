@@ -26,7 +26,7 @@ enum AspectRatioType {
         }
     }
     
-    var string:String {
+    var string: String {
         switch self{
         case .square:
             return "1:1"
@@ -37,4 +37,10 @@ enum AspectRatioType {
         }
     }
     
+}
+
+extension AspectRatioType: CaseIterable {
+    public static var allCases: [AspectRatioType] {
+        return [.standard, .wide, .square]
+    }
 }

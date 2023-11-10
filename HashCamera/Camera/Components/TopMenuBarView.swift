@@ -8,22 +8,24 @@
 import UIKit
 import RxSwift
 import RxRelay
+import RxCocoa
+import RxGesture
 import AVFoundation
 
 class TopMenuBarView: UIView {
     
     @IBOutlet weak var containerView: UIView!
-    
     @IBOutlet weak var moreMenuBtn: UIButton!
-    
     @IBOutlet weak var aspectRatioLabel: UILabel!
     @IBOutlet weak var flashModeBtn: UIButton!
-    
     @IBOutlet weak var cameraPositionBtn: UIButton!
     
-    
     var disposeBag = DisposeBag()
-
+    
+    let moreMenuRx = BehaviorRelay<Void>(value: Void())
+    let aspectRatioRx = BehaviorRelay<AspectRatioType>(value: .standard)
+    let flashModeRx = BehaviorRelay<AVCaptureDevice.FlashMode>(value: .off)
+    let cameraPositionRx = BehaviorRelay<AVCaptureDevice.Position>(value:.unspecified)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -42,13 +44,50 @@ class TopMenuBarView: UIView {
             .first as! UIView
         view.frame = bounds
         addSubview(view)
+        
+        bind()
     }
     
-    func configuration(flashMode: Observable<AVCaptureDevice.FlashMode>) {
-        flashMode.subscribe(onNext: { [weak self] mode in
+    ///버튼 이벤트와 Rx를 연결한다.
+    func bind() {
+        
+        //더보기 버튼
+        moreMenuBtn.rx.tap.bind { [weak self] in
+            self?.moreMenuRx.accept(Void())
+        }.disposed(by: disposeBag)
+        
+        
+        //사진 비율
+        aspectRatioRx.subscribe(onNext: { [weak self] aspectRatio in
+            self?.aspectRatioLabel.text = aspectRatio.string
+        }).disposed(by: disposeBag)
+        
+        aspectRatioLabel.rx.tap.subscribe(onNext: { [weak self] in
+            guard let self else { return }
+            let nextAspectRatio = aspectRatioRx.value.next()
+            self.aspectRatioRx.accept(nextAspectRatio)
+        })
+                  
+        
+        //플래시 버튼
+        flashModeRx.subscribe(onNext: { [weak self] mode in
             self?.flashModeBtn.setImage(mode.iconImage, for: .normal)
         })
         .disposed(by: disposeBag)
+        
+        flashModeBtn.rx.tap.bind { [weak self] in
+            guard let self else { return }
+            let nextflashMode = flashModeRx.value.next()
+            flashModeRx.accept(nextflashMode)
+        }.disposed(by: disposeBag)
+        
+        //카메라 전환 버튼
+        cameraPositionBtn.rx.tap.bind { [weak self] in
+            guard let self else { return }
+            let nextPosition = self.cameraPositionRx.value == .back ? .front : .back
+            self.cameraPositionRx.accept(nextPosition)
+        }.disposed(by: disposeBag)
+        
     }
  
 }

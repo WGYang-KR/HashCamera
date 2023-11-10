@@ -1,5 +1,5 @@
 //
-//  FlashModeType.swift
+//  FlashMode+Ext.swift
 //  HashCamera
 //
 //  Created by WG-MacHome on 11/7/23.
@@ -30,3 +30,4 @@ extension AVCaptureDevice.FlashMode: CaseIterable {
         return [.off, .on, .auto]
     }
 }
+

@@ -38,7 +38,7 @@ class CamVC: UIViewController {
     }
     
     func initView() {
-       let safeAreaSize = safeAreaSize()
+        guard let safeAreaSize = safeAreaSize() else { return }
         let standardPreviewHeight = safeAreaSize.width / AspectRatioType.standard.cgFloat
         let widePreviewHeight = safeAreaSize.width / AspectRatioType.wide.cgFloat
         
@@ -48,7 +48,7 @@ class CamVC: UIViewController {
     
         if rowHeight < 40 { // 너무 높이가 작으면 저장소 선택 버튼을 오버레이로 변경한다.
             storageBtnType = .overlay
-            rowHeight = (safeAreaSize.height - defaultPreviewHeight) / 4
+//            rowHeight = (safeAreaSize.height - defaultPreviewHeight) / 4
         } else {
             storageBtnType = .normal
         }
