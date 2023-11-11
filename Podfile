@@ -8,6 +8,7 @@ target 'HashCamera' do
   # Pods for HashCamera
     pod 'RxSwift', '~> 6.5.0'
     pod 'RxCocoa', '~> 6.5.0'
+    pod 'RxGesture'
     pod 'SnapKit', '5.6.0'
 #target 'HashCameraTests' do
 #   inherit! :search_paths
@@ -26,12 +27,6 @@ target 'HashCamera' do
            end
       end
     end
-    
-    installer.pods_project.build_configurations.each do |config|
-      config.build_settings['VALID_ARCHS'] = 'arm64, arm64e, x86_64'
-      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-    end
-    
   end
 
   

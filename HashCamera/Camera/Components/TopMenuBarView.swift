@@ -62,11 +62,11 @@ class TopMenuBarView: UIView {
             self?.aspectRatioLabel.text = aspectRatio.string
         }).disposed(by: disposeBag)
         
-        aspectRatioLabel.rx.tap.subscribe(onNext: { [weak self] in
+        aspectRatioLabel.rx.tapGesture().when(.recognized).subscribe(onNext: { [weak self] _ in
             guard let self else { return }
             let nextAspectRatio = aspectRatioRx.value.next()
             self.aspectRatioRx.accept(nextAspectRatio)
-        })
+        }).disposed(by: disposeBag)
                   
         
         //플래시 버튼
@@ -84,7 +84,7 @@ class TopMenuBarView: UIView {
         //카메라 전환 버튼
         cameraPositionBtn.rx.tap.bind { [weak self] in
             guard let self else { return }
-            let nextPosition = self.cameraPositionRx.value == .back ? .front : .back
+            let nextPosition: AVCaptureDevice.Position = self.cameraPositionRx.value == .back ? .front : .back
             self.cameraPositionRx.accept(nextPosition)
         }.disposed(by: disposeBag)
         

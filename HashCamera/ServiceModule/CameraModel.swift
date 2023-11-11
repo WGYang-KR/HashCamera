@@ -39,7 +39,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
 //    private override init() {
 //        super.init()
 //    }
-    
+//    
     init(position: AVCaptureDevice.Position,
          flashMode: AVCaptureDevice.FlashMode,
          aspectRatio: AspectRatioType,
@@ -74,18 +74,19 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     
     private func bind() {
-        position.subscribe { [weak self] position in
+
+        position.subscribe(onNext: { [weak self] position in
             self?.isLoading.accept(true)
             self?.updatePosition(position: position)
             DispatchQueue.global(qos: .background).async {
                 self?.captureSession.startRunning() // 세션 시작
                 self?.isLoading.accept(false)
             }
-        }.disposed(by: disposeBag)
+        }).disposed(by: disposeBag)
         
-        zoomFactor.subscribe { [weak self] value in
+        zoomFactor.subscribe(onNext:  { [weak self] value in
             self?.zoom(value)
-        }.disposed(by: disposeBag)
+        }).disposed(by: disposeBag)
         
     }
     
