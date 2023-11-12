@@ -11,33 +11,22 @@ class CamVC: UIViewController {
 
     
     @IBOutlet weak var topMenuView: TopMenuBarView!
-   
-    @IBOutlet weak var previewGuideView: UIView!
+ 
+    @IBOutlet weak var preview916GuideView: UIView!
+    @IBOutlet weak var preview34GuideView:UIView!
     
+    @IBOutlet weak var bottomMenuContainer: UIView!
     @IBOutlet weak var StorageButton: UIButton!
     @IBOutlet weak var captureButton: UIButton!
-    
     @IBOutlet weak var BrowseButton: UIButton!
-    var storageBtnType: StorageBtnType = .normal
-    enum StorageBtnType {
-        case normal
-        case overlay
-    }
+   
+    var cameraModel: CameraModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-
-        // 바들 높이는 32로 고정. 카메라 버튼은 80으로 고정
-        // 3:4 일때, 167을
-        //프리뷰 제외하고 최소 167 남음 또는 안남거나 145
-        //상단바, 저장소, 촬영, 사진/비디오 제어바
-        // 1: 1: 3 : 1
-        //상단바:
-        //프리뷰 높이: 화면 가로 / 비율
-        //저장소 레이블 바
-        //촬영/전후면/ 제어바
-        //사진/비디오 제어바
+        
+        cameraModel = CameraModel(position: .back,
+                                  flashMode: .off, aspectRatio: .standard, fileType: .jpeg)
     }
     
     func initView() {
