@@ -9,12 +9,15 @@ import UIKit
 
 class CamVC: UIViewController {
 
-    let topMenuView = UIView()
-    let previewGuideView = UIView()
-    let menuView = UIView() //선택된 저장소
-    let captureBarView = UIView() //촬영 버튼
-    let modeBarView = UIView() //사진/비디오 전환
     
+    @IBOutlet weak var topMenuView: TopMenuBarView!
+   
+    @IBOutlet weak var previewGuideView: UIView!
+    
+    @IBOutlet weak var StorageButton: UIButton!
+    @IBOutlet weak var captureButton: UIButton!
+    
+    @IBOutlet weak var BrowseButton: UIButton!
     var storageBtnType: StorageBtnType = .normal
     enum StorageBtnType {
         case normal
