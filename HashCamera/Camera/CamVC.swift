@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import RxSwift
+import RxRelay
 
 class CamVC: UIViewController {
 
@@ -16,54 +18,87 @@ class CamVC: UIViewController {
     @IBOutlet weak var preview34GuideView:UIView!
     
     @IBOutlet weak var bottomMenuContainer: UIView!
-    @IBOutlet weak var StorageButton: UIButton!
+    @IBOutlet weak var storageButton: UIButton!
     @IBOutlet weak var captureButton: UIButton!
-    @IBOutlet weak var BrowseButton: UIButton!
+    @IBOutlet weak var browseButton: UIButton!
    
-    var cameraModel: CameraModel?
+    @IBOutlet weak var storageBarView: StorageBarCollectionView!
+    let cameraModel: CameraModel = CameraModel(position: .back,
+                                                 flashMode: .off, aspectRatio: .standard, fileType: .jpeg)
+    let storageModel: StorageModel = StorageModel(selectedStorgeType: .photoLibrary)
+    
+    var disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        initView()
         
-        cameraModel = CameraModel(position: .back,
-                                  flashMode: .off, aspectRatio: .standard, fileType: .jpeg)
     }
-    
-    func initView() {
-        guard let safeAreaSize = safeAreaSize() else { return }
-        let standardPreviewHeight = safeAreaSize.width / AspectRatioType.standard.cgFloat
-        let widePreviewHeight = safeAreaSize.width / AspectRatioType.wide.cgFloat
-        
-        // 19.5: 9
-    
-        var rowHeight = (safeAreaSize.height - standardPreviewHeight) / 2 //제어 메뉴 뷰들의 기준 높이
-    
-        if rowHeight < 40 { // 너무 높이가 작으면 저장소 선택 버튼을 오버레이로 변경한다.
-            storageBtnType = .overlay
-//            rowHeight = (safeAreaSize.height - defaultPreviewHeight) / 4
-        } else {
-            storageBtnType = .normal
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        enableComponents(false)
+        Task {
+            let _ = await cameraModel.startCamera()
+            enableComponents(true)
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        enableComponents(false)
+        Task {
+            let _ = await cameraModel.stopCamera()
+        }
+    }
+    func initView() {
+
+        storageButton.rx.tap.bind(onNext: { [weak self] in
+                guard let self else { return }
+                storageButton.isHidden = storageButton.isHidden == true ? false : true
+        }).disposed(by: disposeBag)
+        
+        storageBarView.seletedStorage.bind { [weak self] storageType in
+            guard let self else { return }
+            storageModel.selectedStorgeType.accept(storageType)
+        }.disposed(by: disposeBag)
+        
+        topMenuView.aspectRatioRx.bind { [weak self] aspectRatio in
+            self?.cameraModel.aspectRatio.accept(aspectRatio)
+        }.disposed(by: disposeBag)
+        
+        topMenuView.flashModeRx.bind { [weak self] flashMode in
+            self?.cameraModel.flashMode.accept(flashMode)
+        }.disposed(by: disposeBag)
+        
+        topMenuView.cameraPositionRx.bind { [weak self] cameraPosition in
+            self?.cameraModel.position.accept(cameraPosition)
+        }.disposed(by: disposeBag)
+        
+        captureButton.rx.tap.bind { [weak self] _ in
+            guard let self else { return }
+            enableComponents(false)
+            Task {
+                let _ = await self.cameraModel.capture()
+                self.enableComponents(true)
+            }
+        }.disposed(by: disposeBag)
         
     }
     
-    func safeAreaSize() -> CGSize? {
-        guard let window = UIApplication.shared.windows.first else { return nil }
-        let safeAreaSize = CGSize( width: window.safeAreaLayoutGuide.layoutFrame.width,
-                                    height: window.safeAreaLayoutGuide.layoutFrame.height)
-        hcLog("safeAreaSize: \(safeAreaSize)")
-        return safeAreaSize
+    ///화면 모든 버튼 활성화/비활성화
+    func enableComponents(_ isEnabled: Bool) {
+        topMenuView.moreMenuBtn.isEnabled = isEnabled
+        topMenuView.aspectRatioBtn.isEnabled = isEnabled
+        topMenuView.flashModeBtn.isEnabled = isEnabled
+        topMenuView.cameraPositionBtn.isEnabled = isEnabled
+        storageButton.isEnabled = isEnabled
+        captureButton.isEnabled = isEnabled
+        browseButton.isEnabled = isEnabled
     }
     
 
-    /*
-    // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

@@ -14,7 +14,7 @@ import SnapKit
 class StorageBarCollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDataSource {
   
     
-    let seletedStorage = BehaviorRelay<StorageType?>(value: nil) //선택된 저장소
+    let seletedStorage = BehaviorRelay<StorageType>(value: .photoLibrary) //선택된 저장소
     
     var storageList: [StorageType] = [.iCloudDrive, .localDrive, .photoLibrary]
 
@@ -56,6 +56,8 @@ class StorageBarCollectionView: UICollectionView, UICollectionViewDelegate, UICo
         
         self.collectionViewLayout = layout //CollctionView의 Layout 적용
         self.backgroundColor = UIColor(white: 0.8, alpha: 0.8)
+        
+        self.layer.cornerRadius = 6.0
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -72,5 +74,14 @@ class StorageBarCollectionView: UICollectionView, UICollectionViewDelegate, UICo
         seletedStorage.accept(storageList[indexPath.item])
     }
     
-    
+//    override var intrinsicContentSize: CGSize {
+//        var s = super.intrinsicContentSize
+//        s.height = 40
+//        s.width = 40
+//        return s
+//    }
+//    
+//    override func prepareForInterfaceBuilder() {
+//        invalidateIntrinsicContentSize()
+//    }
 }

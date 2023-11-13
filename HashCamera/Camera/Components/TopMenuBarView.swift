@@ -16,7 +16,7 @@ class TopMenuBarView: UIView {
     
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var moreMenuBtn: UIButton!
-    @IBOutlet weak var aspectRatioLabel: UILabel!
+    @IBOutlet weak var aspectRatioBtn: UIButton!
     @IBOutlet weak var flashModeBtn: UIButton!
     @IBOutlet weak var cameraPositionBtn: UIButton!
     
@@ -59,14 +59,14 @@ class TopMenuBarView: UIView {
         
         //사진 비율
         aspectRatioRx.subscribe(onNext: { [weak self] aspectRatio in
-            self?.aspectRatioLabel.text = aspectRatio.string
+            self?.aspectRatioBtn.setTitle(aspectRatio.string, for: .normal)
         }).disposed(by: disposeBag)
         
-        aspectRatioLabel.rx.tapGesture().when(.recognized).subscribe(onNext: { [weak self] _ in
+        aspectRatioBtn.rx.tap.bind{ [weak self] _ in
             guard let self else { return }
             let nextAspectRatio = aspectRatioRx.value.next()
             self.aspectRatioRx.accept(nextAspectRatio)
-        }).disposed(by: disposeBag)
+        }.disposed(by: disposeBag)
                   
         
         //플래시 버튼
