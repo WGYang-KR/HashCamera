@@ -536,6 +536,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HashCamera/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera Permission";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photo Library  Additions Usage Permission";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Photo Library Usage Permission";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -569,6 +572,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = HashCamera/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera Permission";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Photo Library  Additions Usage Permission";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Photo Library Usage Permission";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

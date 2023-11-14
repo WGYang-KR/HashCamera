@@ -8,12 +8,14 @@
 import UIKit
 import RxSwift
 import RxRelay
+import SnapKit
 
 class CamVC: UIViewController {
 
     
     @IBOutlet weak var topMenuView: TopMenuBarView!
  
+    @IBOutlet weak var previewView: CameraPreviewView!
     @IBOutlet weak var preview916GuideView: UIView!
     @IBOutlet weak var preview34GuideView:UIView!
     
@@ -39,8 +41,13 @@ class CamVC: UIViewController {
         super.viewWillAppear(animated)
         enableComponents(false)
         Task {
-            let _ = await cameraModel.startCamera()
-            enableComponents(true)
+            if await AuthorizationManager.checkCameraAuth() {
+                let _ = await cameraModel.startCamera()
+            
+                enableComponents(true)
+            } else {
+                AuthorizationManager.presentCameraAuthAlert(baseVC: self)
+            }
         }
     }
     
@@ -54,6 +61,12 @@ class CamVC: UIViewController {
     }
     func initView() {
 
+        previewView.snp.makeConstraints { make in
+            make.edges.equalTo(preview34GuideView)
+        }
+        
+        previewView.session = cameraModel.captureSession
+        
         storageButton.rx.tap.bind(onNext: { [weak self] in
                 guard let self else { return }
                 storageButton.isHidden = storageButton.isHidden == true ? false : true

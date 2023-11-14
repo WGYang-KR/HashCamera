@@ -39,6 +39,7 @@ class CameraPreviewView: UIView {
     func initPreviewLayer() {
         previewLayer.videoGravity = .resizeAspectFill
         previewLayer.cornerRadius = 0
+        previewLayer.backgroundColor = UIColor.clear.cgColor
     }
      
 }
