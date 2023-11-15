@@ -40,6 +40,8 @@ class CameraPreviewView: UIView {
         previewLayer.videoGravity = .resizeAspectFill
         previewLayer.cornerRadius = 0
         previewLayer.backgroundColor = UIColor.clear.cgColor
+        
+        clipsToBounds = true
     }
      
 }

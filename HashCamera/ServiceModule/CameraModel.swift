@@ -56,32 +56,37 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         
     }
 
-    ///카메라 시작
-    func startCamera() async -> Bool {
+    
+    ///카메라 초기화
+    func initCamera() {
         bind()
-        return true
+    }
+    ///카메라 시작
+    func startCamera() async {
+        self.isLoading.accept(true)
+        DispatchQueue.global(qos: .background).async {[weak self] in
+            self?.captureSession.startRunning() // 카메라 세션 시작
+            self?.isLoading.accept(false)
+        }
+
     }
     
     ///카메라 중지
-    func stopCamera() async -> Bool {
+    func stopCamera() async {
+        self.isLoading.accept(true)
         DispatchQueue.global(qos: .background).async {
             self.captureSession.stopRunning()
+            self.isLoading.accept(false)
         }
-        unbind()
-        return true
-        
+
     }
-    
-    
+
     private func bind() {
 
         position.subscribe(onNext: { [weak self] position in
             self?.isLoading.accept(true)
             self?.updatePosition(position: position)
-            DispatchQueue.global(qos: .background).async {
-                self?.captureSession.startRunning() // 세션 시작
-                self?.isLoading.accept(false)
-            }
+            self?.isLoading.accept(false)
         }).disposed(by: disposeBag)
         
         zoomFactor.subscribe(onNext:  { [weak self] value in

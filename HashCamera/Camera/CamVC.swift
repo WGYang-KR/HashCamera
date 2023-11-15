@@ -25,48 +25,94 @@ class CamVC: UIViewController {
     @IBOutlet weak var browseButton: UIButton!
    
     @IBOutlet weak var storageBarView: StorageBarCollectionView!
+    
     let cameraModel: CameraModel = CameraModel(position: .back,
                                                  flashMode: .off, aspectRatio: .standard, fileType: .jpeg)
     let storageModel: StorageModel = StorageModel(selectedStorgeType: .photoLibrary)
     
+    let isLoading = BehaviorRelay(value: true)
     var disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         initView()
+        initCamera()
+        bindAppLifeCycle()
         
+        //isLoading Bind 초기값 true
+        Observable.combineLatest(isLoading, cameraModel.isLoading) { $0 || $1 }.bind { [weak self] isLoading in
+            Task {
+                await MainActor.run {
+                    self?.enableComponents( !isLoading )
+                }
+            }
+        }.disposed(by: disposeBag)
+        
+     
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        enableComponents(false)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        startCamera()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        stopCamera()
+    }
+    
+    func bindAppLifeCycle() {
+        
+        //앱이 활성화 될때
+        AppLifeCycle.sceneDidBecomeActive.bind { [weak self] _ in
+            hcLog("sceneDidBecomeActive")
+            self?.startCamera()
+        }.disposed(by: disposeBag)
+        
+        //앱이 비활성화 될때
+        AppLifeCycle.sceneWillResignActive.bind { [weak self] _ in
+            hcLog("sceneWillResignActive")
+            self?.stopCamera()
+        }.disposed(by: disposeBag)
+        
+    }
+    
+    func initCamera() {
+        previewView.session = cameraModel.captureSession
+        cameraModel.initCamera()
+    }
+    
+    func startCamera() {
         Task {
-            if await AuthorizationManager.checkCameraAuth() {
-                let _ = await cameraModel.startCamera()
+            if await AuthorizationManager.checkCameraAuth() { //권한 확인
+                let _ = await cameraModel.startCamera() //프리뷰 시작.
             
-                enableComponents(true)
+                isLoading.accept(false) //화면 활성화
             } else {
                 AuthorizationManager.presentCameraAuthAlert(baseVC: self)
             }
         }
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        enableComponents(false)
+    func stopCamera() {
+        isLoading.accept(true)  //화면 비활성화
         Task {
-            let _ = await cameraModel.stopCamera()
+            let _  = await cameraModel.stopCamera()
         }
     }
+    
     func initView() {
 
         previewView.snp.makeConstraints { make in
             make.edges.equalTo(preview34GuideView)
         }
-        
-        previewView.session = cameraModel.captureSession
-        
+
         storageButton.rx.tap.bind(onNext: { [weak self] in
                 guard let self else { return }
                 storageButton.isHidden = storageButton.isHidden == true ? false : true
@@ -91,10 +137,10 @@ class CamVC: UIViewController {
         
         captureButton.rx.tap.bind { [weak self] _ in
             guard let self else { return }
-            enableComponents(false)
-            Task {
-                let _ = await self.cameraModel.capture()
-                self.enableComponents(true)
+            isLoading.accept(true)
+            Task { [weak self] in
+                let _ = await self?.cameraModel.capture()
+                self?.isLoading.accept(false)
             }
         }.disposed(by: disposeBag)
         
