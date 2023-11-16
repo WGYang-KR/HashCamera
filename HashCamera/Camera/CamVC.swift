@@ -109,9 +109,6 @@ class CamVC: UIViewController {
     
     func initView() {
 
-        previewView.snp.makeConstraints { make in
-            make.edges.equalTo(preview34GuideView)
-        }
 
         storageButton.rx.tap.bind(onNext: { [weak self] in
                 guard let self else { return }
@@ -125,6 +122,7 @@ class CamVC: UIViewController {
         
         topMenuView.aspectRatioRx.bind { [weak self] aspectRatio in
             self?.cameraModel.aspectRatio.accept(aspectRatio)
+            self?.setPreviewAspectRatio(aspectRatio: aspectRatio)
         }.disposed(by: disposeBag)
         
         topMenuView.flashModeRx.bind { [weak self] flashMode in
@@ -157,6 +155,33 @@ class CamVC: UIViewController {
         browseButton.isEnabled = isEnabled
     }
     
+    
+    func setPreviewAspectRatio(aspectRatio: AspectRatioType) {
+
+        UIView.animate(withDuration: 0.5) {[weak self] in
+            guard let self else { return }
+            previewView.snp.removeConstraints()
+            switch aspectRatio {
+            case .square:
+                previewView.snp.makeConstraints { [weak self] make in
+                    guard let self else  {return }
+                    make.leading.trailing.equalTo(preview34GuideView)
+                    make.centerY.equalTo(preview34GuideView)
+                    make.width.equalTo(previewView.snp.height)
+                }
+            case .standard:
+                previewView.snp.makeConstraints {  [weak self]  make in
+                    guard let self else  {return }
+                    make.edges.equalTo(preview34GuideView)
+                }
+            case .wide:
+                previewView.snp.makeConstraints {[weak self] make in
+                    guard let self else  {return }
+                    make.edges.equalTo(preview916GuideView)
+                }
+            }
+        }
+    }
 
 
 

@@ -22,11 +22,11 @@
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NcB-gx-HbF">
                                         <rect key="frame" x="0.0" y="0.0" width="393" height="759"/>
-                                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xba-Gy-H06">
                                         <rect key="frame" x="0.0" y="38" width="393" height="524"/>
-                                        <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="xba-Gy-H06" secondAttribute="height" multiplier="3:4" id="48N-KV-EJa"/>
                                         </constraints>
@@ -133,7 +133,7 @@
                                                 </constraints>
                                             </stackView>
                                         </subviews>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstItem="Yqq-r3-mDN" firstAttribute="leading" secondItem="p6I-j4-giM" secondAttribute="leading" id="Ku7-kT-XXf"/>
                                             <constraint firstItem="Yqq-r3-mDN" firstAttribute="top" secondItem="p6I-j4-giM" secondAttribute="top" id="Nfj-tt-g5Y"/>
