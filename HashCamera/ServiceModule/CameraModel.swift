@@ -39,7 +39,9 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
 //    private override init() {
 //        super.init()
 //    }
-//    
+//   
+    
+    //카메라 모델 init
     init(position: AVCaptureDevice.Position,
          flashMode: AVCaptureDevice.FlashMode,
          aspectRatio: AspectRatioType,
@@ -57,7 +59,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     }
 
     
-    ///카메라 초기화
+    ///카메라 초기화 - 한번만 호출
     func initCamera() {
         bind()
     }
@@ -93,6 +95,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
             self?.zoom(value)
         }).disposed(by: disposeBag)
         
+        setupSessionOutput()
     }
     
     private func unbind() {
@@ -150,16 +153,16 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     ///position에 맞게 카메라 디바이스를 설정한다.
     private func setupSessionInput() {
-        
-        for input in captureSession.inputs {
-            captureSession.removeInput(input)
-        }
+   
         guard let device = bestDevice(position: self.position.value)
         else {
             print("사용할 수 있는 카메라가 없음")
             return
         }
         
+        for input in captureSession.inputs {
+            captureSession.removeInput(input)
+        }
         do { // 카메라가 사용 가능하면 세션에 input과 output을 연결
             let videoDeviceInput =  try AVCaptureDeviceInput(device: device)
             if captureSession.canAddInput(videoDeviceInput) {
@@ -175,7 +178,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     ///촬영 outupt을 설정한다.
     private func setupSessionOutput() {
-        
+        captureSession.beginConfiguration()
         for output in captureSession.outputs {
             captureSession.removeOutput(output)
         }
@@ -188,6 +191,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         } else {
             self.error.accept(.cameraUnknown)
         }
+        captureSession.commitConfiguration()
        
     }
     
