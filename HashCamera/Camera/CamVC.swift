@@ -26,9 +26,19 @@ class CamVC: UIViewController {
    
     @IBOutlet weak var storageBarView: StorageBarCollectionView!
     
-    let cameraModel: CameraModel = CameraModel(position: .back,
-                                                 flashMode: .off, aspectRatio: .standard, fileType: .jpeg)
-    let storageModel: StorageModel = StorageModel(selectedStorgeType: .photoLibrary)
+    let viewBlurEffect = {
+        let viewBlurEffect = UIVisualEffectView()
+        //Blur Effect는 .light 외에도 .dark, .regular 등이 있으니 적용해보세요!
+        viewBlurEffect.effect = UIBlurEffect(style: .light)
+    }
+    
+    let camVM: CamVM = CamVM(cameraModel: CameraModel(position: .back,
+                                                      flashMode: .off,
+                                                      aspectRatio: .standard,
+                                                      fileType: .jpeg),
+                             storageModel: StorageModel(selectedStorgeType: .photoLibrary))
+    var cameraModel: CameraModel { return  camVM.cameraModel }
+    var storageModel: StorageModel { return camVM.storageModel}
     
     let isLoading = BehaviorRelay(value: true)
     var disposeBag = DisposeBag()
@@ -41,7 +51,7 @@ class CamVC: UIViewController {
         bindAppLifeCycle()
         
         //isLoading Bind 초기값 true
-        Observable.combineLatest(isLoading, cameraModel.isLoading) { $0 || $1 }.bind { [weak self] isLoading in
+        Observable.combineLatest(isLoading, cameraModel.isLoading, camVM.isLoading) { $0 || $1 || $2 }.bind { [weak self] isLoading in
             Task {
                 await MainActor.run {
                     self?.enableComponents( !isLoading )
@@ -112,7 +122,7 @@ class CamVC: UIViewController {
 
         storageButton.rx.tap.bind(onNext: { [weak self] in
                 guard let self else { return }
-                storageButton.isHidden = storageButton.isHidden == true ? false : true
+                storageBarView.isHidden = storageBarView.isHidden == true ? false : true
         }).disposed(by: disposeBag)
         
         storageBarView.seletedStorage.bind { [weak self] storageType in
@@ -135,13 +145,13 @@ class CamVC: UIViewController {
         
         captureButton.rx.tap.bind { [weak self] _ in
             guard let self else { return }
-            isLoading.accept(true)
-            Task { [weak self] in
-                let _ = await self?.cameraModel.capture()
-                self?.isLoading.accept(false)
-            }
+            captureEffect()
+            cameraModel.capturePhoto()
         }.disposed(by: disposeBag)
         
+        
+        //캡처시 테두리 효과 색 지정.
+        previewView.layer.borderColor = UIColor(resource: .majorLight).cgColor
     }
     
     ///화면 모든 버튼 활성화/비활성화
@@ -155,6 +165,18 @@ class CamVC: UIViewController {
         browseButton.isEnabled = isEnabled
     }
     
+    func captureEffect() {
+        UIView.animate(withDuration: 0.1) {
+            self.previewView.layer.borderWidth = 2
+            
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
+            UIView.animate(withDuration: 0.1) {
+                self.previewView.layer.borderWidth = 0
+            }
+        })
+    }
     
     func setPreviewAspectRatio(aspectRatio: AspectRatioType) {
 

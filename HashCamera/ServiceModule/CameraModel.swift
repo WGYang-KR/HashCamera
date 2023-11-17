@@ -30,7 +30,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     ///화면비율 설정 set get
     let aspectRatio: BehaviorRelay<AspectRatioType>
     ///촬영 완료된 사진 반환 get
-    let capturedPhotoData = PublishSubject<Data>()
+    let capturedPhotoData = PublishRelay<Data>()
     ///에러 get
     let error = PublishRelay<HCError>()
     
@@ -197,15 +197,13 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     
     //MARK: - 사진 촬영
-    ///사진 촬영
-    func capture() async -> Bool{
+    ///사진 촬영. 사진촬영이 완료되면 capturedPhotoData로 결과값을 방출한다.
+    func capturePhoto(){
         // 사진 옵션 세팅
         let photoSettings = AVCapturePhotoSettings()
         photoSettings.flashMode = self.flashMode.value
         self.photoOutput.capturePhoto(with: photoSettings, delegate: self)
         print("[Camera]: Photo's taken")
-        return true
-        
     }
     
     func photoOutput(_ output: AVCapturePhotoOutput, willBeginCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings) {
@@ -223,7 +221,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         
         let photoData = cropAVPhotoData(photo, aspectRatio: self.aspectRatio.value.cgFloat)
-        self.capturedPhotoData.onNext(photoData)
+        self.capturedPhotoData.accept(photoData)
     }
     
     //MARK: 사진 비율 처리
@@ -245,7 +243,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         
         //MARK: crop된 이미지의 픽셀, DPI 등 정보 갱신 필요..
         let EXIFDictionary: NSMutableDictionary = (mutable[kCGImagePropertyExifDictionary as String] as? NSMutableDictionary)!
-        dump(EXIFDictionary)
+//        dump(EXIFDictionary)
         EXIFDictionary[kCGImagePropertyExifUserComment as String] = "type:photo"
         mutable[kCGImagePropertyExifDictionary as String] = EXIFDictionary
         
