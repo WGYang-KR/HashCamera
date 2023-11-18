@@ -19,16 +19,16 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     private let photoOutput: AVCapturePhotoOutput
     private var disposeBag = DisposeBag()
     
-    ///카메라 시작, 전후면 전환 중 여부 get
-    let isLoading: BehaviorRelay<Bool>
+    ///촬영시작 true, 촬영끝 false
+    let isCapturingPhoto: BehaviorRelay<Bool>
 
     ///카메라 전/후면 설정 set get
-    let position: BehaviorRelay<AVCaptureDevice.Position>
-    let zoomFactor: BehaviorRelay<CGFloat>
+    private(set) var position: AVCaptureDevice.Position
+    private(set) var zoomFactor: CGFloat
     ///플래시 모두 설정 set get
-    let flashMode: BehaviorRelay<AVCaptureDevice.FlashMode>
+    var flashMode: AVCaptureDevice.FlashMode
     ///화면비율 설정 set get
-    let aspectRatio: BehaviorRelay<AspectRatioType>
+    var aspectRatio: AspectRatioType
     ///촬영 완료된 사진 반환 get
     let capturedPhotoData = PublishRelay<Data>()
     ///에러 get
@@ -36,22 +36,18 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     
     //MARK: - 카메라 시작, 설정, 중지
-//    private override init() {
-//        super.init()
-//    }
-//   
-    
+
     //카메라 모델 init
     init(position: AVCaptureDevice.Position,
          flashMode: AVCaptureDevice.FlashMode,
          aspectRatio: AspectRatioType,
          fileType: PhotoFileType) {
        
-        self.isLoading = BehaviorRelay(value: true)
-        self.position = BehaviorRelay(value: position)
-        self.zoomFactor = BehaviorRelay(value: 1.0)
-        self.flashMode = BehaviorRelay(value: flashMode)
-        self.aspectRatio = BehaviorRelay(value: aspectRatio)
+        self.isCapturingPhoto = BehaviorRelay(value: false)
+        self.position = position
+        self.zoomFactor = 1.0
+        self.flashMode = flashMode
+        self.aspectRatio = aspectRatio
         self.photoOutput = AVCapturePhotoOutput()
         self.captureSession = AVCaptureSession()
         super.init()
@@ -61,41 +57,25 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     ///카메라 초기화 - 한번만 호출
     func initCamera() {
-        bind()
+        setupSessionOutput()
     }
-    ///카메라 시작
-    func startCamera() async {
-        self.isLoading.accept(true)
+    ///카메라 시작. global thread에서 실행되는 것 주의
+    func startCamera(_ completion: ( () -> Void )? = nil)  {
         DispatchQueue.global(qos: .background).async {[weak self] in
             self?.captureSession.startRunning() // 카메라 세션 시작
-            self?.isLoading.accept(false)
+            completion?()
         }
 
     }
     
-    ///카메라 중지
-    func stopCamera() async {
-        self.isLoading.accept(true)
+    
+    ///카메라 중지. global thread에서 실행되는 것 주의
+    func stopCamera(_ completion: ( () -> Void )? = nil) {
         DispatchQueue.global(qos: .background).async {
             self.captureSession.stopRunning()
-            self.isLoading.accept(false)
+            completion?()
         }
 
-    }
-
-    private func bind() {
-
-        position.subscribe(onNext: { [weak self] position in
-            self?.isLoading.accept(true)
-            self?.updatePosition(position: position)
-            self?.isLoading.accept(false)
-        }).disposed(by: disposeBag)
-        
-        zoomFactor.subscribe(onNext:  { [weak self] value in
-            self?.zoom(value)
-        }).disposed(by: disposeBag)
-        
-        setupSessionOutput()
     }
     
     private func unbind() {
@@ -105,7 +85,8 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     //MARK: - 카메라 설정 기능 처리 함수(private)
     ///카메라 전환(전면/후면)
-    private func updatePosition(position: AVCaptureDevice.Position) {
+    func updatePosition(position: AVCaptureDevice.Position) {
+        self.position = position
         captureSession.beginConfiguration()
         setupSessionInput()
         
@@ -120,7 +101,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     
     ///카메라 줌
-    private func zoom(_ zoom: CGFloat) {
+    func zoom(_ zoom: CGFloat) {
         
         guard let device = videoInput?.device else { return }
         let factor = zoom < 1 ? 1 : zoom
@@ -154,7 +135,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     ///position에 맞게 카메라 디바이스를 설정한다.
     private func setupSessionInput() {
    
-        guard let device = bestDevice(position: self.position.value)
+        guard let device = bestDevice(position: self.position)
         else {
             print("사용할 수 있는 카메라가 없음")
             return
@@ -198,12 +179,14 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     //MARK: - 사진 촬영
     ///사진 촬영. 사진촬영이 완료되면 capturedPhotoData로 결과값을 방출한다.
-    func capturePhoto(){
+    func capturePhoto() {
+        hcLog("start")
         // 사진 옵션 세팅
+        isCapturingPhoto.accept(true)
         let photoSettings = AVCapturePhotoSettings()
-        photoSettings.flashMode = self.flashMode.value
+        photoSettings.flashMode = self.flashMode
         self.photoOutput.capturePhoto(with: photoSettings, delegate: self)
-        print("[Camera]: Photo's taken")
+      
     }
     
     func photoOutput(_ output: AVCapturePhotoOutput, willBeginCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings) {
@@ -220,13 +203,18 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         
-        let photoData = cropAVPhotoData(photo, aspectRatio: self.aspectRatio.value.cgFloat)
+        let photoData = cropAVPhotoData(photo, aspectRatio: self.aspectRatio.cgFloat)
         self.capturedPhotoData.accept(photoData)
+        isCapturingPhoto.accept(false)
+        hcLog("end")
+        
+        
     }
     
     //MARK: 사진 비율 처리
     //기존 Exif 유지하면서, 비율처리된 이미지로 교체
     private func cropAVPhotoData(_ data: AVCapturePhoto, aspectRatio: CGFloat) -> Data {
+        hcLog("start")
         guard let originalPhotoData = data.fileDataRepresentation() else { fatalError()}
         guard let croppedImage =  UIImage(data: originalPhotoData)?.crop(aspectRatio: aspectRatio) else { fatalError()}
         
@@ -249,7 +237,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         
         CGImageDestinationAddImageFromSource(destination, croppedImageSource, 0, mutable as CFDictionary)
         CGImageDestinationFinalize(destination)
-        
+        hcLog("end")
         return resultPhotoData as Data
     }
     

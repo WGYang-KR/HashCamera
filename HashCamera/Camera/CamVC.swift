@@ -26,19 +26,12 @@ class CamVC: UIViewController {
    
     @IBOutlet weak var storageBarView: StorageBarCollectionView!
     
-    let viewBlurEffect = {
-        let viewBlurEffect = UIVisualEffectView()
-        //Blur Effect는 .light 외에도 .dark, .regular 등이 있으니 적용해보세요!
-        viewBlurEffect.effect = UIBlurEffect(style: .light)
-    }
     
     let camVM: CamVM = CamVM(cameraModel: CameraModel(position: .back,
                                                       flashMode: .off,
                                                       aspectRatio: .standard,
                                                       fileType: .jpeg),
                              storageModel: StorageModel(selectedStorgeType: .photoLibrary))
-    var cameraModel: CameraModel { return  camVM.cameraModel }
-    var storageModel: StorageModel { return camVM.storageModel}
     
     let isLoading = BehaviorRelay(value: true)
     var disposeBag = DisposeBag()
@@ -50,15 +43,10 @@ class CamVC: UIViewController {
         initCamera()
         bindAppLifeCycle()
         
-        //isLoading Bind 초기값 true
-        Observable.combineLatest(isLoading, cameraModel.isLoading, camVM.isLoading) { $0 || $1 || $2 }.bind { [weak self] isLoading in
-            Task {
-                await MainActor.run {
-                    self?.enableComponents( !isLoading )
-                }
-            }
+        camVM.isCapturingPhoto.observe(on: MainScheduler.instance).bind { [weak self] isCapturing in
+            self?.enableComponents( !isCapturing )
+            self?.previewView.blurEffect(isCapturing)
         }.disposed(by: disposeBag)
-        
      
     }
     
@@ -94,16 +82,21 @@ class CamVC: UIViewController {
     }
     
     func initCamera() {
-        previewView.session = cameraModel.captureSession
-        cameraModel.initCamera()
+        previewView.session = camVM.cameraModel.captureSession
+        camVM.cameraModel.initCamera()
+        
+        enableComponents(false) //초기화시 이벤트 블락
+        previewView.blurEffect(true) // 블러처리
     }
     
     func startCamera() {
         Task {
             if await AuthorizationManager.checkCameraAuth() { //권한 확인
-                let _ = await cameraModel.startCamera() //프리뷰 시작.
-            
-                isLoading.accept(false) //화면 활성화
+                    camVM.cameraModel.startCamera() { [weak self] in //프리뷰 시작.
+                        DispatchQueue.main.async {
+                            self?.enableComponents(true)
+                        }
+                    }
             } else {
                 AuthorizationManager.presentCameraAuthAlert(baseVC: self)
             }
@@ -111,44 +104,78 @@ class CamVC: UIViewController {
     }
     
     func stopCamera() {
-        isLoading.accept(true)  //화면 비활성화
-        Task {
-            let _  = await cameraModel.stopCamera()
-        }
+        enableComponents(false)
+        previewView.blurEffect(true)
+        camVM.cameraModel.stopCamera()
     }
     
     func initView() {
 
 
+        //저장소바 표시 버튼
         storageButton.rx.tap.bind(onNext: { [weak self] in
                 guard let self else { return }
                 storageBarView.isHidden = storageBarView.isHidden == true ? false : true
         }).disposed(by: disposeBag)
         
-        storageBarView.seletedStorage.bind { [weak self] storageType in
+        //저장소바
+        storageBarView.selectedStorage.bind { [weak self] storageType in
             guard let self else { return }
-            storageModel.selectedStorgeType.accept(storageType)
+            camVM.storageModel.selectedStorgeType.accept(storageType)
         }.disposed(by: disposeBag)
         
+        //비율 버튼
         topMenuView.aspectRatioRx.bind { [weak self] aspectRatio in
-            self?.cameraModel.aspectRatio.accept(aspectRatio)
-            self?.setPreviewAspectRatio(aspectRatio: aspectRatio)
+            guard let self else { return }
+            self.enableComponents(false) //이벤트 블락
+            self.previewView.blurEffect(true) //블러효과
+            
+            self.camVM.cameraModel.aspectRatio = aspectRatio
+            
+            self.setPreviewAspectRatio(aspectRatio: aspectRatio) { [weak self] in
+                guard let self else { return }
+                self.enableComponents(true)
+                self.previewView.blurEffect(false)
+            }
         }.disposed(by: disposeBag)
         
+        //플래시 버튼
         topMenuView.flashModeRx.bind { [weak self] flashMode in
-            self?.cameraModel.flashMode.accept(flashMode)
+            self?.camVM.cameraModel.flashMode = flashMode
         }.disposed(by: disposeBag)
         
+        
+        //카메라 전환 버튼
         topMenuView.cameraPositionRx.bind { [weak self] cameraPosition in
-            self?.cameraModel.position.accept(cameraPosition)
+            guard let self else { return }
+            self.enableComponents(false) //이벤트 블락
+            self.previewView.blurEffect(true) //블러효과
+            view.layoutIfNeeded()
+            DispatchQueue.main.async {
+                self.camVM.cameraModel.updatePosition(position: cameraPosition)
+                self.previewView.blurEffect(false) //블러효과
+                self.enableComponents(true) //이벤트 블락
+            }
+            DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {
+                
+            }
+    
         }.disposed(by: disposeBag)
         
+        
+        //촬영버튼
         captureButton.rx.tap.bind { [weak self] _ in
             guard let self else { return }
-            captureEffect()
-            cameraModel.capturePhoto()
+//            enableComponents(false) //버튼 비활성화
+//            previewView.borderEffect() //캡처효과
+            camVM.capturePhoto() //캡처
         }.disposed(by: disposeBag)
         
+//        //촬영 결과 수신
+//        camVM.cameraModel.capturedPhotoData.bind { [weak self] _ in
+//            guard let self else { return }
+//            enableComponents(true)
+//        }.disposed(by: disposeBag)
         
         //캡처시 테두리 효과 색 지정.
         previewView.layer.borderColor = UIColor(resource: .majorLight).cgColor
@@ -165,22 +192,8 @@ class CamVC: UIViewController {
         browseButton.isEnabled = isEnabled
     }
     
-    func captureEffect() {
-        UIView.animate(withDuration: 0.1) {
-            self.previewView.layer.borderWidth = 2
-            
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
-            UIView.animate(withDuration: 0.1) {
-                self.previewView.layer.borderWidth = 0
-            }
-        })
-    }
-    
-    func setPreviewAspectRatio(aspectRatio: AspectRatioType) {
-
-        UIView.animate(withDuration: 0.5) {[weak self] in
+    func setPreviewAspectRatio(aspectRatio: AspectRatioType, completion: ( () -> Void )?)  {
+        UIView.animate(withDuration: 0.5) { [weak self] in
             guard let self else { return }
             previewView.snp.removeConstraints()
             switch aspectRatio {
@@ -202,6 +215,8 @@ class CamVC: UIViewController {
                     make.edges.equalTo(preview916GuideView)
                 }
             }
+        } completion: { bool in
+            completion?()
         }
     }
 

@@ -13,7 +13,9 @@ class CamVM {
     let cameraModel: CameraModel
     let storageModel: StorageModel
     
-    let isLoading = BehaviorRelay(value: false)
+    
+    ///촬영시 true -> 저장 완료 후 false
+    let isCapturingPhoto = BehaviorRelay(value: false)
     var disposeBag = DisposeBag()
     
     init(cameraModel: CameraModel, storageModel: StorageModel) {
@@ -23,13 +25,16 @@ class CamVM {
     }
     
     func initVM() {
-    
+        
         ///사진 캡처결과 받아서 저장소에 저장하기 연결
         cameraModel.capturedPhotoData.bind { [weak self] photoData in
             Task(priority: .high) { [weak self] in
                 guard let self else { return }
-                let result = await storageModel.savePhoto(photoData: photoData)
-                isLoading.accept(false)
+                let _ = await storageModel.savePhoto(photoData: photoData) //저장소 저장
+                
+                await MainActor.run { [weak self] in
+                    self?.isCapturingPhoto.accept(false) //촬영저장 끝
+                }
             }
             
         }.disposed(by: disposeBag)
@@ -37,9 +42,8 @@ class CamVM {
     
     ///사진 촬영
     func capturePhoto() {
-        isLoading.accept(true)
-        cameraModel.capturePhoto()
-
+        isCapturingPhoto.accept(true) //촬영 저장 시작
+        cameraModel.capturePhoto() //촬영 후 결과값은 capturedPhotoData로 수신
     }
     
 }

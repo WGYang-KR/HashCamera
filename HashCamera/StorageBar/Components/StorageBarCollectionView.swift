@@ -14,17 +14,26 @@ import SnapKit
 class StorageBarCollectionView: UICollectionView, UICollectionViewDelegate, UICollectionViewDataSource {
   
     
-    let seletedStorage = BehaviorRelay<StorageType>(value: .photoLibrary) //선택된 저장소
+    let selectedStorage: BehaviorRelay<StorageType> //선택된 저장소
     
     var storageList: [StorageType] = [.iCloudDrive, .localDrive, .photoLibrary]
 
     
+    init(frame: CGRect, selectedStorage: StorageType) {
+        self.selectedStorage = BehaviorRelay<StorageType>(value: selectedStorage)
+        super.init(frame: frame, collectionViewLayout: UICollectionViewLayout())
+        initView()
+    
+    }
+    
     init(frame: CGRect) {
+        self.selectedStorage = BehaviorRelay<StorageType>(value: .photoLibrary)
         super.init(frame: frame, collectionViewLayout: UICollectionViewLayout())
         initView()
     }
     
     required init?(coder: NSCoder) {
+        self.selectedStorage = BehaviorRelay<StorageType>(value: .photoLibrary)
         super.init(coder: coder)
         initView()
     }
@@ -58,6 +67,11 @@ class StorageBarCollectionView: UICollectionView, UICollectionViewDelegate, UICo
         self.backgroundColor = UIColor(white: 0.8, alpha: 0.8)
         
         self.layer.cornerRadius = 6.0
+        
+        if let selectedIndex = storageList.firstIndex(where: {$0 == selectedStorage.value }) {
+            selectItem(at: IndexPath(item: selectedIndex, section: 0),
+                       animated: true, scrollPosition: .left)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -71,7 +85,7 @@ class StorageBarCollectionView: UICollectionView, UICollectionViewDelegate, UICo
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        seletedStorage.accept(storageList[indexPath.item])
+        selectedStorage.accept(storageList[indexPath.item])
     }
     
 //    override var intrinsicContentSize: CGSize {
