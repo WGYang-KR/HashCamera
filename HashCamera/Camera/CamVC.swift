@@ -45,7 +45,9 @@ class CamVC: UIViewController {
         
         camVM.isCapturingPhoto.observe(on: MainScheduler.instance).bind { [weak self] isCapturing in
             self?.enableComponents( !isCapturing )
-            self?.previewView.blurEffect(isCapturing)
+            if isCapturing {
+                self?.previewView.borderEffect()
+            }
         }.disposed(by: disposeBag)
      
     }
@@ -95,6 +97,7 @@ class CamVC: UIViewController {
                     camVM.cameraModel.startCamera() { [weak self] in //프리뷰 시작.
                         DispatchQueue.main.async {
                             self?.enableComponents(true)
+                            self?.previewView.blurEffect(false)
                         }
                     }
             } else {
