@@ -30,8 +30,8 @@ class CamVM {
         cameraModel.capturedPhotoData.bind { [weak self] photoData in
             Task(priority: .high) { [weak self] in
                 guard let self else { return }
-                let _ = await storageModel.savePhoto(photoData: photoData) //저장소 저장
-                
+                let result = await storageModel.savePhoto(photoData: photoData) //저장소 저장
+                hcLog("\(result.0)")
                 await MainActor.run { [weak self] in
                     self?.isCapturingPhoto.accept(false) //촬영저장 끝
                 }

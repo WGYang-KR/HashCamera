@@ -11,7 +11,7 @@ import os.log
 public func hcLog(_ message: String?, file: String = #file, functionName: String = #function , line: UInt = #line) {
     
     
-#if DEBUG
+#if RELEASE
     return
 #endif
     

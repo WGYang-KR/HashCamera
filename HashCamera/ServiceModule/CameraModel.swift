@@ -126,7 +126,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
                                                                 mediaType: .video,
                                                                 position: position)
         let devices = discoverySession.devices
-        hcLog("카메라(position:\(position) 장치 목록: \(devices)")
+        hcLog("카메라(position:\(position) 장치 목록:\n\(devices)")
         
         return devices.first
         

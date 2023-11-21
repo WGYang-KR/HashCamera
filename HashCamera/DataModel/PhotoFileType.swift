@@ -8,7 +8,8 @@
 import Foundation
 import AVFoundation
 
-enum PhotoFileType {
+enum PhotoFileType: String {
     case jpeg,heic
+    
     
 }
