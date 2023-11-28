@@ -1,20 +1,20 @@
 //
-//  BrowserTabVC.swift
+//  BrowserTabBarController.swift
 //  HashCamera
 //
-//  Created by WG-Yang on 10/24/23.
+//  Created by WG-MacHome on 11/26/23.
 //
 
 import UIKit
 
-class BrowserTabVC: UIViewController {
+class BrowserTabBarController: UITabBarController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
     }
-    
+
 
     /*
     // MARK: - Navigation
