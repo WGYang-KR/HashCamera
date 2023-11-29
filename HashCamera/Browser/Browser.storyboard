@@ -9,17 +9,48 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--iCloud Drive-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
-                <viewController id="Y6W-OH-hqX" sceneMemberID="viewController">
+                <viewController id="Y6W-OH-hqX" customClass="BrowseriCloudVC" customModule="HashCamera" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z5z-AP-UZx">
+                                <rect key="frame" x="0.0" y="103" width="393" height="666"/>
+                                <subviews>
+                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="iT9-Q5-br9">
+                                        <rect key="frame" x="0.0" y="0.0" width="393" height="666"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="SBB-xA-LeZ">
+                                            <size key="itemSize" width="128" height="128"/>
+                                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        </collectionViewFlowLayout>
+                                        <cells/>
+                                    </collectionView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="iT9-Q5-br9" firstAttribute="leading" secondItem="z5z-AP-UZx" secondAttribute="leading" id="Fnq-1m-vED"/>
+                                    <constraint firstAttribute="bottom" secondItem="iT9-Q5-br9" secondAttribute="bottom" id="PAl-rl-BOX"/>
+                                    <constraint firstItem="iT9-Q5-br9" firstAttribute="top" secondItem="z5z-AP-UZx" secondAttribute="top" id="aOd-QK-PQm"/>
+                                    <constraint firstAttribute="trailing" secondItem="iT9-Q5-br9" secondAttribute="trailing" id="u8w-Pt-uPz"/>
+                                </constraints>
+                            </view>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="z5z-AP-UZx" secondAttribute="trailing" id="ATV-nj-pdJ"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="z5z-AP-UZx" secondAttribute="bottom" id="FFh-Uo-o6H"/>
+                            <constraint firstItem="z5z-AP-UZx" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" id="d9t-sp-kTt"/>
+                            <constraint firstItem="z5z-AP-UZx" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="p3j-lM-WUg"/>
+                        </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="QdA-Co-CQz"/>
+                    <navigationItem key="navigationItem" title="iCloud Drive" id="QdA-Co-CQz"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -45,8 +76,9 @@
         <scene sceneID="VR3-r1-YUt">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="e6m-bA-w5p" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="iCloud" image="tabIconiCloud" id="W0b-ng-MkI"/>
+                    <tabBarItem key="tabBarItem" title="iCloud" image="tabIconiCloud" id="N71-5h-gbQ"/>
                     <toolbarItems/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="U9u-15-0EF">
                         <rect key="frame" x="0.0" y="59" width="393" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -60,12 +92,13 @@
             </objects>
             <point key="canvasLocation" x="1061.8320610687022" y="4.9295774647887329"/>
         </scene>
-        <!--Tab Bar Controller-->
+        <!--Browser Tab Bar Controller-->
         <scene sceneID="d9D-c1-vNw">
             <objects>
-                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="TT6-n7-eVa" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="BrowserTabBarController" automaticallyAdjustsScrollViewInsets="NO" modalPresentationStyle="fullScreen" id="TT6-n7-eVa" customClass="BrowserTabBarController" customModule="HashCamera" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="hb1-fr-gnp">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>

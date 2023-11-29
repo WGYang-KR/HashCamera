@@ -182,6 +182,13 @@ class CamVC: UIViewController {
         
         //캡처시 테두리 효과 색 지정.
         previewView.layer.borderColor = UIColor(resource: .majorLight).cgColor
+        
+        //뷰어 버튼
+        browseButton.rx.tap.bind { [weak self] _ in
+            guard let self else { return }
+            let vc = UIStoryboard(name: "Browser", bundle: nil).instantiateViewController(withIdentifier: "\(BrowserTabBarController.self)")
+            self.present(vc, animated: true)
+        }.disposed(by: disposeBag)
     }
     
     ///화면 모든 버튼 활성화/비활성화
