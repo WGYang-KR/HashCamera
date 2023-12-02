@@ -56,7 +56,7 @@ class BrowseriCloudVC: UIViewController, UICollectionViewDataSource, UICollectio
     
     func initData() {
         
-        browserModel.thumbnailSize = CGSize(width: itemSize.width * 2, height: itemSize.height * 2)
+        browserModel.thumbnailSize = CGSize(width: itemSize.width, height: itemSize.height)
         
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
@@ -92,19 +92,20 @@ class BrowseriCloudVC: UIViewController, UICollectionViewDataSource, UICollectio
     
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
+        hcLog("index:\(indexPath.item)")
         guard let cell =  collectionView
             .dequeueReusableCell(withReuseIdentifier: "\(BrowserItemCell.self)", for: indexPath)
                 as? BrowserItemCell else { return UICollectionViewCell()}
-        
-        
+
         browserModel.startFetchingThumb(index: indexPath.item) { image in
             
             DispatchQueue.main.async {
                 //셀 indexPath가 바뀌었는지 확인
                 if collectionView.indexPath(for: cell) == indexPath {
                     cell.imageView.image = image
-                    hcLog("imageSize: \(image?.size)")
+//                    hcLog("index:\(indexPath.item) imageSize: \(image?.size ?? CGSize.zero)")
+                } else {
+                    hcLog("Cell 위치 변함")
                 }
             }
         }
@@ -115,6 +116,6 @@ class BrowseriCloudVC: UIViewController, UICollectionViewDataSource, UICollectio
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         browserModel.stopFetchingThumb(index: indexPath.item)
     }
-    
+
     
 }

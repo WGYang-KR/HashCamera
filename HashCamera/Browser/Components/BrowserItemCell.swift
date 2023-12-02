@@ -23,4 +23,8 @@ class BrowserItemCell: UICollectionViewCell {
         guard selectionCoverView != nil else { return }
         selectionCoverView.isHidden  = !state.isSelected
     }
+    
+    override func prepareForReuse() {
+        imageView.image = nil
+    }
 }

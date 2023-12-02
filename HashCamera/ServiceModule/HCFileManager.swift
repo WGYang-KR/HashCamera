@@ -38,9 +38,10 @@ class HCFileManager {
         do {
             let list =  try fileManager.contentsOfDirectory(at: source,
                                                             includingPropertiesForKeys: nil)
-            hcLog("list:\n\(list)")
+            hcLog("fetched list count = \(list.count)")
             return list
         } catch {
+            hcLog("fetched list count = 0")
             return [URL]()
         }
     }
