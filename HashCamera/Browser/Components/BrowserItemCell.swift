@@ -20,6 +20,7 @@ class BrowserItemCell: UICollectionViewCell {
     override func updateConfiguration(using state: UICellConfigurationState) {
         super.updateConfiguration(using: state)
         
-        selectionCoverView.isHidden  = !state.isSelected 
+        guard selectionCoverView != nil else { return }
+        selectionCoverView.isHidden  = !state.isSelected
     }
 }

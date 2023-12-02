@@ -36,8 +36,10 @@ class HCFileManager {
     ///폴더 내 컨텐츠 가져오기
     func fetchContentList(source: URL) -> [URL] {
         do {
-            return try fileManager.contentsOfDirectory(at: source,
-                                                           includingPropertiesForKeys: nil)
+            let list =  try fileManager.contentsOfDirectory(at: source,
+                                                            includingPropertiesForKeys: nil)
+            hcLog("list:\n\(list)")
+            return list
         } catch {
             return [URL]()
         }
@@ -107,10 +109,11 @@ class HCFileManager {
     
     //MARK: - 이미지 로드
     
+    //MARK: 썸네일
     ///파일의 썸네일을 가져온다. (completion은 여러번 호출 될 수 있다.) lowQuality -> HighQuality
-    func generateThumbnail(url: URL, size: CGSize, completion: @escaping (UIImage?) -> Void ) {
+    func generateThumbnail(url: URL, size: CGSize, 
+                           completion: @escaping ( QLThumbnailRepresentation.RepresentationType? , UIImage?) -> Void ) {
         
-        let size: CGSize = CGSize(width: 60, height: 90)
         let scale = UIScreen.main.scale
         
         // Create the thumbnail request.
@@ -124,25 +127,32 @@ class HCFileManager {
         
         generator.generateRepresentations(for: request) { thumbnail, type, error in
             if let thumbnail {
-                completion(thumbnail.uiImage)
+                completion(type, thumbnail.uiImage)
             } else {
                 hcLog("thumnail = nil")
-                completion(nil)
+                completion(nil,nil)
             }
         }
-        
+
     }
+
     
     ///폴더의 대표파일의 썸네일을 가져온다.
-    func generateFolderThumbnail(url: URL, size: CGSize, completion: @escaping (UIImage?) -> Void )  {
+    func generateFolderThumbnail(url: URL, size: CGSize,
+                                 completion: @escaping (QLThumbnailRepresentation.RepresentationType?, UIImage?) -> Void )  {
         if let firstURL = fetchFirstMediaFile(source: url) {
             generateThumbnail(url: firstURL, size: size, completion: completion)
         } else {
             hcLog("firstURL = nil")
-            completion(nil)
+            completion(nil, nil)
         }
     }
+    
+    func stopGeneratingThumbnail(request: QLThumbnailGenerator.Request ) {
+        QLThumbnailGenerator.shared.cancel(request)
+    }
 
+    //MARK:
     ///파일의 원본 이미지를 가져온다. 실패시 nil 반환
     func fetchBestImage(url: URL, completion: @escaping (UIImage?) -> Void ) {
         
@@ -220,12 +230,14 @@ class HCFileManager {
 extension URL {
     var typeIdentifier: String? { (try? resourceValues(forKeys: [.typeIdentifierKey]))?.typeIdentifier }
     var isMP3: Bool { typeIdentifier == "public.mp3" }
-    var isJPG: Bool { typeIdentifier == "public.jpg" }
-    var isJPEG: Bool { typeIdentifier == "public.jpeg"}
+    var isJPG: Bool { typeIdentifier == "public.jpg" || typeIdentifier == "public.JPG"  }
+    var isJPEG: Bool { typeIdentifier == "public.jpeg" || typeIdentifier == "public.JPEG"}
     var isPNG: Bool { typeIdentifier == "public.png" }
     var isMP4: Bool { typeIdentifier == "public.mp4" }
     var isMOV: Bool { typeIdentifier == "public.mov" }
+    var isHEIC: Bool { typeIdentifier == "public.heic" || typeIdentifier == "public.HEIC"}
     var isMedia: Bool { isJPG || isJPEG || isPNG || isMP4 || isMOV }
+    var isPhoto: Bool { isJPG || isJPEG || isPNG || isHEIC }
     var isDirectory: Bool { (try? resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true }
     var localizedName: String? { (try? resourceValues(forKeys: [.localizedNameKey]))?.localizedName }
     var hasHiddenExtension: Bool {
