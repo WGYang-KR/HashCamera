@@ -1,13 +1,13 @@
 //
-//  FileListVC.swift
+//  BrowserLocalVC.swift
 //  HashCamera
 //
-//  Created by WG-Yang on 10/24/23.
+//  Created by WG-MacHome on 12/6/23.
 //
 
 import UIKit
 
-class FileListVC: UIViewController {
+class BrowserLocalVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

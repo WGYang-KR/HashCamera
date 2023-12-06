@@ -17,5 +17,5 @@ public func hcLog(_ message: String?, file: String = #file, functionName: String
     
     
     let className = (file as NSString).lastPathComponent
-    os_log("%@",type:.default ,"[\(message ?? "")] <\(className)> \(functionName) [#\(line)]")
+    os_log("%@",type:.default ,"<\(className)> \(functionName) [#\(line)] \(message ?? "")")
 }

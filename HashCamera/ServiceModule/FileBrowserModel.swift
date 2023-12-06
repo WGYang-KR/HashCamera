@@ -83,4 +83,11 @@ class FileBrowserModel {
         var originalImage: UIImage?
     }
     
+    func shareFiles(_ indices:[Int]) {
+        
+    }
+    
+    func deleteFiles(_ indices:[Int]) {
+        
+    }
 }

@@ -186,7 +186,7 @@ class CamVC: UIViewController {
         //뷰어 버튼
         browseButton.rx.tap.bind { [weak self] _ in
             guard let self else { return }
-            let vc = UIStoryboard(name: "Browser", bundle: nil).instantiateViewController(withIdentifier: "\(BrowserTabBarController.self)")
+            let vc = BrowserTabBarController()
             self.present(vc, animated: true)
         }.disposed(by: disposeBag)
     }
