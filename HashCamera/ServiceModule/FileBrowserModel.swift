@@ -51,6 +51,7 @@ class FileBrowserModel {
             hcFileManager.generateThumbnail(url: item.url,
                                             size: self.thumbnailSize) { type, fetchedImage in
                 if type == .thumbnail, let highImage = fetchedImage {
+                    item.highThumbnailImage = highImage
                     completion(highImage)
                 } else if type == .icon {
                     hcLog("아이콘은 무시")
@@ -62,7 +63,14 @@ class FileBrowserModel {
         } else {
             hcFileManager.generateThumbnail(url: item.url,
                                             size: self.thumbnailSize) { type, fetchedImage in
-                    completion(fetchedImage)
+                if let fetchedImage {
+                    if type == .lowQualityThumbnail {
+                        item.lowThumbnailImage = fetchedImage
+                    } else if type == .thumbnail {
+                        item.highThumbnailImage = fetchedImage
+                    }
+                }
+                completion(fetchedImage)
             }
         }
         
@@ -75,19 +83,31 @@ class FileBrowserModel {
         hcFileManager.stopGeneratingThumbnail(request: request)
     }
     
-    struct FileBrowserItemModel {
-        let url: URL
-        var thumbnailRequest: QLThumbnailGenerator.Request?
-        var lowThumbnailImage: UIImage?
-        var highThumbnailImage: UIImage?
-        var originalImage: UIImage?
-    }
-    
-    func shareFiles(_ indices:[Int]) {
-        
+    func sharingFiles(_ indices:[Int]) -> [URL]? {
+        var shareObject = [URL]()
+        indices.forEach { index in
+            shareObject.append(fileList[index].url)
+        }
+        return shareObject
     }
     
     func deleteFiles(_ indices:[Int]) {
         
     }
+}
+
+class FileBrowserItemModel {
+    internal init(url: URL, thumbnailRequest: QLThumbnailGenerator.Request? = nil, lowThumbnailImage: UIImage? = nil, highThumbnailImage: UIImage? = nil, originalImage: UIImage? = nil) {
+        self.url = url
+        self.thumbnailRequest = thumbnailRequest
+        self.lowThumbnailImage = lowThumbnailImage
+        self.highThumbnailImage = highThumbnailImage
+        self.originalImage = originalImage
+    }
+    
+    let url: URL
+    var thumbnailRequest: QLThumbnailGenerator.Request?
+    var lowThumbnailImage: UIImage?
+    var highThumbnailImage: UIImage?
+    var originalImage: UIImage?
 }

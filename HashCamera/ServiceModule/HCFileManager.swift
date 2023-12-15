@@ -127,10 +127,13 @@ class HCFileManager {
         let generator = QLThumbnailGenerator.shared
         
         generator.generateRepresentations(for: request) { thumbnail, type, error in
+            if let error {
+                hcLog("\(error) : \(error.localizedDescription)")
+            }
             if let thumbnail {
                 completion(type, thumbnail.uiImage)
             } else {
-                hcLog("thumnail = nil")
+                hcLog("\(url.lastPathComponent) Thumnail = nil")
                 completion(nil,nil)
             }
         }

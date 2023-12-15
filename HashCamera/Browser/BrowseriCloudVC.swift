@@ -98,7 +98,7 @@ class BrowseriCloudVC: UIViewController, UICollectionViewDataSource, UICollectio
         toolbar.leftItem.rx.tap.bind { [weak self] in
             guard let self else { return }
             if let selectedIndices:[Int] = collectionView.indexPathsForSelectedItems?.map({ $0.item }) {
-                browserModel.shareFiles(selectedIndices)
+                shareFiles(selectedIndices)
             }
             
         }.disposed(by: disposeBag)
@@ -191,6 +191,16 @@ class BrowseriCloudVC: UIViewController, UICollectionViewDataSource, UICollectio
         browserModel.stopFetchingThumb(index: indexPath.item)
     }
     
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+            if isSelecting.value {
+                
+                return true
+            } else {
+                //해당 사진을 Viewer로 띄운다.
+                return false
+            }
+        }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if isSelecting.value {
             ///해당 사진이 선택된다.
@@ -198,9 +208,31 @@ class BrowseriCloudVC: UIViewController, UICollectionViewDataSource, UICollectio
             toolbar.middleLabel.text = "\(selectedIndices.count)" + " 개 선택됨"
             
         } else {
-            
-            //해당 사진을 Viewer로 띄운다.
+            //선택불가
         }
+    }
+    
+    
+    func shareFiles(_ indices: [Int]) {
+        guard let sharingData = browserModel.sharingFiles(indices)
+        else { hcLog("공유할 URL 없음"); return }
+        
+        let activityViewController = UIActivityViewController(activityItems : sharingData, applicationActivities: nil)
+        
+        activityViewController.completionWithItemsHandler = .some({ [weak self] _, completed, _, error in
+            if let error {
+                hcLog("\(error) : \(error.localizedDescription)")
+            }
+            
+            if completed {
+                self?.isSelecting.accept(false)
+            }
+            
+        })
+//        activityViewController.popoverPresentationController?.sourceView = self
+        
+        //activityViewController.excludedActivityTypes = [UIActivity.ActivityType.airDrop, UIActivity.ActivityType.postToFacebook,UIActivity.ActivityType.postToTwitter,UIActivity.ActivityType.mail]
+        present(activityViewController, animated: true)
     }
     
     
