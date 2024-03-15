@@ -83,6 +83,7 @@ class FileBrowserModel {
         hcFileManager.stopGeneratingThumbnail(request: request)
     }
     
+    ///해당 Index 파일들의 URL을 반환한다.
     func sharingFiles(_ indices:[Int]) -> [URL]? {
         var shareObject = [URL]()
         indices.forEach { index in
@@ -91,8 +92,15 @@ class FileBrowserModel {
         return shareObject
     }
     
-    func deleteFiles(_ indices:[Int]) {
-        
+    ///파일을 삭제한다. 일부 파일이 삭제 실패했을 경우에는 false를 반환하면서 error와 실패한 url 리스트를 반환한다.
+    /// - Parameter urlList: 삭제할 파일 url 배열
+    /// - Returns: (모든 파일 삭제 성공여부, 실패시 에러, 실패한 파일목록)
+    func deleteFiles(_ indices:[Int]) -> (success: Bool, error: Error?, failedURLs: [URL]) {
+        var deletingURLs = [URL]()
+        indices.forEach { index in
+            deletingURLs.append(fileList[index].url)
+        }
+        return hcFileManager.deleteFile(urlList: deletingURLs)
     }
 }
 

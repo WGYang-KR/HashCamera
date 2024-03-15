@@ -106,7 +106,7 @@ class BrowseriCloudVC: UIViewController, UICollectionViewDataSource, UICollectio
         toolbar.rightItem.rx.tap.bind { [weak self] in
             guard let self else { return }
             if let selectedIndices:[Int] = collectionView.indexPathsForSelectedItems?.map({ $0.item }) {
-                browserModel.deleteFiles(selectedIndices)
+                deleteFiles(selectedIndices)
             }
             
         }.disposed(by: disposeBag)
@@ -235,7 +235,20 @@ class BrowseriCloudVC: UIViewController, UICollectionViewDataSource, UICollectio
         present(activityViewController, animated: true)
     }
     
+    func deleteFiles(_ indices: [Int]) {
+        
+        HCAlert.commonYesNo(baseVC: self, title: "선택된 파일을 삭제하시겠습니까?") {
+            let result = self.browserModel.deleteFiles(indices)
+            if result.success {
+                hcLog("파일 삭제 성공")
+            } else {
+                hcLog("파일 삭제 실패(일부 또는 전체)")
+            }
+        }
     
+    }
+    
+  
     
 }
 
