@@ -9,12 +9,14 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxRelay
+import Combine
 
 class BrowseriCloudVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate , UICollectionViewDelegateFlowLayout{
     
     
     let browserModel = FileBrowserModel(storageType: .iCloudDrive)
     var disposeBag = DisposeBag()
+    var cancellable = Set<AnyCancellable>()
     
     let collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     ///NavigationBar > 사진 복수 선택 기능 on/off 버튼
@@ -22,6 +24,7 @@ class BrowseriCloudVC: UIViewController, UICollectionViewDataSource, UICollectio
     ///사진 복수 선택 기능 on 상태 여부
     let isSelecting = BehaviorRelay(value: false)
     let toolbar = BrowserToolBar()
+
     
     lazy var itemSize: CGSize =  {
         let itemLength = UIScreen.main.bounds.width / 3
@@ -35,6 +38,7 @@ class BrowseriCloudVC: UIViewController, UICollectionViewDataSource, UICollectio
         initView()
         initData()
     }
+    
     
     ///네비게이션바를 초기 설정한다.
     func initNavi() {
@@ -118,16 +122,11 @@ class BrowseriCloudVC: UIViewController, UICollectionViewDataSource, UICollectio
         
         browserModel.thumbnailSize = CGSize(width: itemSize.width, height: itemSize.height)
         
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard let self else { return }
-            browserModel.initFileList()
-            DispatchQueue.main.async{ [weak self] in
-                self?.collectionView.reloadData()
+        browserModel.fileList.sink { [weak self] _ in
+            self?.collectionView.reloadData()
+        }.store(in: &cancellable)
                 
-            }
-        }
-        
-        
+        browserModel.initFileList()
     }
     
     ///사진 선택 모드를 설정한다.
@@ -148,7 +147,7 @@ class BrowseriCloudVC: UIViewController, UICollectionViewDataSource, UICollectio
     
     //MARK: - collection View
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return browserModel.fileList.count
+        return browserModel.fileList.value.count
     }
     
     

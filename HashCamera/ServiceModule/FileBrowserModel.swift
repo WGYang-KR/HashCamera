@@ -7,16 +7,18 @@
 
 import UIKit
 import QuickLookThumbnailing
+import Combine
 
 class FileBrowserModel {
     
     var storageType: StorageType
     var rootURL: URL?
-    var fileList: [FileBrowserItemModel] = []
+    var fileList =  CurrentValueSubject<[FileBrowserItemModel],Never>([])
     let hcFileManager = HCFileManager()
     var thumbnailSize: CGSize
     let qlThumbnailGenerator =  QLThumbnailGenerator.shared
-    
+    let folderMonitor: FolderMonitor //폴더 변경 감시자
+
     init(storageType: StorageType) {
         self.storageType = storageType
         self.thumbnailSize = CGSize.zero
@@ -29,19 +31,34 @@ class FileBrowserModel {
             hcLog("잘못된 접근")
             fatalError()
         }
+        
+        self.folderMonitor = FolderMonitor(url: self.rootURL)
+        folderMonitor.folderDidChange = { [weak self] in
+            self?.initFileList()
+        }
+        folderMonitor.startMonitoring()
 
     }
     
     func initFileList() {
         guard let rootURL else { return }
-        fileList =  hcFileManager.fetchContentList(source: rootURL)
-            .filter { $0.isPhoto }
-            .map({ FileBrowserItemModel(url: $0)})
+        Task { [weak self ] in
+            guard let self else { return }
+            let list = hcFileManager.fetchContentList(source: rootURL)
+                .filter { $0.isPhoto }
+                .map({ FileBrowserItemModel(
+                    url: $0)})
+            await MainActor.run { [weak self] in
+                self?.fileList.send( list)
+            }
+        }
+    
+    
     }
     
     func startFetchingThumb(index: Int, completion: @escaping (UIImage?) -> Void ) {
-        guard index >= 0, index < fileList.count else { return }
-        let item = fileList[index]
+        guard index >= 0, index < fileList.value.count else { return }
+        let item = fileList.value[index]
         
         if let image = item.highThumbnailImage {
             completion(image)
@@ -77,8 +94,8 @@ class FileBrowserModel {
     }
     
     func stopFetchingThumb(index: Int) {
-        guard index >= 0, index < fileList.count else { return }
-        let item = fileList[index]
+        guard index >= 0, index < fileList.value.count else { return }
+        let item = fileList.value[index]
         guard let request = item.thumbnailRequest else { return }
         hcFileManager.stopGeneratingThumbnail(request: request)
     }
@@ -87,7 +104,7 @@ class FileBrowserModel {
     func sharingFiles(_ indices:[Int]) -> [URL]? {
         var shareObject = [URL]()
         indices.forEach { index in
-            shareObject.append(fileList[index].url)
+            shareObject.append(fileList.value[index].url)
         }
         return shareObject
     }
@@ -98,9 +115,13 @@ class FileBrowserModel {
     func deleteFiles(_ indices:[Int]) -> (success: Bool, error: Error?, failedURLs: [URL]) {
         var deletingURLs = [URL]()
         indices.forEach { index in
-            deletingURLs.append(fileList[index].url)
+            deletingURLs.append(fileList.value[index].url)
         }
         return hcFileManager.deleteFile(urlList: deletingURLs)
+    }
+    
+    deinit {
+        self.folderMonitor.stopMonitoring()
     }
 }
 
