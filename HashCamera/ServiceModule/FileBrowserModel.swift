@@ -13,7 +13,7 @@ class FileBrowserModel {
     
     var storageType: StorageType
     var rootURL: URL?
-    var fileList =  CurrentValueSubject<[FileBrowserItemModel],Never>([])
+    var fileList =  CurrentValueSubject<[MediaFileModel],Never>([])
     let hcFileManager = HCFileManager()
     var thumbnailSize: CGSize
     let qlThumbnailGenerator =  QLThumbnailGenerator.shared
@@ -46,7 +46,7 @@ class FileBrowserModel {
             guard let self else { return }
             let list = hcFileManager.fetchContentList(source: rootURL)
                 .filter { $0.isPhoto }
-                .map({ FileBrowserItemModel(
+                .map({ MediaFileModel(
                     url: $0)})
             await MainActor.run { [weak self] in
                 self?.fileList.send( list)
@@ -125,8 +125,8 @@ class FileBrowserModel {
     }
 }
 
-class FileBrowserItemModel {
-    internal init(url: URL, thumbnailRequest: QLThumbnailGenerator.Request? = nil, lowThumbnailImage: UIImage? = nil, highThumbnailImage: UIImage? = nil, originalImage: UIImage? = nil) {
+class MediaFileModel {
+    init(url: URL, thumbnailRequest: QLThumbnailGenerator.Request? = nil, lowThumbnailImage: UIImage? = nil, highThumbnailImage: UIImage? = nil, originalImage: UIImage? = nil) {
         self.url = url
         self.thumbnailRequest = thumbnailRequest
         self.lowThumbnailImage = lowThumbnailImage
@@ -150,4 +150,5 @@ class FileBrowserItemModel {
             }
         }
     }
+    
 }

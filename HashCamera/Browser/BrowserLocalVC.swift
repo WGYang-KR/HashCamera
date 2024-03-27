@@ -206,13 +206,10 @@ class BrowserLocalVC: UIViewController, UICollectionViewDataSource, UICollection
             } else {
                 //해당 사진을 Viewer로 띄운다.
                 //뷰어 화면 이동
-                let imageModel = browserModel.fileList.value[indexPath.item]
-                imageModel.bestImage { [weak self] image in
-                    guard let self else { return }
-                    guard let image else { return }
-                    let vc = UIHostingController(rootView: ImageViewer(image: Image(uiImage: image)))
-                    present(vc, animated: true)
-                }
+                let mediaFileModel = browserModel.fileList.value[indexPath.item]
+                let vc = UIHostingController(rootView: ImageViewer(mediaFileModel: mediaFileModel))
+                present(vc, animated: true)
+            
                 
                 return false
             }

@@ -11,33 +11,46 @@ import SwiftUI
 public struct ImageViewer: View {
     @Environment(\.presentationMode) var presentationMode
     
-    let image: Image
-
+    @State var image: Image?
+    let mediaFileModel: MediaFileModel
     @State private var scale: CGFloat = 1
     @State private var lastScale: CGFloat = 1
 
     @State private var offset: CGPoint = .zero
     @State private var lastTranslation: CGSize = .zero
 
-    public init(image: Image) {
-        self.image = image
+    init(mediaFileModel: MediaFileModel) {
+        self.mediaFileModel = mediaFileModel
     }
 
     public var body: some View {
         GeometryReader { proxy in
             ZStack {
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .scaleEffect(scale)
-                    .offset(x: offset.x, y: offset.y)
-                    .gesture(makeDragGesture(size: proxy.size))
-                    .gesture(makeMagnificationGesture(size: proxy.size))
+                if let image {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .scaleEffect(scale)
+                        .offset(x: offset.x, y: offset.y)
+                        .gesture(makeDragGesture(size: proxy.size))
+                        .gesture(makeMagnificationGesture(size: proxy.size))
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .edgesIgnoringSafeArea(.all)
             .overlay(alignment: .topTrailing) {
                 closeButton
+            }
+            .onAppear(perform: {
+                loadImage()
+            })
+        }
+    }
+    
+    func loadImage() {
+        mediaFileModel.bestImage { loadedImage in
+            if let loadedImage {
+                image = Image(uiImage: loadedImage)
             }
         }
     }
