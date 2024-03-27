@@ -139,4 +139,15 @@ class FileBrowserItemModel {
     var lowThumbnailImage: UIImage?
     var highThumbnailImage: UIImage?
     var originalImage: UIImage?
+    
+    func bestImage(completion: @escaping (UIImage?) -> Void) {
+        if let bestImage = originalImage { //이미 로드되었으면 바로 반환
+            completion(bestImage)
+        } else { //없으면 로드후 반환
+            HCFileManager.shared.fetchBestImage(url: url) { [weak self] image in
+                self?.originalImage = image
+                completion(image)
+            }
+        }
+    }
 }

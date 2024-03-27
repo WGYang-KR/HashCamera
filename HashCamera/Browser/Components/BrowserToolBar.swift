@@ -28,8 +28,10 @@ class BrowserToolBar: UIToolbar {
     
     func initView() {
         
+        backgroundColor = .systemGray6
         middleLabel.textColor = .black
         middleLabel.font = .systemFont(ofSize: 12)
+        middleLabel.text = "항목 보기"
         self.items = [leftItem,
                       UIBarButtonItem.flexibleSpace(),
                       middleItem,

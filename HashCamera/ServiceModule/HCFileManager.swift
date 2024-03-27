@@ -11,6 +11,7 @@ import QuickLookThumbnailing
 
 class HCFileManager {
     let fileManager = FileManager.default
+    static let shared = HCFileManager()
     
     //MARK: - iClud 다운로드 관련 변수
     var queryNotifications = [UUID: QueryNotification]() //원격저장소 다운로드에 사용되는 Notifcation을 저장.
@@ -185,7 +186,7 @@ class HCFileManager {
             fetchBestImage(iCloudURL: url, completion: completion)
             
         } else {    //로컬 파일일때
-            completion(UIImage(contentsOfFile: url.absoluteString) )
+            completion(UIImage(contentsOfFile: url.path) )
         }
     }
     
