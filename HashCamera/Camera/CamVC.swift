@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 import RxSwift
 import RxRelay
 import SnapKit
@@ -127,6 +128,12 @@ class CamVC: UIViewController {
             camVM.storageModel.selectedStorgeType.accept(storageType)
         }.disposed(by: disposeBag)
         
+        //설정 버튼
+        topMenuView.moreMenuRx.bind { [weak self] in
+            guard let self else { return }
+            self.moveSettingsView()
+        }.disposed(by: disposeBag)
+        
         //비율 버튼
         topMenuView.aspectRatioRx.bind { [weak self] aspectRatio in
             guard let self else { return }
@@ -232,6 +239,11 @@ class CamVC: UIViewController {
         }
     }
 
-
+    
+    func moveSettingsView() {
+        let vc = UIHostingController(rootView: SettingsView())
+        vc.modalPresentationStyle = .fullScreen
+        present(vc , animated: true)
+    }
 
 }
