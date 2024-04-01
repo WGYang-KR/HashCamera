@@ -25,9 +25,8 @@ class BrowserLocalVC: UIViewController, UICollectionViewDataSource, UICollection
     let selectionModeBtn: UIBarButtonItem = UIBarButtonItem(title: "선택", style: .plain, target: nil, action: nil)
     ///사진 복수 선택 기능 on 상태 여부
     let isSelecting = BehaviorRelay(value: false)
-    let toolbar = BrowserToolBar()
-    let toolbarBtmColorView = UIView()
-
+    let toolbar = BrowserToolBarView()
+ 
     
     lazy var itemSize: CGSize =  {
         let itemLength = UIScreen.main.bounds.width / 3
@@ -94,7 +93,7 @@ class BrowserLocalVC: UIViewController, UICollectionViewDataSource, UICollection
         
     
         //공유,삭제 툴바
-        toolbar.leftItem.rx.tap.bind { [weak self] in
+        toolbar.shareBtn.rx.tap.bind { [weak self] in
             guard let self else { return }
             if let selectedIndices:[Int] = collectionView.indexPathsForSelectedItems?.map({ $0.item }) {
                 shareFiles(selectedIndices)
@@ -102,7 +101,7 @@ class BrowserLocalVC: UIViewController, UICollectionViewDataSource, UICollection
             
         }.disposed(by: disposeBag)
         
-        toolbar.rightItem.rx.tap.bind { [weak self] in
+        toolbar.trashBtn.rx.tap.bind { [weak self] in
             guard let self else { return }
             if let selectedIndices:[Int] = collectionView.indexPathsForSelectedItems?.map({ $0.item }) {
                 deleteFiles(selectedIndices)
@@ -123,8 +122,6 @@ class BrowserLocalVC: UIViewController, UICollectionViewDataSource, UICollection
             make.edges.equalTo(view.safeAreaLayoutGuide)
         }
         
-        toolbarBtmColorView.backgroundColor = .systemGray6
-
     }
     
     ///사진 목록을  초기 fetch 한다.
@@ -144,7 +141,9 @@ class BrowserLocalVC: UIViewController, UICollectionViewDataSource, UICollection
         
         selectionModeBtn.title = isSelecting ? "취소" : "선택" //사진 복수 선택 기능 on/off에 따라서 버튼 텍스트 변경
         collectionView.allowsMultipleSelection = isSelecting //콜렉션뷰 멀티셀렉션
+        toolbar.setupStatus(selectionCount: 0)
         toolbar.isHidden = !isSelecting
+    
         if let selectedIndices = collectionView.indexPathsForSelectedItems {
             selectedIndices.forEach { indexPath in
                 collectionView.deselectItem(at: indexPath, animated: false) //선택 초기화
@@ -217,16 +216,29 @@ class BrowserLocalVC: UIViewController, UICollectionViewDataSource, UICollection
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if isSelecting.value {
-            ///해당 사진이 선택된다.
-            let selectedIndices: [Int] = collectionView.indexPathsForSelectedItems?.map({$0.item}) ?? []
-            toolbar.middleLabel.text = "\(selectedIndices.count)" + " 개 선택됨"
+            setupSelectedStatus()
             
         } else {
            
         }
     }
     
-
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        if isSelecting.value {
+            setupSelectedStatus()
+            
+        } else {
+           
+        }
+    }
+    
+    func setupSelectedStatus() {
+        ///해당 사진이 선택된다.
+        let selectedIndices: [Int] = collectionView.indexPathsForSelectedItems?.map({$0.item}) ?? []
+        let selectedCount = selectedIndices.count
+        toolbar.setupStatus(selectionCount: selectedCount)
+    }
+    
     func shareFiles(_ indices: [Int]) {
         guard let sharingData = browserModel.sharingFiles(indices)
         else { hcLog("공유할 URL 없음"); return }
