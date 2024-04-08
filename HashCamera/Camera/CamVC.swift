@@ -12,7 +12,8 @@ import RxRelay
 import SnapKit
 
 class CamVC: UIViewController {
-
+    
+    var disposeBag = DisposeBag()
     
     @IBOutlet weak var topMenuView: TopMenuBarView!
  
@@ -35,7 +36,7 @@ class CamVC: UIViewController {
                              storageModel: StorageModel(selectedStorgeType: .photoLibrary))
     
     let isLoading = BehaviorRelay(value: true)
-    var disposeBag = DisposeBag()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -198,6 +199,13 @@ class CamVC: UIViewController {
             naviVC.modalPresentationStyle = .fullScreen
             self.present(naviVC, animated: true)
         }.disposed(by: disposeBag)
+        
+        
+        //프리뷰 탭(포커싱)
+        previewView.didTapPointRx.withUnretained(self).bind { owner, points in
+            owner.showFocusView(points.original)
+            owner.camVM.cameraModel.focus(point: points.converted)
+        }.disposed(by: disposeBag)
     }
     
     ///화면 모든 버튼 활성화/비활성화
@@ -246,4 +254,7 @@ class CamVC: UIViewController {
         present(vc , animated: true)
     }
 
+    func showFocusView(_ point: CGPoint) {
+        
+    }
 }

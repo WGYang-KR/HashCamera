@@ -116,6 +116,36 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         }
     }
     
+    ///카메라 초점
+    func focus(point: CGPoint) {
+        
+        guard let captureDevice = self.videoInput?.device else { return }
+        let focus_x = point.x
+        let focus_y = point.y
+
+        hcLog("포커싱 \(focus_x), \(focus_y)")
+        
+        if (captureDevice.isFocusModeSupported(.autoFocus) && captureDevice.isFocusPointOfInterestSupported) {
+            do {
+                try captureDevice.lockForConfiguration()
+                captureDevice.focusPointOfInterest = CGPoint(x: focus_x, y: focus_y)
+                captureDevice.focusMode = .autoFocus
+              
+                
+                if (captureDevice.isExposureModeSupported(.autoExpose) && captureDevice.isExposurePointOfInterestSupported) {
+                    captureDevice.exposurePointOfInterest = CGPoint(x: focus_x, y: focus_y);
+                    captureDevice.exposureMode = .autoExpose;
+                  
+                }
+                
+                captureDevice.unlockForConfiguration()
+            } catch {
+                hcLog("\(error) :: \(error.localizedDescription)")
+            }
+        }
+        
+    }
+    
     ///기기에서 사용가능한 최상의 카메라 장치를 반환한다.
     private func bestDevice(position: AVCaptureDevice.Position) -> AVCaptureDevice? {
         let deviceTypes: [AVCaptureDevice.DeviceType] = [.builtInTrueDepthCamera,
@@ -273,3 +303,4 @@ extension UIImage {
         return croppedImage
     }
 }
+

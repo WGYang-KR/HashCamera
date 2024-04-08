@@ -8,9 +8,26 @@
 import UIKit
 import AVFoundation
 import SnapKit
+import RxSwift
+import RxRelay
 
 class CameraPreviewView: UIView {
 
+    
+    var disposeBag = DisposeBag()
+    
+    
+    ///카메라 프리뷰의 한 지점을 나타내는 구조체
+    struct CaptureDevicePreviewPoints{
+        let original: CGPoint
+        ///AVFoundation 용 좌표
+        let converted: CGPoint
+    }
+    
+    ///카메라 프리뷰가 탭되는 위치 이벤트를 방출한다.
+    let didTapPointRx = PublishRelay<CaptureDevicePreviewPoints>()
+                                      
+                                      
     let blurEffectView: UIView = {
         let viewBlurEffect = UIVisualEffectView()
         //Blur Effect는 .light 외에도 .dark, .regular 등이 있으니 적용해보세요!
@@ -61,6 +78,19 @@ class CameraPreviewView: UIView {
         blurEffectView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        
+        //탭 이벤트 연결
+        self.rx.tapGesture().when(.recognized)
+            .bind { [weak self] recognizer in
+                
+                guard let self else { return }
+                
+                let location = recognizer.location(in: self)
+                didTapPointRx.accept(.init(original: location,
+                                           converted: previewLayer.captureDevicePointConverted(fromLayerPoint: location)))
+                
+            }.disposed(by: disposeBag)
+        
     }
     
     func borderEffect() {
