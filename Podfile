@@ -10,6 +10,7 @@ target 'HashCamera' do
     pod 'RxCocoa', '~> 6.5.0'
     pod 'RxGesture'
     pod 'SnapKit', '5.6.0'
+    pod 'SideMenu'
 #target 'HashCameraTests' do
 #   inherit! :search_paths
 #   # Pods for testing

@@ -56,6 +56,7 @@ class CamVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -194,7 +195,8 @@ class CamVC: UIViewController {
         //뷰어 버튼
         browseButton.rx.tap.bind { [weak self] _ in
             guard let self else { return }
-            let vc = BrowserLocalVC()
+            let vc = BrowserVC()
+//            let vc = BrowserLocalVC()
             let naviVC = UINavigationController(rootViewController: vc)
             naviVC.modalPresentationStyle = .fullScreen
             self.present(naviVC, animated: true)
