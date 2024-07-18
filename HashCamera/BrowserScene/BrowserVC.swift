@@ -10,22 +10,49 @@ import SideMenu
 
 class BrowserVC: UIViewController {
 
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var selectionBtn: UIButton!
+    @IBOutlet weak var bottomBarLabel: UILabel!
+    
     let menu  = SideMenuNavigationController(rootViewController: SideMenuVC())
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        menu.setNavigationBarHidden(true, animated: false)
+        initSideMenu()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.setNavigationBarHidden(true, animated: false)
     }
-    @IBAction func sideMenuTapped(_ sender: Any) {
-        
+    
+    
+    func initSideMenu() {
+        menu.setNavigationBarHidden(true, animated: false)
+        menu.leftSide = true
+    }
+    
+    
+    @IBAction func sideMenuBtnTapped(_ sender: Any) {
         present(menu, animated: true)
     }
     
-
+    @IBAction func selectionBtnTapped(_ sender: Any) {
+        
+    }
+    
+    @IBAction func shareBtnTapped(_ sender: Any) {
+        
+    }
+    
+    @IBAction func trashBtnTapped(_ sender: Any) {
+        
+    }
+    
+    @IBAction func tagBtnTapped(_ sender: Any) {
+        
+    }
+    
+    
     /*
     // MARK: - Navigation
 

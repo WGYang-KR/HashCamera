@@ -12,6 +12,7 @@
 		6A0486442C49519000C3989F /* BrowserVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0486422C49519000C3989F /* BrowserVC.xib */; };
 		6A0486472C49529000C3989F /* SideMenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0486452C49529000C3989F /* SideMenuVC.swift */; };
 		6A0486482C49529000C3989F /* SideMenuVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0486462C49529000C3989F /* SideMenuVC.xib */; };
+		6A04864A2C49617500C3989F /* BrowserVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0486492C49617500C3989F /* BrowserVM.swift */; };
 		6A133E3E2B0268FF0018A769 /* StorageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A133E3D2B0268FF0018A769 /* StorageModel.swift */; };
 		6A133E4D2B0503690018A769 /* AppLifeCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A133E4C2B0503690018A769 /* AppLifeCycle.swift */; };
 		6A133E512B0655320018A769 /* CamVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A133E502B0655320018A769 /* CamVM.swift */; };
@@ -68,6 +69,7 @@
 		6A0486422C49519000C3989F /* BrowserVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BrowserVC.xib; sourceTree = "<group>"; };
 		6A0486452C49529000C3989F /* SideMenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuVC.swift; sourceTree = "<group>"; };
 		6A0486462C49529000C3989F /* SideMenuVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SideMenuVC.xib; sourceTree = "<group>"; };
+		6A0486492C49617500C3989F /* BrowserVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserVM.swift; sourceTree = "<group>"; };
 		6A133E3D2B0268FF0018A769 /* StorageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageModel.swift; sourceTree = "<group>"; };
 		6A133E4C2B0503690018A769 /* AppLifeCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLifeCycle.swift; sourceTree = "<group>"; };
 		6A133E502B0655320018A769 /* CamVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CamVM.swift; sourceTree = "<group>"; };
@@ -139,10 +141,13 @@
 		6A04863C2C494FAB00C3989F /* BrowserScene */ = {
 			isa = PBXGroup;
 			children = (
+				6A2529D52B162BAA00721202 /* BrowserItemCell.swift */,
+				6A2529D62B162BAA00721202 /* BrowserItemCell.xib */,
 				6A0486412C49519000C3989F /* BrowserVC.swift */,
 				6A0486422C49519000C3989F /* BrowserVC.xib */,
 				6A0486452C49529000C3989F /* SideMenuVC.swift */,
 				6A0486462C49529000C3989F /* SideMenuVC.xib */,
+				6A0486492C49617500C3989F /* BrowserVM.swift */,
 			);
 			path = BrowserScene;
 			sourceTree = "<group>";
@@ -290,8 +295,6 @@
 		6AE7FFDE2B177E7800BC3DB9 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				6A2529D52B162BAA00721202 /* BrowserItemCell.swift */,
-				6A2529D62B162BAA00721202 /* BrowserItemCell.xib */,
 				6A37965A2BBAF08B00BAFC19 /* BrowserToolBarView.swift */,
 			);
 			path = Components;
@@ -456,6 +459,7 @@
 				6A0486472C49529000C3989F /* SideMenuVC.swift in Sources */,
 				6AA61AC82AE81555002E3725 /* AuthorizationManager.swift in Sources */,
 				6AE7FFE22B17817E00BC3DB9 /* UIViewController+Ext.swift in Sources */,
+				6A04864A2C49617500C3989F /* BrowserVM.swift in Sources */,
 				6A133E512B0655320018A769 /* CamVM.swift in Sources */,
 				6A0486432C49519000C3989F /* BrowserVC.swift in Sources */,
 				6AA61AD82AFE71E1002E3725 /* CaseIterable+Ext.swift in Sources */,
