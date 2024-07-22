@@ -13,6 +13,8 @@
 		6A0486472C49529000C3989F /* SideMenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0486452C49529000C3989F /* SideMenuVC.swift */; };
 		6A0486482C49529000C3989F /* SideMenuVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0486462C49529000C3989F /* SideMenuVC.xib */; };
 		6A04864A2C49617500C3989F /* BrowserVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0486492C49617500C3989F /* BrowserVM.swift */; };
+		6A04864D2C4E8EB400C3989F /* TagService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A04864C2C4E8EB400C3989F /* TagService.swift */; };
+		6A04864F2C4E8F1800C3989F /* TagObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A04864E2C4E8F1800C3989F /* TagObject.swift */; };
 		6A133E3E2B0268FF0018A769 /* StorageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A133E3D2B0268FF0018A769 /* StorageModel.swift */; };
 		6A133E4D2B0503690018A769 /* AppLifeCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A133E4C2B0503690018A769 /* AppLifeCycle.swift */; };
 		6A133E512B0655320018A769 /* CamVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A133E502B0655320018A769 /* CamVM.swift */; };
@@ -29,6 +31,8 @@
 		6A3796582BB5A4CD00BAFC19 /* AppStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3796572BB5A4CD00BAFC19 /* AppStatus.swift */; };
 		6A37965B2BBAF08B00BAFC19 /* BrowserToolBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A37965A2BBAF08B00BAFC19 /* BrowserToolBarView.swift */; };
 		6A64A0652B20A67D0025AE80 /* BrowserLocalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A64A0642B20A67D0025AE80 /* BrowserLocalVC.swift */; };
+		6A73A0FF2C4E983C007B6CAE /* TagSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A0FD2C4E983C007B6CAE /* TagSettingVC.swift */; };
+		6A73A1002C4E983C007B6CAE /* TagSettingVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A73A0FE2C4E983C007B6CAE /* TagSettingVC.xib */; };
 		6A8B31FA2AE7983E00D24E49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B31F92AE7983E00D24E49 /* AppDelegate.swift */; };
 		6A8B31FC2AE7983E00D24E49 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B31FB2AE7983E00D24E49 /* SceneDelegate.swift */; };
 		6A8B31FE2AE7983E00D24E49 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B31FD2AE7983E00D24E49 /* ViewController.swift */; };
@@ -70,6 +74,8 @@
 		6A0486452C49529000C3989F /* SideMenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuVC.swift; sourceTree = "<group>"; };
 		6A0486462C49529000C3989F /* SideMenuVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SideMenuVC.xib; sourceTree = "<group>"; };
 		6A0486492C49617500C3989F /* BrowserVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserVM.swift; sourceTree = "<group>"; };
+		6A04864C2C4E8EB400C3989F /* TagService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagService.swift; sourceTree = "<group>"; };
+		6A04864E2C4E8F1800C3989F /* TagObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagObject.swift; sourceTree = "<group>"; };
 		6A133E3D2B0268FF0018A769 /* StorageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageModel.swift; sourceTree = "<group>"; };
 		6A133E4C2B0503690018A769 /* AppLifeCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLifeCycle.swift; sourceTree = "<group>"; };
 		6A133E502B0655320018A769 /* CamVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CamVM.swift; sourceTree = "<group>"; };
@@ -87,6 +93,8 @@
 		6A3796572BB5A4CD00BAFC19 /* AppStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStatus.swift; sourceTree = "<group>"; };
 		6A37965A2BBAF08B00BAFC19 /* BrowserToolBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserToolBarView.swift; sourceTree = "<group>"; };
 		6A64A0642B20A67D0025AE80 /* BrowserLocalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserLocalVC.swift; sourceTree = "<group>"; };
+		6A73A0FD2C4E983C007B6CAE /* TagSettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSettingVC.swift; sourceTree = "<group>"; };
+		6A73A0FE2C4E983C007B6CAE /* TagSettingVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TagSettingVC.xib; sourceTree = "<group>"; };
 		6A8B31F62AE7983E00D24E49 /* HashCamera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HashCamera.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A8B31F92AE7983E00D24E49 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6A8B31FB2AE7983E00D24E49 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -152,6 +160,17 @@
 			path = BrowserScene;
 			sourceTree = "<group>";
 		};
+		6A04864B2C4E8E6C00C3989F /* TagScene */ = {
+			isa = PBXGroup;
+			children = (
+				6A04864E2C4E8F1800C3989F /* TagObject.swift */,
+				6A04864C2C4E8EB400C3989F /* TagService.swift */,
+				6A73A0FD2C4E983C007B6CAE /* TagSettingVC.swift */,
+				6A73A0FE2C4E983C007B6CAE /* TagSettingVC.xib */,
+			);
+			path = TagScene;
+			sourceTree = "<group>";
+		};
 		6A3796472BB4513100BAFC19 /* ImageViewer */ = {
 			isa = PBXGroup;
 			children = (
@@ -192,6 +211,7 @@
 		6A8B31F82AE7983E00D24E49 /* HashCamera */ = {
 			isa = PBXGroup;
 			children = (
+				6A04864B2C4E8E6C00C3989F /* TagScene */,
 				6A04863C2C494FAB00C3989F /* BrowserScene */,
 				6A3796592BB5A4FB00BAFC19 /* Utilities */,
 				6A1C2F1B2B0CFBE20085C3E1 /* HashCamera.entitlements */,
@@ -396,6 +416,7 @@
 			files = (
 				6A0486442C49519000C3989F /* BrowserVC.xib in Resources */,
 				6A8B32062AE7983F00D24E49 /* LaunchScreen.storyboard in Resources */,
+				6A73A1002C4E983C007B6CAE /* TagSettingVC.xib in Resources */,
 				6A0486482C49529000C3989F /* SideMenuVC.xib in Resources */,
 				6AA61AD02AFA8337002E3725 /* TopMenuBarView.xib in Resources */,
 				6A8B32032AE7983F00D24E49 /* Assets.xcassets in Resources */,
@@ -474,12 +495,14 @@
 				6A3796492BB4514F00BAFC19 /* ImageViewer.swift in Sources */,
 				6A8B31FA2AE7983E00D24E49 /* AppDelegate.swift in Sources */,
 				6AE8CF9D2AF4B5DD0063C8C6 /* PhotoFileType.swift in Sources */,
+				6A04864D2C4E8EB400C3989F /* TagService.swift in Sources */,
 				6A8B322B2AE7AB9300D24E49 /* StorageType.swift in Sources */,
 				6AA61AD22AFA850E002E3725 /* FlashMode+Ext.swift in Sources */,
 				6AE7FFE42B1782DF00BC3DB9 /* UINavigationController+Ext.swift in Sources */,
 				6A961E602B011FA100A05F9B /* CALayer+Ext.swift in Sources */,
 				6A8B32262AE7A5EE00D24E49 /* StorageBarItemCell.swift in Sources */,
 				6A8B31FC2AE7983E00D24E49 /* SceneDelegate.swift in Sources */,
+				6A04864F2C4E8F1800C3989F /* TagObject.swift in Sources */,
 				6A8B321D2AE7A19A00D24E49 /* StorageBarCollectionView.swift in Sources */,
 				6A8B32152AE7A03000D24E49 /* CamVC.swift in Sources */,
 				6A133E3E2B0268FF0018A769 /* StorageModel.swift in Sources */,
@@ -496,6 +519,7 @@
 				6AE8CF9F2AF4BF0D0063C8C6 /* HCError.swift in Sources */,
 				6AA61ACA2AEC9C02002E3725 /* HCLog.swift in Sources */,
 				6A8B321F2AE7A1D000D24E49 /* SelectStorageBarView.swift in Sources */,
+				6A73A0FF2C4E983C007B6CAE /* TagSettingVC.swift in Sources */,
 				6A2529D72B162BAA00721202 /* BrowserItemCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
