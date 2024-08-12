@@ -7,19 +7,17 @@
 
 import Foundation
 import RealmSwift
-import RxSwift
-import RxRelay
+
 
 class TagService {
     static let shared = TagService()
     private init() { }
     
-    let tags = BehaviorRelay<[TagObject]>(value: [])
+    var tags: [TagObject] = []
     
     ///태그 추가
     func addNewTag(_ newName: String) {
-        fetchTags()
-        let lastOrder = tags.value.last?.order ?? 0
+        let lastOrder = tags.last?.order ?? 0
         let newTag = TagObject(order: lastOrder + 1, name: newName)
         
         do {
@@ -34,7 +32,6 @@ class TagService {
         
         fetchTags()
         
-        
     }
     
     ///태그 목록 갱신
@@ -42,22 +39,22 @@ class TagService {
         do {
             let realm = try Realm()
             let results = realm.objects(TagObject.self).sorted(byKeyPath: "index", ascending: true)
-            tags.accept(Array(results))
+            tags = Array(results)
             hcLog("태그 목록 갱신 완료")
         } catch {
             hcLog("\(error) \(error.localizedDescription)")
-            tags.accept([])
+            tags = []
         }
     }
     
     ///태그 이름 수정
     func editTagName(at index: Int, newName: String) {
-        guard index < tags.value.count else {
+        guard index < tags.count else {
             hcLog("바운드 오류")
             return
         }
         
-        let tag = tags.value[index]
+        let tag = tags[index]
         tag.name = newName
         do {
             let realm = try Realm()
@@ -72,12 +69,11 @@ class TagService {
     
     ///태그 순서 수정
     func editTagOrder(at oldIndex: Int, to newIndex: Int) {
-        guard oldIndex < tags.value.count, newIndex < tags.value.count, oldIndex != newIndex else {
+        guard oldIndex < tags.count, newIndex < tags.count, oldIndex != newIndex else {
             hcLog("바운드 오류")
             return
         }
         
-        let tags = tags.value
         let tag = tags[oldIndex]
         do {
             let realm = try Realm()
@@ -111,12 +107,25 @@ class TagService {
 
     ///태그 삭제
     func deleteTag(at index: Int) {
-        guard index < tags.value.count else {
+        guard index < tags.count else {
             hcLog("바운드 오류")
             return
-        }
+        } 
         
-
+        do {
+            let realm = try Realm()
+            try realm.write {
+                
+                for i in index+1..<tags.count {
+                    tags[i].order -= 1
+                }
+                let tag = tags[index]
+                tags.remove(at: index)
+                realm.delete(tag)
+            }
+        } catch {
+            
+        }
     }
     
     
