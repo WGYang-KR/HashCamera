@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="184" id="KGk-i7-Jjw" customClass="TagListItemCell" customModule="HashCamera" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="475" height="184"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="475" height="184"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rDj-6b-fTZ">
+                        <rect key="frame" x="0.0" y="0.0" width="475" height="184"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="Via-U7-mnJ">
+                                <rect key="frame" x="16" y="16" width="109" height="152"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TagName" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ek2-07-r1r">
+                                        <rect key="frame" x="0.0" y="0.0" width="72.333333333333329" height="152"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" name="colorTeal01"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="753" text="(35)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Teu-dI-2Qr">
+                                        <rect key="frame" x="76.333333333333314" y="0.0" width="32.666666666666686" height="152"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" name="colorTeal03"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="Via-U7-mnJ" secondAttribute="bottom" constant="16" id="Te5-am-6FS"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Via-U7-mnJ" secondAttribute="trailing" constant="16" id="cFf-TI-vYf"/>
+                            <constraint firstItem="Via-U7-mnJ" firstAttribute="top" secondItem="rDj-6b-fTZ" secondAttribute="top" constant="16" id="cMf-re-CWA"/>
+                            <constraint firstItem="Via-U7-mnJ" firstAttribute="leading" secondItem="rDj-6b-fTZ" secondAttribute="leading" constant="16" id="ilt-iv-RIn"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="rDj-6b-fTZ" secondAttribute="trailing" id="a5C-DT-QNS"/>
+                    <constraint firstAttribute="bottom" secondItem="rDj-6b-fTZ" secondAttribute="bottom" id="eMl-cq-RCe"/>
+                    <constraint firstItem="rDj-6b-fTZ" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="gzh-oz-Z6B"/>
+                    <constraint firstItem="rDj-6b-fTZ" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="mDq-Z1-4uT"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="countLabel" destination="Teu-dI-2Qr" id="d66-kn-exD"/>
+                <outlet property="nameLabel" destination="ek2-07-r1r" id="6rZ-y2-0B0"/>
+            </connections>
+            <point key="canvasLocation" x="257.25190839694653" y="69.718309859154928"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <namedColor name="colorTeal01">
+            <color red="0.0" green="0.23529411764705882" blue="0.2627450980392157" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="colorTeal03">
+            <color red="0.46666666666666667" green="0.69019607843137254" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

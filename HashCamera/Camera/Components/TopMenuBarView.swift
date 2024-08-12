@@ -25,7 +25,7 @@ class TopMenuBarView: UIView {
     let moreMenuRx = BehaviorRelay<Void>(value: Void())
     let aspectRatioRx = BehaviorRelay<AspectRatioType>(value: .standard)
     let flashModeRx = BehaviorRelay<AVCaptureDevice.FlashMode>(value: .off)
-    let cameraPositionRx = BehaviorRelay<AVCaptureDevice.Position>(value:.unspecified)
+    let cameraPositionRx = BehaviorRelay<AVCaptureDevice.Position>(value:.back)
     
     override init(frame: CGRect) {
         super.init(frame: frame)

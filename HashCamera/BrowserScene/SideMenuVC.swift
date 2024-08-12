@@ -17,8 +17,10 @@ class SideMenuVC: UIViewController {
 
 
     @IBAction func goBackTapped(_ sender: Any) {
-        
-        dismiss(animated: true)
+        moveBackVC(animated: true)
+    }
+    @IBAction func editBtnTapped(_ sender: Any) {
+        presentFull(UINavigationController(rootViewController: TagSettingVC()), animated: true)
     }
     /*
     // MARK: - Navigation

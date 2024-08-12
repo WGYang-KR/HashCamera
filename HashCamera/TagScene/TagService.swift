@@ -96,7 +96,6 @@ class TagService {
             }
             hcLog("태그 순서 변경 DB 반영 완료. \(tag.name): \(oldIndex) -> \(tag.order)")
             
-            var tags = tags
             Utils.moveItem(array: &tags, fromIndex: oldIndex, toIndex: newIndex)
             hcLog("태그 순서 변경 Service 반영 완료. \(tag.name): \(oldIndex) -> \(tag.order)")
         } catch {

@@ -30,9 +30,18 @@
                                 <action selector="goBackTapped:" destination="-1" eventType="touchUpInside" id="Tix-39-GQO"/>
                             </connections>
                         </button>
+                        <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0AV-ll-sOD">
+                            <rect key="frame" x="154" y="427" width="97" height="58"/>
+                            <state key="normal" title="Button"/>
+                            <buttonConfiguration key="configuration" style="plain" title="Edit"/>
+                            <connections>
+                                <action selector="editBtnTapped:" destination="-1" eventType="touchUpInside" id="0XA-g5-PVe"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
+                        <constraint firstItem="0AV-ll-sOD" firstAttribute="centerX" secondItem="Neq-NB-DOd" secondAttribute="centerX" id="8KV-TA-Vfc"/>
                         <constraint firstItem="Neq-NB-DOd" firstAttribute="centerX" secondItem="pKY-XG-JSB" secondAttribute="centerX" id="Cpx-O5-g0r"/>
                         <constraint firstItem="Neq-NB-DOd" firstAttribute="centerY" secondItem="pKY-XG-JSB" secondAttribute="centerY" id="MHQ-8m-wkR"/>
                     </constraints>
@@ -46,7 +55,7 @@
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="pKY-XG-JSB" secondAttribute="bottom" id="kvj-YK-Ya2"/>
                 <constraint firstItem="pKY-XG-JSB" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="tv6-Ht-BhS"/>
             </constraints>
-            <point key="canvasLocation" x="138" y="21"/>
+            <point key="canvasLocation" x="136.64122137404578" y="20.422535211267608"/>
         </view>
     </objects>
     <resources>

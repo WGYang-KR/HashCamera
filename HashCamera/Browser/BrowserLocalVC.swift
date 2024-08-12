@@ -56,7 +56,7 @@ class BrowserLocalVC: UIViewController, UICollectionViewDataSource, UICollection
         
         
         backBtn.rx.tap.bind { [weak self] _ in
-            self?.movePrevVC(animated: true)
+            self?.moveBackVC(animated: true)
         }.disposed(by: disposeBag)
         
         isSelecting.bind {[weak self] isOn in

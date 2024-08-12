@@ -23,7 +23,7 @@ class CameraSetting {
     }
     
     ///카메라 전/후면 최근 상태
-    static var lastPosition: AVCaptureDevice.Position {
+    static var lastPosition: AVCaptureDevice.Position { 
         get {
             let intValue = UserDefaults.standard.integer(forKey: Keys.cameraSettingPosition.rawValue)
             return AVCaptureDevice.Position(rawValue: intValue) ?? .back //기본값
