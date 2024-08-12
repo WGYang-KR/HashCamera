@@ -51,30 +51,46 @@ extension UIViewController {
     }
     
     func setNaviBar(_ title: String, left: BarButtonPresetType = .back, right: BarButtonPresetType = .none) {
-        self.navigationItem.title = title
-        // 네비게이션 바 타이틀 색상 설정
-        self.navigationController?.navigationBar.titleTextAttributes = [
-            .foregroundColor: UIColor.colorTeal02 // 타이틀 텍스트 색상 변경
-        ]
         
-        self.navigationItem.leftBarButtonItem = presetBarButtonItem(type: left)
         
         func presetBarButtonItem(type: BarButtonPresetType) -> UIBarButtonItem?
         {
-            var retBtn: UIBarButtonItem? = nil
             switch type {
             case .none:
                 return nil
             case .back:
-                retBtn = UIBarButtonItem(image: SystemUIImage.chevronLeft,
+                return UIBarButtonItem(image: SystemUIImage.chevronLeft,
                                        style: .plain,
                                        target: self,
                                        action: #selector(_moveBackVC))
                 
             }
-            retBtn?.tintColor = .colorTeal02
-            return retBtn
         }
+        
+        self.navigationItem.title = title
+    
+        self.navigationItem.leftBarButtonItem = presetBarButtonItem(type: left)
+
+        // 네비게이션 바 색상 설정
+        let defaultColor = UIColor.colorTeal02
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            .foregroundColor: defaultColor // 타이틀 텍스트 색상 변경
+        ]
+        
+        if let leftBarButtonItems = self.navigationItem.leftBarButtonItems {
+            for item in leftBarButtonItems {
+                item.tintColor = defaultColor
+                item.setTitleTextAttributes([.foregroundColor: defaultColor], for: .normal)
+            }
+        }
+        
+        if let rightBarButtonItems = self.navigationItem.rightBarButtonItems {
+            for item in rightBarButtonItems {
+                item.tintColor = defaultColor
+                item.setTitleTextAttributes([.foregroundColor: defaultColor], for: .normal)
+            }
+        }
+        
     }
 }
 
