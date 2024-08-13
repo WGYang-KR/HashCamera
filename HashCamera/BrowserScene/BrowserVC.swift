@@ -10,8 +10,6 @@ import SideMenu
 
 class BrowserVC: UIViewController {
 
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var selectionBtn: UIButton!
     @IBOutlet weak var bottomBarLabel: UILabel!
     
     let menu  = SideMenuNavigationController(rootViewController: SideMenuVC())
@@ -19,24 +17,42 @@ class BrowserVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         initSideMenu()
+        initNaviBar()
+        initToolbar()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
+    func initNaviBar() {
+        let naviLeftItems = [naviBackBarButtonItem(),
+                             UIBarButtonItem(image: SystemUIImage.listBullet,
+                                             style: .plain,
+                                             target: self,
+                                             action: #selector(naviListBtnTapped))]
+        
+        let naviRightItems = [UIBarButtonItem(image: SystemUIImage.checkmarkCircle,
+                                              style: .plain,
+                                              target: self,
+                                              action: #selector(naviSelectionBtnTapped))]
+        setNaviBar("Browser", leftItems: naviLeftItems, rightItems: naviRightItems)
+    }
     
     func initSideMenu() {
         menu.setNavigationBarHidden(true, animated: false)
         menu.leftSide = true
     }
     
+    func initToolbar() {
     
-    @IBAction func sideMenuBtnTapped(_ sender: Any) {
+    }
+    
+    @objc func naviListBtnTapped() {
         present(menu, animated: true)
     }
     
-    @IBAction func selectionBtnTapped(_ sender: Any) {
+    @objc func naviSelectionBtnTapped() {
         
     }
     

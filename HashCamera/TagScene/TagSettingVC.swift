@@ -24,7 +24,7 @@ class TagSettingVC: UIViewController, UITableViewDataSource, UITableViewDelegate
           
           tableView.register(UINib(nibName: "\(TagListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(TagListItemCell.self)")
 
-          setNaviBar("태그 관리")
+          setNaviBar("Edit Tags", leftItems: [naviBackBarButtonItem()], rightItems: nil)
       }
 
       // 데이터 소스 메서드

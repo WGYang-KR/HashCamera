@@ -13,4 +13,5 @@ class SystemUIImage {
     static let xmark = UIImage(systemName: "xmark")
     static let listBullet = UIImage(systemName: "list.bullet")
     static let infoCircle = UIImage(systemName: "info.circle")
+    static let checkmarkCircle = UIImage(systemName: "checkmark.circle")
 }

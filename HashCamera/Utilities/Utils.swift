@@ -45,32 +45,26 @@ class Timestamp {
 
 //MARK: - 네비바
 extension UIViewController {
-    enum BarButtonPresetType {
-        case none
-        case back
+
+    func naviBackBarButtonItem() -> UIBarButtonItem {
+        return UIBarButtonItem(image: SystemUIImage.chevronLeft,
+                               style: .plain,
+                               target: self,
+                               action: #selector(naviBackBtnTapped))
     }
     
-    func setNaviBar(_ title: String, left: BarButtonPresetType = .back, right: BarButtonPresetType = .none) {
-        
-        
-        func presetBarButtonItem(type: BarButtonPresetType) -> UIBarButtonItem?
-        {
-            switch type {
-            case .none:
-                return nil
-            case .back:
-                return UIBarButtonItem(image: SystemUIImage.chevronLeft,
-                                       style: .plain,
-                                       target: self,
-                                       action: #selector(_moveBackVC))
-                
-            }
-        }
-        
-        self.navigationItem.title = title
-    
-        self.navigationItem.leftBarButtonItem = presetBarButtonItem(type: left)
+    @objc func naviBackBtnTapped() {
+        moveBackVC(animated: true)
+    }
 
+    func setNaviBar(_ title: String, leftItems: [UIBarButtonItem]?, rightItems: [UIBarButtonItem]?) {
+        
+        //아이콘 세팅
+        self.navigationItem.title = title
+        self.navigationItem.leftBarButtonItems = leftItems
+        self.navigationItem.rightBarButtonItems = rightItems
+
+        
         // 네비게이션 바 색상 설정
         let defaultColor = UIColor.colorTeal02
         self.navigationController?.navigationBar.titleTextAttributes = [
@@ -110,11 +104,6 @@ extension UIViewController {
     func present(_ vcToPresent: UIViewController, modalStyle: UIModalPresentationStyle, animated: Bool, completion: (() -> Void)? = nil) {
         vcToPresent.modalPresentationStyle = modalStyle
         self.present(vcToPresent, animated: animated, completion: completion)
-    }
-    
-    
-    @objc func _moveBackVC() {
-        moveBackVC(animated: true)
     }
     
     ///popVC / dismiss 를 자동으로 결정하여 수행.
