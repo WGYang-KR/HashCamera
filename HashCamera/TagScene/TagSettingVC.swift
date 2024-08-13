@@ -25,7 +25,17 @@ class TagSettingVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         
         tableView.register(UINib(nibName: "\(TagListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(TagListItemCell.self)")
         
-        setNaviBar("Edit Tags", leftItems: [naviBackBarButtonItem()], rightItems: nil)
+        let naviAddBarBtnItem = UIBarButtonItem(image: SystemUIImage.plus,
+                                                style: .plain,
+                                                target: self,
+                                                action: #selector(addBtnTapped))
+        
+        setNaviBar("Edit Tags", leftItems: [naviBackBarButtonItem()], rightItems: [naviAddBarBtnItem])
+    }
+    
+    
+    @objc func addBtnTapped() {
+        
     }
     
     //MARK: - UITableViewDataSource
