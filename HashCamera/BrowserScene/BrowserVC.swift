@@ -40,7 +40,7 @@ class BrowserVC: UIViewController {
     }
     
     func initSideMenu() {
-        menu.setNavigationBarHidden(true, animated: false)
+//        menu.setNavigationBarHidden(true, animated: false)
         menu.leftSide = true
     }
     

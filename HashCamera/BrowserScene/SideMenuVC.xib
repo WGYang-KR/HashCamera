@@ -6,11 +6,13 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SideMenuVC" customModule="HashCamera" customModuleProvider="target">
             <connections>
+                <outlet property="tableView" destination="kSi-bY-7KL" id="IOv-h0-9Ib"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -19,48 +21,28 @@
             <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pKY-XG-JSB">
-                    <rect key="frame" x="0.0" y="59" width="393" height="759"/>
-                    <subviews>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Neq-NB-DOd">
-                            <rect key="frame" x="154" y="362" width="85" height="35"/>
-                            <state key="normal" title="Button"/>
-                            <buttonConfiguration key="configuration" style="plain" title="go back"/>
-                            <connections>
-                                <action selector="goBackTapped:" destination="-1" eventType="touchUpInside" id="Tix-39-GQO"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0AV-ll-sOD">
-                            <rect key="frame" x="154" y="427" width="97" height="58"/>
-                            <state key="normal" title="Button"/>
-                            <buttonConfiguration key="configuration" style="plain" title="Edit"/>
-                            <connections>
-                                <action selector="editBtnTapped:" destination="-1" eventType="touchUpInside" id="0XA-g5-PVe"/>
-                            </connections>
-                        </button>
-                    </subviews>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <constraints>
-                        <constraint firstItem="0AV-ll-sOD" firstAttribute="centerX" secondItem="Neq-NB-DOd" secondAttribute="centerX" id="8KV-TA-Vfc"/>
-                        <constraint firstItem="Neq-NB-DOd" firstAttribute="centerX" secondItem="pKY-XG-JSB" secondAttribute="centerX" id="Cpx-O5-g0r"/>
-                        <constraint firstItem="Neq-NB-DOd" firstAttribute="centerY" secondItem="pKY-XG-JSB" secondAttribute="centerY" id="MHQ-8m-wkR"/>
-                    </constraints>
-                </view>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="insetGrouped" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="kSi-bY-7KL">
+                    <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                    <color key="backgroundColor" name="colorGrey04"/>
+                </tableView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
-            <color key="backgroundColor" name="colorGrey02"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
-                <constraint firstItem="pKY-XG-JSB" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="9aQ-MW-YKe"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="pKY-XG-JSB" secondAttribute="trailing" id="QMN-jO-7CZ"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="pKY-XG-JSB" secondAttribute="bottom" id="kvj-YK-Ya2"/>
-                <constraint firstItem="pKY-XG-JSB" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="tv6-Ht-BhS"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="kSi-bY-7KL" secondAttribute="trailing" id="21r-vR-zas"/>
+                <constraint firstItem="kSi-bY-7KL" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="VcQ-Xg-PfB"/>
+                <constraint firstItem="kSi-bY-7KL" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="WsR-QX-vfC"/>
+                <constraint firstAttribute="bottom" secondItem="kSi-bY-7KL" secondAttribute="bottom" id="bDJ-Ll-fvI"/>
             </constraints>
             <point key="canvasLocation" x="136.64122137404578" y="20.422535211267608"/>
         </view>
     </objects>
     <resources>
-        <namedColor name="colorGrey02">
-            <color red="0.82352941176470584" green="0.9137254901960784" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <namedColor name="colorGrey04">
+            <color red="0.97254901960784312" green="0.96470588235294119" blue="0.95686274509803926" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>

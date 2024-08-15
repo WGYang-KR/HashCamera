@@ -30,6 +30,10 @@ class TagSettingVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         
         setNaviBar("Edit Tags", leftItems: [naviBackBarButtonItem()], rightItems: [naviAddBarBtnItem])
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         tagService.fetchTags()
         tableView.reloadData()
     }
@@ -86,13 +90,13 @@ class TagSettingVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     
  
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        tableView.deselectRow(at: indexPath, animated: true)
         // 수정 팝업 띄우기
         let alert = UIAlertController(title: "Edit Item", message: nil, preferredStyle: .alert)
         alert.addTextField { textField in
             textField.text = self.tagService.tags[indexPath.row].name
         }
-        let saveAction = UIAlertAction(title: "Save", style: .default) { [weak self]_ in
+        let saveAction = UIAlertAction(title: "Save", style: .default) { [weak self] _ in
             if let textField = alert.textFields?.first, let newText = textField.text,
                !newText.isEmpty {
                 guard let self else { return }
