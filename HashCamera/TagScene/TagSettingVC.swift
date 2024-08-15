@@ -12,8 +12,6 @@ class TagSettingVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     let tagService = TagService.shared
     @IBOutlet weak var tableView: UITableView!
     
-    var items: [String] = ["Item 1", "Item 2", "Item 3", "Item 4"]
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -31,22 +29,41 @@ class TagSettingVC: UIViewController, UITableViewDataSource, UITableViewDelegate
                                                 action: #selector(addBtnTapped))
         
         setNaviBar("Edit Tags", leftItems: [naviBackBarButtonItem()], rightItems: [naviAddBarBtnItem])
+        
+        tagService.fetchTags()
+        tableView.reloadData()
     }
     
     
     @objc func addBtnTapped() {
+        // 수정 팝업 띄우기
+        let alert = UIAlertController(title: "Add New Tag", message: nil, preferredStyle: .alert)
+        alert.addTextField()
+        let saveAction = UIAlertAction(title: "Save", style: .default) { [weak self]_ in
+            if let textField = alert.textFields?.first, let newText = textField.text, !newText.isEmpty {
+                guard let self else { return }
+                tagService.addNewTag(newText)
+                tableView.reloadData()
+            }
+        }
+        alert.addAction(saveAction)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(cancelAction)
         
+        present(alert, animated: true, completion: nil)
     }
     
     //MARK: - UITableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+        return tagService.tags.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "\(TagListItemCell.self)", for: indexPath) as? TagListItemCell else
         {return UITableViewCell()}
-        cell.nameLabel.text = items[indexPath.row]
+        let item = tagService.tags[indexPath.row]
+        cell.nameLabel.text =  item.name
+        cell.countLabel.text = "(" + String(describing: item.filePaths.count)  + ")"
         return cell
     }
     
@@ -56,7 +73,8 @@ class TagSettingVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         
         //쓸어서 삭제 기능
         let deleteAction = UIContextualAction(style: .destructive, title: "삭제(Delete)"){ [weak self] action, view, completion in
-            self?.items.remove(at: indexPath.row)
+            guard let self else { return }
+            tagService.deleteTag(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
             completion(true)
         }
@@ -72,12 +90,14 @@ class TagSettingVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         // 수정 팝업 띄우기
         let alert = UIAlertController(title: "Edit Item", message: nil, preferredStyle: .alert)
         alert.addTextField { textField in
-            textField.text = self.items[indexPath.row]
+            textField.text = self.tagService.tags[indexPath.row].name
         }
-        let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
-            if let textField = alert.textFields?.first, let newText = textField.text, !newText.isEmpty {
-                self.items[indexPath.row] = newText
-                self.tableView.reloadRows(at: [indexPath], with: .automatic)
+        let saveAction = UIAlertAction(title: "Save", style: .default) { [weak self]_ in
+            if let textField = alert.textFields?.first, let newText = textField.text,
+               !newText.isEmpty {
+                guard let self else { return }
+                tagService.editTagName(at: indexPath.row, newName: newText)
+                tableView.reloadRows(at: [indexPath], with: .automatic)
             }
         }
         alert.addAction(saveAction)
@@ -89,7 +109,7 @@ class TagSettingVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     // MARK: - UITableViewDragDelegate
     func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        let item = items[indexPath.row]
+        let item = tagService.tags[indexPath.row]._id.stringValue
         let itemProvider = NSItemProvider(object: item as NSString)
         let dragItem = UIDragItem(itemProvider: itemProvider)
         dragItem.localObject = item
@@ -111,15 +131,15 @@ class TagSettingVC: UIViewController, UITableViewDataSource, UITableViewDelegate
 
         coordinator.items.forEach { item in
             if let sourceIndexPath = item.sourceIndexPath, let dragItem = item.dragItem.localObject as? String {
+                
+                tagService.editTagOrder(at: sourceIndexPath.row, to: destinationIndexPath.row)
+                
                 tableView.performBatchUpdates({
-                    // 원래 위치에서 아이템을 제거
-                    items.remove(at: sourceIndexPath.row)
-                    // 새로운 위치에 아이템을 삽입
-                    items.insert(dragItem, at: destinationIndexPath.row)
-
+                
                     tableView.deleteRows(at: [sourceIndexPath], with: .automatic)
                     tableView.insertRows(at: [destinationIndexPath], with: .automatic)
                 })
+                
                 coordinator.drop(item.dragItem, toRowAt: destinationIndexPath)
             }
         }

@@ -38,9 +38,9 @@ class TagService {
     func fetchTags() {
         do {
             let realm = try Realm()
-            let results = realm.objects(TagObject.self).sorted(byKeyPath: "index", ascending: true)
+            let results = realm.objects(TagObject.self).sorted(byKeyPath: "order", ascending: true)
             tags = Array(results)
-            hcLog("태그 목록 갱신 완료")
+            hcLog("태그 목록 로드 완료")
         } catch {
             hcLog("\(error) \(error.localizedDescription)")
             tags = []
@@ -55,10 +55,10 @@ class TagService {
         }
         
         let tag = tags[index]
-        tag.name = newName
         do {
             let realm = try Realm()
             try realm.write {
+                tag.name = newName
                 realm.add(tag, update: .modified)
             }
             hcLog("태그 이름 수정 완료: \(newName)")
