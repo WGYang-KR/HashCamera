@@ -158,6 +158,7 @@
 				6A0486452C49529000C3989F /* SideMenuVC.swift */,
 				6A0486462C49529000C3989F /* SideMenuVC.xib */,
 				6A0486492C49617500C3989F /* BrowserVM.swift */,
+				6A2C369C2BA8711600AAF24B /* FolderMonitor.swift */,
 			);
 			path = BrowserScene;
 			sourceTree = "<group>";
@@ -300,7 +301,6 @@
 				6A133E3D2B0268FF0018A769 /* StorageModel.swift */,
 				6AE7FFE52B1B5A4A00BC3DB9 /* FileBrowserModel.swift */,
 				6A37964F2BB5A3C300BAFC19 /* MediaFileModel.swift */,
-				6A2C369C2BA8711600AAF24B /* FolderMonitor.swift */,
 			);
 			path = ServiceModule;
 			sourceTree = "<group>";
