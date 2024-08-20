@@ -14,6 +14,7 @@ class SystemUIImage {
     static let listBullet = UIImage(systemName: "list.bullet")
     static let infoCircle = UIImage(systemName: "info.circle") // i
     static let checkmarkCircle = UIImage(systemName: "checkmark.circle")
+    static let checkmarkCircleFill = UIImage(systemName: "checkmark.circle.fill")
     static let plus = UIImage(systemName: "plus")
     static let gearshape = UIImage(systemName: "gearshape") //􀣋
     static let squareAndArrowUp = UIImage(systemName: "square.and.arrow.up")//공유

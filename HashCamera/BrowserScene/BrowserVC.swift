@@ -16,10 +16,17 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     
     @IBOutlet weak var collectionView: UICollectionView!
     let toolBarLabel = UILabel()
+    var selectionModeBtn: UIBarButtonItem?
     let menu  = SideMenuNavigationController(rootViewController: SideMenuVC())
     
     var itemSize: CGSize = .zero
     var itemSpacing: CGFloat = 2.0
+    
+    var selectionMode: Bool = false {
+        didSet {
+            setSelectionMode(selectionMode)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,7 +37,7 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.setNavigationBarHidden(false, animated: false)
-        navigationController?.setToolbarHidden(true, animated: false)
+        selectionMode = false
     }
     
     override func viewDidLayoutSubviews() {
@@ -48,10 +55,12 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
                                              target: self,
                                              action: #selector(naviListBtnTapped))]
         
-        let naviRightItems = [UIBarButtonItem(image: SystemUIImage.checkmarkCircle,
+        let selectionModeBtn = UIBarButtonItem(image: SystemUIImage.checkmarkCircle,
                                               style: .plain,
                                               target: self,
-                                              action: #selector(naviSelectionBtnTapped))]
+                                              action: #selector(naviSelectionBtnTapped))
+        self.selectionModeBtn = selectionModeBtn
+        let naviRightItems = [selectionModeBtn]
         setNaviBar("Browser", leftItems: naviLeftItems, rightItems: naviRightItems)
         
         // Side Bar
@@ -106,19 +115,18 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
         
         collectionView.dataSource = self
         collectionView.delegate = self
-        
+        collectionView.allowsMultipleSelection = true
+    
         collectionView.register(UINib(nibName: "\(BrowserItemCell.self)",
                                       bundle: nil),
                                 forCellWithReuseIdentifier: "\(BrowserItemCell.self)")
         
-    
-        //콜렉션뷰
         if let collectionLayout = collectionView.collectionViewLayout as?  UICollectionViewFlowLayout {
             collectionLayout.scrollDirection = .vertical
             collectionLayout.minimumLineSpacing = .zero
             collectionLayout.minimumInteritemSpacing = .zero
         }
-    
+        
     }
 
     //MARK: - CollectionView DataSource
@@ -167,15 +175,23 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     
     //MARK: -
     
+    ///선택모드를 키고, 끈다.
+    func setSelectionMode(_ selectionMode: Bool) {
+        guard let navigationController else { return }
+        navigationController.setToolbarHidden(!selectionMode, animated: true)
+        selectionModeBtn?.image = selectionMode ? SystemUIImage.checkmarkCircleFill : SystemUIImage.checkmarkCircle
+        
+        collectionView.indexPathsForSelectedItems?.forEach{collectionView.deselectItem(at: $0, animated: false)}
+       
+        collectionView.allowsMultipleSelection = selectionMode
+    }
+    
     @objc func naviListBtnTapped() {
         present(menu, animated: true)
     }
     
     @objc func naviSelectionBtnTapped() {
-        guard let navigationController else { return }
-        let newValue = !navigationController.isToolbarHidden
-        navigationController.setToolbarHidden(newValue, animated: true)
-     
+        selectionMode = !selectionMode
     }
     
     @IBAction func shareBtnTapped(_ sender: Any) {
