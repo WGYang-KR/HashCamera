@@ -53,23 +53,24 @@ class BrowserVM {
         folderMonitor.startMonitoring()
     }
 
-    func initFileList() async {
+    func initFileList() {
         guard let rootURL else { return }
-        
-        do {
-            let fetchedList =  try fileManager.contentsOfDirectory(at: rootURL,
-                                                                   includingPropertiesForKeys: nil)
-            hcLog("fetched list count = \(fetchedList.count)")
-            let photoList = fetchedList.filter{$0.isPhoto}
-            hcLog("photo file count = \(photoList.count)")
-            
-            await MainActor.run {
-                fileList.accept(photoList.map{ImageFileModel(url: $0)})
-            }
-        } catch {
-            hcLog("fetch error")
-            await MainActor.run {
-                fileList.accept([])
+        Task {
+            do {
+                let fetchedList =  try fileManager.contentsOfDirectory(at: rootURL,
+                                                                       includingPropertiesForKeys: nil)
+                hcLog("fetched list count = \(fetchedList.count)")
+                let photoList = fetchedList.filter{$0.isPhoto}
+                hcLog("photo file count = \(photoList.count)")
+                
+                await MainActor.run {
+                    fileList.accept(photoList.map{ImageFileModel(url: $0)})
+                }
+            } catch {
+                hcLog("fetch error")
+                await MainActor.run {
+                    fileList.accept([])
+                }
             }
         }
     }
