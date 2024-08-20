@@ -15,11 +15,11 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     let vm = BrowserVM()
     
     @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var bottomBarLabel: UILabel!
+    let toolBarLabel = UILabel()
+    let menu  = SideMenuNavigationController(rootViewController: SideMenuVC())
+    
     var itemSize: CGSize = .zero
     var itemSpacing: CGFloat = 2.0
-    
-    let menu  = SideMenuNavigationController(rootViewController: SideMenuVC())
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +30,7 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.setNavigationBarHidden(false, animated: false)
+        navigationController?.setToolbarHidden(true, animated: false)
     }
     
     override func viewDidLayoutSubviews() {
@@ -55,8 +56,43 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
         
         // Side Bar
         menu.leftSide = true
+        
+        // Tool Bar
+        let defaultColor = UIColor.colorTeal02
+        let spacing = 8.0
+        let shareBtn = UIBarButtonItem(image: SystemUIImage.squareAndArrowUp,
+                                       style: .plain,
+                                       target: self,
+                                       action: #selector(shareBtnTapped))
+        let dummyBtn = UIBarButtonItem(image: nil,
+                                       style: .plain,
+                                       target: nil,
+                                       action: nil)
+        let labelItem = UIBarButtonItem(customView: toolBarLabel)
+        toolBarLabel.font = .systemFont(ofSize: 14.0, weight: .regular)
+        toolBarLabel.textColor = defaultColor
+        toolBarLabel.lineBreakMode = .byTruncatingTail
+        toolBarLabel.numberOfLines = 1
+        let trashBtn = UIBarButtonItem(image: SystemUIImage.trash,
+                                       style: .plain,
+                                       target: self,
+                                       action: #selector(trashBtnTapped))
+        let tagBtn =  UIBarButtonItem(image: SystemUIImage.tag,
+                                      style: .done,
+                                      target: self,
+                                      action: #selector(tagBtnTapped))
+   
+        let items = [shareBtn, .fixedSpace(spacing), dummyBtn, .fixedSpace(spacing), .flexibleSpace(), labelItem, .flexibleSpace(),  .fixedSpace(spacing), trashBtn, .fixedSpace(spacing), tagBtn]
+        
+     
+        for item in items {
+            item.tintColor = defaultColor
+            item.setTitleTextAttributes([.foregroundColor: defaultColor], for: .normal)
+        }
+        
+        self.setToolbarItems(items, animated: false)
+
     }
-    
     
     func initVM() {
         vm.fileList.subscribe { [weak self] list in
@@ -136,19 +172,25 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     }
     
     @objc func naviSelectionBtnTapped() {
-        
+        guard let navigationController else { return }
+        let newValue = !navigationController.isToolbarHidden
+        navigationController.setToolbarHidden(newValue, animated: true)
+     
     }
     
     @IBAction func shareBtnTapped(_ sender: Any) {
-        
+        toolBarLabel.text = "공유버튼 클릭"
+        toolBarLabel.sizeToFit()
     }
     
     @IBAction func trashBtnTapped(_ sender: Any) {
-        
+        toolBarLabel.text = "삭제버튼 클릭 레이블 내용이 굉장히 길 때를 테스트해 보겠습니다. Ipsem lorem"
+        toolBarLabel.sizeToFit()
     }
     
     @IBAction func tagBtnTapped(_ sender: Any) {
-        
+        toolBarLabel.text = "태그버튼 클릭"
+        toolBarLabel.sizeToFit()
     }
     
 

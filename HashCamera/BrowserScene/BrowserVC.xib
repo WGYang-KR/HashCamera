@@ -12,7 +12,6 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BrowserVC" customModule="HashCamera" customModuleProvider="target">
             <connections>
-                <outlet property="bottomBarLabel" destination="oE8-kf-jAp" id="afK-Bp-QaH"/>
                 <outlet property="collectionView" destination="Gpn-zH-zmV" id="YL6-ub-B0R"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -22,133 +21,31 @@
             <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1cY-fZ-zSI">
-                    <rect key="frame" x="0.0" y="59" width="393" height="759"/>
-                    <subviews>
-                        <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="Gpn-zH-zmV">
-                            <rect key="frame" x="0.0" y="0.0" width="393" height="759"/>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                            <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="jS0-5u-QzP">
-                                <size key="itemSize" width="128" height="128"/>
-                                <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                            </collectionViewFlowLayout>
-                        </collectionView>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="D6d-oc-TuR">
-                            <rect key="frame" x="0.0" y="711" width="393" height="48"/>
-                            <subviews>
-                                <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="Oea-XH-fBh">
-                                    <rect key="frame" x="16" y="8" width="361" height="32"/>
-                                    <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="C2E-yM-eEn">
-                                            <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="32" id="Ew7-fg-Fie"/>
-                                                <constraint firstAttribute="width" constant="32" id="na9-KZ-01M"/>
-                                            </constraints>
-                                            <color key="tintColor" name="colorTeal02"/>
-                                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                            <state key="normal" image="square.and.arrow.up" catalog="system">
-                                                <color key="titleColor" name="colorTeal02"/>
-                                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="20"/>
-                                            </state>
-                                            <connections>
-                                                <action selector="shareBtnTapped:" destination="-1" eventType="touchUpInside" id="j6q-ls-mtH"/>
-                                            </connections>
-                                        </button>
-                                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1wn-iv-Zzo">
-                                            <rect key="frame" x="48" y="0.0" width="32" height="32"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="32" id="LH8-iP-u31"/>
-                                                <constraint firstAttribute="height" constant="32" id="hc8-wS-3QX"/>
-                                            </constraints>
-                                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                        </button>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1장의 사진이 선택됨" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oE8-kf-jAp">
-                                            <rect key="frame" x="96" y="7.6666666666666288" width="169" height="17"/>
-                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="14"/>
-                                            <color key="textColor" name="colorTeal02"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DeN-Hb-Ni6">
-                                            <rect key="frame" x="281" y="0.0" width="32" height="32"/>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="32" id="aq0-ps-Xqe"/>
-                                                <constraint firstAttribute="width" constant="32" id="hDY-y5-esr"/>
-                                            </constraints>
-                                            <color key="tintColor" name="colorTeal02"/>
-                                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                            <state key="normal" image="trash" catalog="system">
-                                                <color key="titleColor" name="colorTeal02"/>
-                                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="20"/>
-                                            </state>
-                                            <connections>
-                                                <action selector="trashBtnTapped:" destination="-1" eventType="touchUpInside" id="JZT-1a-y3Z"/>
-                                            </connections>
-                                        </button>
-                                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B1p-5d-SY8">
-                                            <rect key="frame" x="329" y="0.0" width="32" height="32"/>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="32" id="3Hj-Gm-C6W"/>
-                                                <constraint firstAttribute="height" constant="32" id="IPY-g4-G3r"/>
-                                            </constraints>
-                                            <color key="tintColor" name="colorTeal02"/>
-                                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                            <state key="normal" image="tag" catalog="system">
-                                                <color key="titleColor" name="colorTeal02"/>
-                                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="20"/>
-                                            </state>
-                                            <connections>
-                                                <action selector="tagBtnTapped:" destination="-1" eventType="touchUpInside" id="fAK-kv-Onz"/>
-                                            </connections>
-                                        </button>
-                                    </subviews>
-                                </stackView>
-                            </subviews>
-                            <constraints>
-                                <constraint firstItem="Oea-XH-fBh" firstAttribute="top" secondItem="D6d-oc-TuR" secondAttribute="top" constant="8" id="IMC-1U-2CY"/>
-                                <constraint firstItem="Oea-XH-fBh" firstAttribute="leading" secondItem="D6d-oc-TuR" secondAttribute="leading" constant="16" id="Ouq-UC-cfC"/>
-                                <constraint firstAttribute="trailing" secondItem="Oea-XH-fBh" secondAttribute="trailing" constant="16" id="bcv-4H-4Vc"/>
-                                <constraint firstAttribute="bottom" secondItem="Oea-XH-fBh" secondAttribute="bottom" constant="8" id="yZw-HG-FqY"/>
-                            </constraints>
-                        </view>
-                    </subviews>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <constraints>
-                        <constraint firstItem="D6d-oc-TuR" firstAttribute="leading" secondItem="1cY-fZ-zSI" secondAttribute="leading" id="KPa-qb-2kQ"/>
-                        <constraint firstAttribute="bottom" secondItem="D6d-oc-TuR" secondAttribute="bottom" id="N6R-Ox-kFt"/>
-                        <constraint firstAttribute="trailing" secondItem="Gpn-zH-zmV" secondAttribute="trailing" id="P71-Tt-4K9"/>
-                        <constraint firstItem="Gpn-zH-zmV" firstAttribute="leading" secondItem="1cY-fZ-zSI" secondAttribute="leading" id="k2S-3M-dPa"/>
-                        <constraint firstAttribute="trailing" secondItem="D6d-oc-TuR" secondAttribute="trailing" id="mS8-e4-87p"/>
-                        <constraint firstAttribute="bottom" secondItem="Gpn-zH-zmV" secondAttribute="bottom" id="ub6-rD-rM6"/>
-                        <constraint firstItem="Gpn-zH-zmV" firstAttribute="top" secondItem="1cY-fZ-zSI" secondAttribute="top" id="vyd-fD-gc1"/>
-                    </constraints>
-                </view>
+                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="Gpn-zH-zmV">
+                    <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="jS0-5u-QzP">
+                        <size key="itemSize" width="128" height="128"/>
+                        <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                        <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                        <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                    </collectionViewFlowLayout>
+                </collectionView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <color key="backgroundColor" name="colorGrey04"/>
             <constraints>
-                <constraint firstItem="1cY-fZ-zSI" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="6pr-Mn-wag"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="1cY-fZ-zSI" secondAttribute="bottom" id="L3w-Un-P7l"/>
-                <constraint firstItem="1cY-fZ-zSI" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="YZh-LD-kE3"/>
-                <constraint firstItem="1cY-fZ-zSI" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="jcW-ua-N5J"/>
+                <constraint firstItem="Gpn-zH-zmV" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="NVl-V6-Qjd"/>
+                <constraint firstItem="Gpn-zH-zmV" firstAttribute="trailing" secondItem="i5M-Pr-FkT" secondAttribute="trailing" id="ZKK-0O-Ruj"/>
+                <constraint firstAttribute="bottom" secondItem="Gpn-zH-zmV" secondAttribute="bottom" id="uC2-sR-UXw"/>
+                <constraint firstItem="Gpn-zH-zmV" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="vjK-pS-x2U"/>
             </constraints>
             <point key="canvasLocation" x="136.64122137404578" y="20.422535211267608"/>
         </view>
     </objects>
     <resources>
-        <image name="square.and.arrow.up" catalog="system" width="108" height="128"/>
-        <image name="tag" catalog="system" width="128" height="118"/>
-        <image name="trash" catalog="system" width="117" height="128"/>
         <namedColor name="colorGrey04">
             <color red="0.97254901960784312" green="0.96470588235294119" blue="0.95686274509803926" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
-        <namedColor name="colorTeal02">
-            <color red="0.074509803921568626" green="0.36470588235294116" blue="0.40000000000000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
