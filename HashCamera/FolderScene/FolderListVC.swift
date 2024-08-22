@@ -19,7 +19,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         tableView.delegate = self
         tableView.dataSource = self
         
-        tableView.register(UINib(nibName: "\(TagListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(TagListItemCell.self)")
+        tableView.register(UINib(nibName: "\(FolderListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(FolderListItemCell.self)")
         
         let naviAddBarBtnItem = UIBarButtonItem(image: SystemUIImage.plus,
                                                 style: .plain,
@@ -66,16 +66,18 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "\(TagListItemCell.self)", for: indexPath) as? TagListItemCell else
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "\(FolderListItemCell.self)", for: indexPath) as? FolderListItemCell else
         {return UITableViewCell()}
         let item = FolderService.shared.folders.value[indexPath.row]
         cell.nameLabel.text =  item.lastPathComponent
 //        cell.countLabel.text = "(" + String(describing: item.filePaths.count)  + ")"
         return cell
     }
-    
+
     //MARK: - UITableViewDelegate
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        navigationController?.pushViewController(BrowserVC(), animated: true)
+    }
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         //쓸어서 삭제 기능

@@ -1,5 +1,5 @@
 //
-//  TagListItemCell.swift
+//  FolderListItemCell.swift
 //  HashCamera
 //
 //  Created by Anto-Yang on 8/5/24.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class TagListItemCell: UITableViewCell {
+class FolderListItemCell: UITableViewCell {
 
     @IBOutlet weak var selectedImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
