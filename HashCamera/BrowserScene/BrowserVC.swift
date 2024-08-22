@@ -160,6 +160,15 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
         vm.stopFetchingThumb(index: indexPath.item)
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView.allowsMultipleSelection {
+            
+        } else {
+            collectionView.deselectItem(at: indexPath, animated: true)
+            //뷰어이동
+        }
+    }
+    
     //MARK: - CollectionView Delegate FlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return itemSize

@@ -50,7 +50,6 @@ class SideMenuVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "\(TagListItemCell.self)", for: indexPath) as? TagListItemCell else
         {return UITableViewCell()}
         let item = tagService.tags[indexPath.row]
-        cell.line3ImageView.isHidden = true
         cell.nameLabel.text =  item.name
         cell.countLabel.text = "(" + String(describing: item.filePaths.count)  + ")"
         return cell

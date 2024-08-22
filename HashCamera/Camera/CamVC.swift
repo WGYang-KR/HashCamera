@@ -195,7 +195,7 @@ class CamVC: UIViewController {
         //뷰어 버튼
         browseButton.rx.tap.bind { [weak self] _ in
             guard let self else { return }
-            let vc = BrowserVC()
+            let vc = FolderListVC()
 //            let vc = BrowserLocalVC()
             let naviVC = UINavigationController(rootViewController: vc)
             naviVC.modalPresentationStyle = .fullScreen

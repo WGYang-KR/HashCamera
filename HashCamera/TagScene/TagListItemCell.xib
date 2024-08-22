@@ -22,43 +22,40 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rDj-6b-fTZ">
                         <rect key="frame" x="0.0" y="0.0" width="275" height="141"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="Via-U7-mnJ">
-                                <rect key="frame" x="16" y="16" width="145" height="109"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="circle.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="9Me-Va-b5q">
+                                <rect key="frame" x="8" y="67.666666666666671" width="8" height="6.6666666666666714"/>
+                                <color key="tintColor" name="ColorTeal02"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="8" id="XG3-sl-Xfa"/>
+                                    <constraint firstAttribute="height" constant="8" id="y5C-M8-b5D"/>
+                                </constraints>
+                            </imageView>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="rCa-ni-vKe">
+                                <rect key="frame" x="23.999999999999986" y="16" width="229.66666666666663" height="109"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="line.3.horizontal" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="9Me-Va-b5q">
-                                        <rect key="frame" x="0.0" y="49.666666666666664" width="20" height="10.333333333333336"/>
-                                        <color key="tintColor" name="colorTeal03"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="20" id="XG3-sl-Xfa"/>
-                                            <constraint firstAttribute="height" constant="20" id="y5C-M8-b5D"/>
-                                        </constraints>
-                                    </imageView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="rCa-ni-vKe">
-                                        <rect key="frame" x="36" y="44.333333333333336" width="109" height="20.333333333333336"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TagName" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ek2-07-r1r">
-                                                <rect key="frame" x="0.0" y="0.0" width="72.333333333333329" height="20.333333333333332"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <color key="textColor" name="ColorTeal02"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="753" text="(35)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Teu-dI-2Qr">
-                                                <rect key="frame" x="76.333333333333343" y="0.0" width="32.666666666666657" height="20.333333333333332"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <color key="textColor" name="colorTeal03"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                        </subviews>
-                                    </stackView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Very Long Folder Name " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ek2-07-r1r">
+                                        <rect key="frame" x="0.0" y="0.0" width="182.66666666666666" height="109"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" name="ColorTeal02"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="753" text="(000)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Teu-dI-2Qr">
+                                        <rect key="frame" x="186.66666666666666" y="0.0" width="43" height="109"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" name="colorTeal03"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="Via-U7-mnJ" secondAttribute="bottom" constant="16" id="Te5-am-6FS"/>
-                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Via-U7-mnJ" secondAttribute="trailing" constant="16" id="cFf-TI-vYf"/>
-                            <constraint firstItem="Via-U7-mnJ" firstAttribute="top" secondItem="rDj-6b-fTZ" secondAttribute="top" constant="16" id="cMf-re-CWA"/>
-                            <constraint firstItem="Via-U7-mnJ" firstAttribute="leading" secondItem="rDj-6b-fTZ" secondAttribute="leading" constant="16" id="ilt-iv-RIn"/>
+                            <constraint firstAttribute="bottom" secondItem="rCa-ni-vKe" secondAttribute="bottom" constant="16" id="A19-iP-M9H"/>
+                            <constraint firstItem="rCa-ni-vKe" firstAttribute="leading" secondItem="9Me-Va-b5q" secondAttribute="trailing" constant="8" id="HHA-GO-39a"/>
+                            <constraint firstItem="rCa-ni-vKe" firstAttribute="top" secondItem="rDj-6b-fTZ" secondAttribute="top" constant="16" id="Jp6-nd-zw6"/>
+                            <constraint firstItem="9Me-Va-b5q" firstAttribute="leading" secondItem="rDj-6b-fTZ" secondAttribute="leading" constant="8" id="KuI-O1-MQs"/>
+                            <constraint firstItem="9Me-Va-b5q" firstAttribute="centerY" secondItem="rDj-6b-fTZ" secondAttribute="centerY" id="Ru1-6Q-K9P"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="rCa-ni-vKe" secondAttribute="trailing" constant="16" id="cgw-sy-yzQ"/>
                         </constraints>
                     </view>
                 </subviews>
@@ -72,14 +69,14 @@
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="countLabel" destination="Teu-dI-2Qr" id="d66-kn-exD"/>
-                <outlet property="line3ImageView" destination="9Me-Va-b5q" id="9bB-Ue-chs"/>
                 <outlet property="nameLabel" destination="ek2-07-r1r" id="6rZ-y2-0B0"/>
+                <outlet property="selectedImageView" destination="9Me-Va-b5q" id="9bB-Ue-chs"/>
             </connections>
             <point key="canvasLocation" x="100" y="69.366197183098592"/>
         </tableViewCell>
     </objects>
     <resources>
-        <image name="line.3.horizontal" catalog="system" width="128" height="65"/>
+        <image name="circle.fill" catalog="system" width="128" height="123"/>
         <namedColor name="ColorTeal02">
             <color red="0.074509803921568626" green="0.36470588235294116" blue="0.40000000000000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

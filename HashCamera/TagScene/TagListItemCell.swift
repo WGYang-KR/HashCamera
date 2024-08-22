@@ -9,7 +9,7 @@ import UIKit
 
 class TagListItemCell: UITableViewCell {
 
-    @IBOutlet weak var line3ImageView: UIImageView!
+    @IBOutlet weak var selectedImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var countLabel: UILabel!
     
@@ -21,12 +21,14 @@ class TagListItemCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         selectionStyle = .none
+        selectedImageView.isHidden = true
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         nameLabel.font = selected ? selectedFont : normalFont
         nameLabel.textColor = selected ? selectedColor : normalColor
+        selectedImageView.isHidden = !selected
     }
     
 }

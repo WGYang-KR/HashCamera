@@ -30,6 +30,20 @@ public func hcLog(_ message: String?, file: String = #file, functionName: String
     os_log("%@",type:.default ,"\(Timestamp.timestamp())<\(className)> \(functionName) [#\(line)] \(message ?? "")")
 }
 
+public func hcLog(_ message: String?, file: String = #file, functionName: String = #function , line: UInt = #line, error: Error?) {
+    
+#if RELEASE
+    return
+#endif
+    if let error {
+        let className = (file as NSString).lastPathComponent
+        os_log("%@",type:.default ,"\(Timestamp.timestamp())<\(className)> \(functionName) [#\(line)] \(message ?? "") | \(error) | \(error.localizedDescription)")
+    } else {
+        hcLog(message,file: file, functionName: functionName, line: line)
+    }
+}
+
+
 class Timestamp {
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
