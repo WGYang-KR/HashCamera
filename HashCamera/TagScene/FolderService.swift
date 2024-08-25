@@ -24,13 +24,10 @@ class FolderService {
     
     let folders = BehaviorRelay<[FolderListItemModel]>(value: [])
  
-    var rootURL: URL? {
-        if let baseURL =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-            return URL(string: "./", relativeTo: baseURL)
-        } else {
-            return nil
-        }
-    }
+    var rootURL: URL? = {
+        let baseURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        return URL(string: "./", relativeTo: baseURL)
+    }()
     
     func prepare() {
         guard let rootURL else { return }
@@ -39,16 +36,17 @@ class FolderService {
             folderMonitor = FolderMonitor(url: rootURL)
         }
         
-        folderMonitor?.folderDidChange = {
-            self.fetchFolders()
+        folderMonitor?.folderDidChange = { [weak self] in
+            Task { [weak self] in
+                await self?.fetchFolders()
+            }
         }
         folderMonitor?.startMonitoring()
     }
     
     ///새폴더 만들기. 성공시 생성된 URL 반환. 실패시 에러반환
     func createFolder(folderName: String ) async -> Result<URL, CreationError> {
-        guard let baseURL =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first,
-              let rootURL = URL(string: "./", relativeTo: baseURL) else { return .failure(.unknown) }
+        guard let rootURL else { return .failure(.unknown) }
         
         let newURL = rootURL.appendingPathComponent(folderName, conformingTo: .directory)
         guard fileManager.fileExists(atPath: newURL.path) == false else { return .failure(.duplicatedName)}
@@ -69,29 +67,26 @@ class FolderService {
     }
     
     ///폴더 조회
-    func fetchFolders() {
+    func fetchFolders() async {
         ///로컬폴더 rootURL 세팅
-        Task {
-            guard let baseURL =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first,
-                  let rootURL = URL(string: "./", relativeTo: baseURL) else { return }
-            
-            do {
-                let list =  try fileManager.contentsOfDirectory(at: rootURL,
-                                                                includingPropertiesForKeys: nil).filter { $0.isDirectory }
-                    .sorted{ $0.lastPathComponent < $1.lastPathComponent }
-                hcLog("fetched folders count = \(list.count)")
-                await MainActor.run { [weak self] in
-                    self?.folders.accept(list.map{.init(type: .folder, url: $0)} )
-                }
+        guard let rootURL else { return }
+        
+        do {
+            let list =  try fileManager.contentsOfDirectory(at: rootURL,
+                                                            includingPropertiesForKeys: nil).filter { $0.isDirectory }
+                .sorted{ $0.lastPathComponent < $1.lastPathComponent }
+            hcLog("fetched folders count = \(list.count)")
+            await MainActor.run { [weak self] in
+                self?.folders.accept(list.map{.init(type: .folder, url: $0)} )
             }
-            catch {
-                hcLog("폴더 읽기 실패", error: error)
-                await MainActor.run { [weak self] in
-                    self?.folders.accept([])
-                }
-            }
-         
         }
+        catch {
+            hcLog("폴더 읽기 실패", error: error)
+            await MainActor.run { [weak self] in
+                self?.folders.accept([])
+            }
+        }
+        
     }
     
     ///폴더 이름바꾸기. 성공시 바뀐 URL 반환. 실패시 에러 반환.

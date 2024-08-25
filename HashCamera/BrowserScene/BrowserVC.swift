@@ -13,13 +13,12 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     
     var disposeBag = DisposeBag()
     let vm = BrowserVM()
+    let folderListVC = FolderListVC()
     
     @IBOutlet weak var collectionView: UICollectionView!
     let toolBarLabel = UILabel()
     var selectionModeBtn: UIBarButtonItem?
     lazy var menu = {
-        let folderListVC = FolderListVC()
-        folderListVC.delegate = self
         return SideMenuNavigationController(rootViewController: folderListVC)
     }()
 
@@ -118,16 +117,12 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
         vm.fileList.subscribe { [weak self] list in
             self?.collectionView.reloadData()
         }.disposed(by: disposeBag)
-
-        vm.initFileList()
+        folderListVC.delegate = self
     }
-    
   
-
-    
     //MARK: - SideBar FolderList Delegate
     func folderListVCDidSelectFolder(index: IndexPath, folderListItem: FolderListItemModel) {
-        vm.rootURL = folderListItem.url
+        vm.selectedURL = folderListItem.url
         vm.initFileList()
     }
     

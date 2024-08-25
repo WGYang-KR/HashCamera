@@ -7,6 +7,7 @@
 
 import UIKit
 import RxSwift
+import RxRelay
 
 protocol FolderListVCDelegate: AnyObject {
     func folderListVCDidSelectFolder(index: IndexPath, folderListItem: FolderListItemModel)
@@ -17,6 +18,14 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     var disposeBag = DisposeBag()
     @IBOutlet weak var tableView: UITableView!
 
+    let section0CellList: [FolderListItemModel] = {
+        if let rootURL = FolderService.shared.rootURL {
+            return [.init(type: .allPhotos, url: rootURL), .init(type: .unclassified, url: rootURL)]
+        } else {
+            return []
+        }
+    }()
+    
     var sceneType: ScenetType = .sideMenu
     enum ScenetType {
         case sideMenu
@@ -56,11 +65,19 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         
         FolderService.shared.prepare()
         
+        Task { [weak self] in
+            await FolderService.shared.fetchFolders()
+            await MainActor.run {
+                guard let self else { return }
+                self.tableView.selectRow(at:.init(row: 0, section: 0), animated: false, scrollPosition: .top)
+                self.tableView(self.tableView, didSelectRowAt: .init(row: 0, section: 0))
+            }
+        }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        FolderService.shared.fetchFolders()
     }
     
     @objc func addBtnTapped() {
@@ -83,23 +100,42 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     }
     
     //MARK: - UITableViewDataSource
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return FolderService.shared.folders.value.count
+        if section == 0 {
+            return section0CellList.count
+        } else {
+            return FolderService.shared.folders.value.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "\(FolderListItemCell.self)", for: indexPath) as? FolderListItemCell else
         {return UITableViewCell()}
-        let item = FolderService.shared.folders.value[indexPath.row]
-        cell.nameLabel.text =  item.name
-//        cell.countLabel.text = "(" + String(describing: item.filePaths.count)  + ")"
-        return cell
+        
+        if indexPath.section == 0 {
+            let item  = section0CellList[indexPath.row]
+            cell.nameLabel.text = item.name
+            return cell
+        } else {
+         
+            let item = FolderService.shared.folders.value[indexPath.row]
+            cell.nameLabel.text =  item.name
+            //        cell.countLabel.text = "(" + String(describing: item.filePaths.count)  + ")"
+            return cell
+        }
     }
     
     //MARK: - UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        delegate?.folderListVCDidSelectFolder(index: indexPath, folderListItem: FolderService.shared.folders.value[indexPath.row])
+        if indexPath.section == 0 {
+            delegate?.folderListVCDidSelectFolder(index: indexPath, folderListItem:  section0CellList[indexPath.row])
+        } else {
+            delegate?.folderListVCDidSelectFolder(index: indexPath, folderListItem: FolderService.shared.folders.value[indexPath.row])
+        }
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

@@ -28,36 +28,27 @@ class BrowserVM {
     let fileManager = FileManager.default
     let qlThumbnailGenerator =  QLThumbnailGenerator.shared
     
-    var rootURL: URL?
+    var selectedURL: URL?
     let fileList = BehaviorRelay<[ImageFileModel]>(value: [])
     var thumbnailSize: CGSize = .zero
-    let folderMonitor: FolderMonitor //폴더 변경 감시자
-
+    var folderMonitor: FolderMonitor? //폴더 변경 감시자
     
-    init() {
-        ///로컬폴더 rootURL 세팅
-        if let baseURL =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first{
-            let rootURL = URL(string: "./", relativeTo: baseURL)
-            self.rootURL = rootURL
-            
-        }
+    func initFileList() {
+        guard let selectedURL else { return }
         
-        ///폴더 변경 감시자 세팅
-        self.folderMonitor = FolderMonitor(url: self.rootURL)
-        folderMonitor.folderDidChange = {
+        self.folderMonitor?.stopMonitoring()
+        self.folderMonitor = FolderMonitor(url: self.selectedURL)
+        folderMonitor?.folderDidChange = {
+            hcLog("파일목록 갱신 감지")
             Task { [weak self] in
                 self?.initFileList
             }
         }
+        folderMonitor?.startMonitoring()
         
-        folderMonitor.startMonitoring()
-    }
-
-    func initFileList() {
-        guard let rootURL else { return }
         Task {
             do {
-                let fetchedList =  try fileManager.contentsOfDirectory(at: rootURL,
+                let fetchedList =  try fileManager.contentsOfDirectory(at: selectedURL,
                                                                        includingPropertiesForKeys: nil)
                 hcLog("fetched list count = \(fetchedList.count)")
                 let photoList = fetchedList.filter{$0.isPhoto}
@@ -155,7 +146,7 @@ class BrowserVM {
     }
     
     deinit {
-        self.folderMonitor.stopMonitoring()
+        self.folderMonitor?.stopMonitoring()
     }
 }
 
