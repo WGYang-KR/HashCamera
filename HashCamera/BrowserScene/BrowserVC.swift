@@ -17,6 +17,7 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     @IBOutlet weak var collectionView: UICollectionView!
     let toolBarLabel = UILabel()
     var selectionModeBtn: UIBarButtonItem?
+    let menu  = SideMenuNavigationController(rootViewController: SideMenuVC())
     
     var itemSize: CGSize = .zero
     var itemSpacing: CGFloat = 2.0
@@ -48,15 +49,23 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     
     func initUI() {
         // Navi Bar
-
+        let naviLeftItems = [naviBackBarButtonItem(),
+                             UIBarButtonItem(image: SystemUIImage.listBullet,
+                                             style: .plain,
+                                             target: self,
+                                             action: #selector(naviListBtnTapped))]
+        
         let selectionModeBtn = UIBarButtonItem(image: SystemUIImage.checkmarkCircle,
                                               style: .plain,
                                               target: self,
                                               action: #selector(naviSelectionBtnTapped))
         self.selectionModeBtn = selectionModeBtn
-        setNaviBar("Browser", leftItems: [naviBackBarButtonItem()], rightItems: [selectionModeBtn])
+        let naviRightItems = [selectionModeBtn]
+        setNaviBar("Browser", leftItems: naviLeftItems, rightItems: naviRightItems)
         
-
+        // Side Bar
+        menu.leftSide = true
+        
         // Tool Bar
         let defaultColor = UIColor.colorTeal02
         let spacing = 8.0
@@ -184,6 +193,10 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
         collectionView.indexPathsForSelectedItems?.forEach{collectionView.deselectItem(at: $0, animated: false)}
        
         collectionView.allowsMultipleSelection = selectionMode
+    }
+    
+    @objc func naviListBtnTapped() {
+        present(menu, animated: true)
     }
     
     @objc func naviSelectionBtnTapped() {
