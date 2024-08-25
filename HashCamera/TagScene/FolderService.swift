@@ -22,7 +22,7 @@ class FolderService {
 
     let fileManager = FileManager.default
     
-    let folders = BehaviorRelay<[URL]>(value: [])
+    let folders = BehaviorRelay<[FolderListItemModel]>(value: [])
  
     var rootURL: URL? {
         if let baseURL =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
@@ -81,7 +81,7 @@ class FolderService {
                     .sorted{ $0.lastPathComponent < $1.lastPathComponent }
                 hcLog("fetched folders count = \(list.count)")
                 await MainActor.run { [weak self] in
-                    self?.folders.accept(list)
+                    self?.folders.accept(list.map{.init(type: .folder, url: $0)} )
                 }
             }
             catch {
@@ -98,7 +98,7 @@ class FolderService {
     func renameFolder(at index: Int, newName: String) async -> Result<URL,RenameError> {
         guard index < folders.value.count else { return .failure(.outOfBound)}
         
-        let originURL = folders.value[index]
+        let originURL = folders.value[index].url
         let newURL = originURL.deletingLastPathComponent().appendingPathComponent(newName)
         guard fileManager.fileExists(atPath: newURL.path) == false else { return .failure(.duplicatedName) }
         do {
@@ -119,7 +119,7 @@ class FolderService {
     
     func deleteFolder(at index: Int) async -> Result<Void,DeleteError> {
         guard index < folders.value.count else { return .failure(.outOfBound)}
-        let url = folders.value[index]
+        let url = folders.value[index].url
         
         do {
             try fileManager.removeItem(at: url)

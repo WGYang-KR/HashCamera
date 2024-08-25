@@ -9,15 +9,21 @@ import UIKit
 import RxSwift
 import SideMenu
 
-class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-
+class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, FolderListVCDelegate {
+    
     var disposeBag = DisposeBag()
     let vm = BrowserVM()
     
     @IBOutlet weak var collectionView: UICollectionView!
     let toolBarLabel = UILabel()
     var selectionModeBtn: UIBarButtonItem?
-    let menu  = SideMenuNavigationController(rootViewController: FolderListVC())
+    lazy var menu = {
+        let folderListVC = FolderListVC()
+        folderListVC.delegate = self
+        return SideMenuNavigationController(rootViewController: folderListVC)
+    }()
+
+    
     
     var itemSize: CGSize = .zero
     var itemSpacing: CGFloat = 2.0
@@ -116,6 +122,17 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
         vm.initFileList()
     }
     
+  
+
+    
+    //MARK: - SideBar FolderList Delegate
+    func folderListVCDidSelectFolder(index: IndexPath, folderListItem: FolderListItemModel) {
+        vm.rootURL = folderListItem.url
+        vm.initFileList()
+    }
+    
+    //MARK: - CollectionView Delegate
+    
     func initCollectionView() {
         
         collectionView.dataSource = self
@@ -133,8 +150,7 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
         }
         
     }
-
-    //MARK: - CollectionView DataSource
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return vm.fileList.value.count
     }

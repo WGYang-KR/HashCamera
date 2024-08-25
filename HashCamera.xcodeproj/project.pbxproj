@@ -32,6 +32,7 @@
 		6A7D4F652C76237C00ED0C59 /* FolderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7D4F642C76237C00ED0C59 /* FolderService.swift */; };
 		6A7D4F682C775DED00ED0C59 /* FolderListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7D4F662C775DED00ED0C59 /* FolderListVC.swift */; };
 		6A7D4F692C775DED00ED0C59 /* FolderListVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A7D4F672C775DED00ED0C59 /* FolderListVC.xib */; };
+		6A7D4F6E2C7B4C9A00ED0C59 /* FolderListItemModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7D4F6D2C7B4C9A00ED0C59 /* FolderListItemModel.swift */; };
 		6A8B31FA2AE7983E00D24E49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B31F92AE7983E00D24E49 /* AppDelegate.swift */; };
 		6A8B31FC2AE7983E00D24E49 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B31FB2AE7983E00D24E49 /* SceneDelegate.swift */; };
 		6A8B31FE2AE7983E00D24E49 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B31FD2AE7983E00D24E49 /* ViewController.swift */; };
@@ -89,6 +90,7 @@
 		6A7D4F642C76237C00ED0C59 /* FolderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderService.swift; sourceTree = "<group>"; };
 		6A7D4F662C775DED00ED0C59 /* FolderListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListVC.swift; sourceTree = "<group>"; };
 		6A7D4F672C775DED00ED0C59 /* FolderListVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FolderListVC.xib; sourceTree = "<group>"; };
+		6A7D4F6D2C7B4C9A00ED0C59 /* FolderListItemModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListItemModel.swift; sourceTree = "<group>"; };
 		6A8B31F62AE7983E00D24E49 /* HashCamera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HashCamera.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A8B31F92AE7983E00D24E49 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6A8B31FB2AE7983E00D24E49 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				6A73A1042C610A2D007B6CAE /* FolderListItemCell.xib */,
 				6A7D4F662C775DED00ED0C59 /* FolderListVC.swift */,
 				6A7D4F672C775DED00ED0C59 /* FolderListVC.xib */,
+				6A7D4F6D2C7B4C9A00ED0C59 /* FolderListItemModel.swift */,
 			);
 			path = TagScene;
 			sourceTree = "<group>";
@@ -474,6 +477,7 @@
 				6A133E3E2B0268FF0018A769 /* StorageModel.swift in Sources */,
 				6A2C369D2BA8711600AAF24B /* FolderMonitor.swift in Sources */,
 				6A37964E2BB5A34700BAFC19 /* EmailHelper.swift in Sources */,
+				6A7D4F6E2C7B4C9A00ED0C59 /* FolderListItemModel.swift in Sources */,
 				6AA61AC62AE810F0002E3725 /* HCFileManager.swift in Sources */,
 				6AE8CFA12AF4D32D0063C8C6 /* CamPreviewView.swift in Sources */,
 				6A3796582BB5A4CD00BAFC19 /* AppStatus.swift in Sources */,

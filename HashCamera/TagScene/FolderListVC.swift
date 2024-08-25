@@ -8,6 +8,10 @@
 import UIKit
 import RxSwift
 
+protocol FolderListVCDelegate: AnyObject {
+    func folderListVCDidSelectFolder(index: IndexPath, folderListItem: FolderListItemModel)
+}
+
 class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     var disposeBag = DisposeBag()
@@ -18,6 +22,8 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         case sideMenu
         case moveFolder
     }
+
+    weak var delegate: FolderListVCDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,12 +91,16 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "\(FolderListItemCell.self)", for: indexPath) as? FolderListItemCell else
         {return UITableViewCell()}
         let item = FolderService.shared.folders.value[indexPath.row]
-        cell.nameLabel.text =  item.lastPathComponent
+        cell.nameLabel.text =  item.name
 //        cell.countLabel.text = "(" + String(describing: item.filePaths.count)  + ")"
         return cell
     }
     
     //MARK: - UITableViewDelegate
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        delegate?.folderListVCDidSelectFolder(index: indexPath, folderListItem: FolderService.shared.folders.value[indexPath.row])
+    }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
@@ -114,7 +124,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
             // 수정 팝업 띄우기
             let alert = UIAlertController(title: "이름변경", message: "변경할 이름 입력하세요.", preferredStyle: .alert)
             alert.addTextField { textField in
-                textField.text = FolderService.shared.folders.value[indexPath.row].lastPathComponent
+                textField.text = FolderService.shared.folders.value[indexPath.row].name
             }
             let saveAction = UIAlertAction(title: "확인", style: .default) { _ in
                 if let textField = alert.textFields?.first, let newText = textField.text,
