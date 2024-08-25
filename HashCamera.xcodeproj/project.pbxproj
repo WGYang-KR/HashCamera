@@ -10,11 +10,7 @@
 		68503708EA7E4DEC8BC3BEF6 /* Pods_HashCamera.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FDE4463923D94F256121154 /* Pods_HashCamera.framework */; };
 		6A0486432C49519000C3989F /* BrowserVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0486412C49519000C3989F /* BrowserVC.swift */; };
 		6A0486442C49519000C3989F /* BrowserVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0486422C49519000C3989F /* BrowserVC.xib */; };
-		6A0486472C49529000C3989F /* SideMenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0486452C49529000C3989F /* SideMenuVC.swift */; };
-		6A0486482C49529000C3989F /* SideMenuVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0486462C49529000C3989F /* SideMenuVC.xib */; };
 		6A04864A2C49617500C3989F /* BrowserVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0486492C49617500C3989F /* BrowserVM.swift */; };
-		6A04864D2C4E8EB400C3989F /* TagService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A04864C2C4E8EB400C3989F /* TagService.swift */; };
-		6A04864F2C4E8F1800C3989F /* TagObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A04864E2C4E8F1800C3989F /* TagObject.swift */; };
 		6A133E3E2B0268FF0018A769 /* StorageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A133E3D2B0268FF0018A769 /* StorageModel.swift */; };
 		6A133E4D2B0503690018A769 /* AppLifeCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A133E4C2B0503690018A769 /* AppLifeCycle.swift */; };
 		6A133E512B0655320018A769 /* CamVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A133E502B0655320018A769 /* CamVM.swift */; };
@@ -29,13 +25,9 @@
 		6A3796542BB5A44000BAFC19 /* PhotoFileFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3796532BB5A44000BAFC19 /* PhotoFileFormat.swift */; };
 		6A3796562BB5A47900BAFC19 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3796552BB5A47900BAFC19 /* SettingsView.swift */; };
 		6A3796582BB5A4CD00BAFC19 /* AppStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3796572BB5A4CD00BAFC19 /* AppStatus.swift */; };
-		6A37965B2BBAF08B00BAFC19 /* BrowserToolBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A37965A2BBAF08B00BAFC19 /* BrowserToolBarView.swift */; };
-		6A64A0652B20A67D0025AE80 /* BrowserLocalVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A64A0642B20A67D0025AE80 /* BrowserLocalVC.swift */; };
-		6A73A0FF2C4E983C007B6CAE /* TagSettingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A0FD2C4E983C007B6CAE /* TagSettingVC.swift */; };
-		6A73A1002C4E983C007B6CAE /* TagSettingVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A73A0FE2C4E983C007B6CAE /* TagSettingVC.xib */; };
 		6A73A1022C5143B2007B6CAE /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1012C5143B2007B6CAE /* Utils.swift */; };
-		6A73A1052C610A2D007B6CAE /* TagListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1032C610A2D007B6CAE /* TagListItemCell.swift */; };
-		6A73A1062C610A2D007B6CAE /* TagListItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A73A1042C610A2D007B6CAE /* TagListItemCell.xib */; };
+		6A73A1052C610A2D007B6CAE /* FolderListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */; };
+		6A73A1062C610A2D007B6CAE /* FolderListItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A73A1042C610A2D007B6CAE /* FolderListItemCell.xib */; };
 		6A73A1082C6A3DF5007B6CAE /* SystemUIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1072C6A3DF5007B6CAE /* SystemUIImage.swift */; };
 		6A7D4F652C76237C00ED0C59 /* FolderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7D4F642C76237C00ED0C59 /* FolderService.swift */; };
 		6A7D4F682C775DED00ED0C59 /* FolderListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7D4F662C775DED00ED0C59 /* FolderListVC.swift */; };
@@ -47,7 +39,6 @@
 		6A8B32032AE7983F00D24E49 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A8B32022AE7983F00D24E49 /* Assets.xcassets */; };
 		6A8B32062AE7983F00D24E49 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A8B32042AE7983F00D24E49 /* LaunchScreen.storyboard */; };
 		6A8B32152AE7A03000D24E49 /* CamVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B32142AE7A03000D24E49 /* CamVC.swift */; };
-		6A8B321B2AE7A14600D24E49 /* PhotoViewerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B321A2AE7A14600D24E49 /* PhotoViewerVC.swift */; };
 		6A8B321D2AE7A19A00D24E49 /* StorageBarCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B321C2AE7A19A00D24E49 /* StorageBarCollectionView.swift */; };
 		6A8B321F2AE7A1D000D24E49 /* SelectStorageBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B321E2AE7A1D000D24E49 /* SelectStorageBarView.swift */; };
 		6A8B32262AE7A5EE00D24E49 /* StorageBarItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B32252AE7A5EE00D24E49 /* StorageBarItemCell.swift */; };
@@ -75,11 +66,7 @@
 		4FDE4463923D94F256121154 /* Pods_HashCamera.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HashCamera.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A0486412C49519000C3989F /* BrowserVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserVC.swift; sourceTree = "<group>"; };
 		6A0486422C49519000C3989F /* BrowserVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BrowserVC.xib; sourceTree = "<group>"; };
-		6A0486452C49529000C3989F /* SideMenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuVC.swift; sourceTree = "<group>"; };
-		6A0486462C49529000C3989F /* SideMenuVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SideMenuVC.xib; sourceTree = "<group>"; };
 		6A0486492C49617500C3989F /* BrowserVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserVM.swift; sourceTree = "<group>"; };
-		6A04864C2C4E8EB400C3989F /* TagService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagService.swift; sourceTree = "<group>"; };
-		6A04864E2C4E8F1800C3989F /* TagObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagObject.swift; sourceTree = "<group>"; };
 		6A133E3D2B0268FF0018A769 /* StorageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageModel.swift; sourceTree = "<group>"; };
 		6A133E4C2B0503690018A769 /* AppLifeCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLifeCycle.swift; sourceTree = "<group>"; };
 		6A133E502B0655320018A769 /* CamVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CamVM.swift; sourceTree = "<group>"; };
@@ -95,13 +82,9 @@
 		6A3796532BB5A44000BAFC19 /* PhotoFileFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoFileFormat.swift; sourceTree = "<group>"; };
 		6A3796552BB5A47900BAFC19 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		6A3796572BB5A4CD00BAFC19 /* AppStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStatus.swift; sourceTree = "<group>"; };
-		6A37965A2BBAF08B00BAFC19 /* BrowserToolBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserToolBarView.swift; sourceTree = "<group>"; };
-		6A64A0642B20A67D0025AE80 /* BrowserLocalVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserLocalVC.swift; sourceTree = "<group>"; };
-		6A73A0FD2C4E983C007B6CAE /* TagSettingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagSettingVC.swift; sourceTree = "<group>"; };
-		6A73A0FE2C4E983C007B6CAE /* TagSettingVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TagSettingVC.xib; sourceTree = "<group>"; };
 		6A73A1012C5143B2007B6CAE /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		6A73A1032C610A2D007B6CAE /* TagListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagListItemCell.swift; sourceTree = "<group>"; };
-		6A73A1042C610A2D007B6CAE /* TagListItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TagListItemCell.xib; sourceTree = "<group>"; };
+		6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListItemCell.swift; sourceTree = "<group>"; };
+		6A73A1042C610A2D007B6CAE /* FolderListItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FolderListItemCell.xib; sourceTree = "<group>"; };
 		6A73A1072C6A3DF5007B6CAE /* SystemUIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemUIImage.swift; sourceTree = "<group>"; };
 		6A7D4F642C76237C00ED0C59 /* FolderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderService.swift; sourceTree = "<group>"; };
 		6A7D4F662C775DED00ED0C59 /* FolderListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListVC.swift; sourceTree = "<group>"; };
@@ -115,7 +98,6 @@
 		6A8B32052AE7983F00D24E49 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6A8B32072AE7983F00D24E49 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6A8B32142AE7A03000D24E49 /* CamVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CamVC.swift; sourceTree = "<group>"; };
-		6A8B321A2AE7A14600D24E49 /* PhotoViewerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewerVC.swift; sourceTree = "<group>"; };
 		6A8B321C2AE7A19A00D24E49 /* StorageBarCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageBarCollectionView.swift; sourceTree = "<group>"; };
 		6A8B321E2AE7A1D000D24E49 /* SelectStorageBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectStorageBarView.swift; sourceTree = "<group>"; };
 		6A8B32252AE7A5EE00D24E49 /* StorageBarItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageBarItemCell.swift; sourceTree = "<group>"; };
@@ -161,8 +143,6 @@
 				6A2529D62B162BAA00721202 /* BrowserItemCell.xib */,
 				6A0486412C49519000C3989F /* BrowserVC.swift */,
 				6A0486422C49519000C3989F /* BrowserVC.xib */,
-				6A0486452C49529000C3989F /* SideMenuVC.swift */,
-				6A0486462C49529000C3989F /* SideMenuVC.xib */,
 				6A0486492C49617500C3989F /* BrowserVM.swift */,
 				6A2C369C2BA8711600AAF24B /* FolderMonitor.swift */,
 			);
@@ -172,13 +152,9 @@
 		6A04864B2C4E8E6C00C3989F /* TagScene */ = {
 			isa = PBXGroup;
 			children = (
-				6A04864E2C4E8F1800C3989F /* TagObject.swift */,
-				6A04864C2C4E8EB400C3989F /* TagService.swift */,
 				6A7D4F642C76237C00ED0C59 /* FolderService.swift */,
-				6A73A0FD2C4E983C007B6CAE /* TagSettingVC.swift */,
-				6A73A0FE2C4E983C007B6CAE /* TagSettingVC.xib */,
-				6A73A1032C610A2D007B6CAE /* TagListItemCell.swift */,
-				6A73A1042C610A2D007B6CAE /* TagListItemCell.xib */,
+				6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */,
+				6A73A1042C610A2D007B6CAE /* FolderListItemCell.xib */,
 				6A7D4F662C775DED00ED0C59 /* FolderListVC.swift */,
 				6A7D4F672C775DED00ED0C59 /* FolderListVC.xib */,
 			);
@@ -236,7 +212,6 @@
 				6AA61AC32AE81095002E3725 /* Extensions */,
 				6A8B320D2AE79ED300D24E49 /* Camera */,
 				6A3796472BB4513100BAFC19 /* ImageViewer */,
-				6A8B320E2AE79F1A00D24E49 /* Browser */,
 				6A8B320F2AE79F1F00D24E49 /* StorageBar */,
 				6A3796552BB5A47900BAFC19 /* SettingsView.swift */,
 				6A8B31F92AE7983E00D24E49 /* AppDelegate.swift */,
@@ -260,16 +235,6 @@
 				6A133E502B0655320018A769 /* CamVM.swift */,
 			);
 			path = Camera;
-			sourceTree = "<group>";
-		};
-		6A8B320E2AE79F1A00D24E49 /* Browser */ = {
-			isa = PBXGroup;
-			children = (
-				6AE7FFDE2B177E7800BC3DB9 /* Components */,
-				6A64A0642B20A67D0025AE80 /* BrowserLocalVC.swift */,
-				6A8B321A2AE7A14600D24E49 /* PhotoViewerVC.swift */,
-			);
-			path = Browser;
 			sourceTree = "<group>";
 		};
 		6A8B320F2AE79F1F00D24E49 /* StorageBar */ = {
@@ -322,14 +287,6 @@
 				6A961E5F2B011FA100A05F9B /* CALayer+Ext.swift */,
 			);
 			path = Extensions;
-			sourceTree = "<group>";
-		};
-		6AE7FFDE2B177E7800BC3DB9 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				6A37965A2BBAF08B00BAFC19 /* BrowserToolBarView.swift */,
-			);
-			path = Components;
 			sourceTree = "<group>";
 		};
 		6AE8CFA22AF4D5A70063C8C6 /* Components */ = {
@@ -428,10 +385,8 @@
 			files = (
 				6A0486442C49519000C3989F /* BrowserVC.xib in Resources */,
 				6A8B32062AE7983F00D24E49 /* LaunchScreen.storyboard in Resources */,
-				6A73A1002C4E983C007B6CAE /* TagSettingVC.xib in Resources */,
-				6A0486482C49529000C3989F /* SideMenuVC.xib in Resources */,
 				6AA61AD02AFA8337002E3725 /* TopMenuBarView.xib in Resources */,
-				6A73A1062C610A2D007B6CAE /* TagListItemCell.xib in Resources */,
+				6A73A1062C610A2D007B6CAE /* FolderListItemCell.xib in Resources */,
 				6A8B32032AE7983F00D24E49 /* Assets.xcassets in Resources */,
 				6AA61AD62AFD2605002E3725 /* CaptureBtnView.xib in Resources */,
 				6A8B32012AE7983E00D24E49 /* Main.storyboard in Resources */,
@@ -491,7 +446,6 @@
 			files = (
 				6A3796522BB5A42600BAFC19 /* CameraSetting.swift in Sources */,
 				6A2C369B2BA5014500AAF24B /* HCAlert.swift in Sources */,
-				6A0486472C49529000C3989F /* SideMenuVC.swift in Sources */,
 				6AA61AC82AE81555002E3725 /* AuthorizationManager.swift in Sources */,
 				6A04864A2C49617500C3989F /* BrowserVM.swift in Sources */,
 				6A133E512B0655320018A769 /* CamVM.swift in Sources */,
@@ -503,7 +457,6 @@
 				6A73A1022C5143B2007B6CAE /* Utils.swift in Sources */,
 				6A73A1082C6A3DF5007B6CAE /* SystemUIImage.swift in Sources */,
 				6AE7FFE62B1B5A4A00BC3DB9 /* FileBrowserModel.swift in Sources */,
-				6A64A0652B20A67D0025AE80 /* BrowserLocalVC.swift in Sources */,
 				6A3796502BB5A3C300BAFC19 /* MediaFileModel.swift in Sources */,
 				6A8B31FE2AE7983E00D24E49 /* ViewController.swift in Sources */,
 				6A3796562BB5A47900BAFC19 /* SettingsView.swift in Sources */,
@@ -511,30 +464,25 @@
 				6A3796492BB4514F00BAFC19 /* ImageViewer.swift in Sources */,
 				6A8B31FA2AE7983E00D24E49 /* AppDelegate.swift in Sources */,
 				6AE8CF9D2AF4B5DD0063C8C6 /* PhotoFileType.swift in Sources */,
-				6A04864D2C4E8EB400C3989F /* TagService.swift in Sources */,
 				6A8B322B2AE7AB9300D24E49 /* StorageType.swift in Sources */,
 				6AA61AD22AFA850E002E3725 /* FlashMode+Ext.swift in Sources */,
 				6A961E602B011FA100A05F9B /* CALayer+Ext.swift in Sources */,
 				6A8B32262AE7A5EE00D24E49 /* StorageBarItemCell.swift in Sources */,
 				6A8B31FC2AE7983E00D24E49 /* SceneDelegate.swift in Sources */,
-				6A04864F2C4E8F1800C3989F /* TagObject.swift in Sources */,
 				6A8B321D2AE7A19A00D24E49 /* StorageBarCollectionView.swift in Sources */,
 				6A8B32152AE7A03000D24E49 /* CamVC.swift in Sources */,
 				6A133E3E2B0268FF0018A769 /* StorageModel.swift in Sources */,
 				6A2C369D2BA8711600AAF24B /* FolderMonitor.swift in Sources */,
 				6A37964E2BB5A34700BAFC19 /* EmailHelper.swift in Sources */,
-				6A37965B2BBAF08B00BAFC19 /* BrowserToolBarView.swift in Sources */,
 				6AA61AC62AE810F0002E3725 /* HCFileManager.swift in Sources */,
 				6AE8CFA12AF4D32D0063C8C6 /* CamPreviewView.swift in Sources */,
 				6A3796582BB5A4CD00BAFC19 /* AppStatus.swift in Sources */,
-				6A8B321B2AE7A14600D24E49 /* PhotoViewerVC.swift in Sources */,
-				6A73A1052C610A2D007B6CAE /* TagListItemCell.swift in Sources */,
+				6A73A1052C610A2D007B6CAE /* FolderListItemCell.swift in Sources */,
 				6AFB72D42B0113D00029592F /* CaptureBtnView.swift in Sources */,
 				6A133E4D2B0503690018A769 /* AppLifeCycle.swift in Sources */,
 				6AA61AD42AFD22E3002E3725 /* TopMenuBarView.swift in Sources */,
 				6AE8CF9F2AF4BF0D0063C8C6 /* HCError.swift in Sources */,
 				6A8B321F2AE7A1D000D24E49 /* SelectStorageBarView.swift in Sources */,
-				6A73A0FF2C4E983C007B6CAE /* TagSettingVC.swift in Sources */,
 				6A7D4F682C775DED00ED0C59 /* FolderListVC.swift in Sources */,
 				6A2529D72B162BAA00721202 /* BrowserItemCell.swift in Sources */,
 			);

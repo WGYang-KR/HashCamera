@@ -21,4 +21,5 @@ class SystemUIImage {
     static let trash = UIImage(systemName: "trash") //쓰레기통
     static let tag = UIImage(systemName: "tag")//태그
     static let heart = UIImage(systemName: "heart") //􀊴
+    static let pencil = UIImage(systemName: "pencil") // 􀈊
 }

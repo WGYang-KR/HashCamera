@@ -12,6 +12,12 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     var disposeBag = DisposeBag()
     @IBOutlet weak var tableView: UITableView!
+
+    var sceneType: ScenetType = .sideMenu
+    enum ScenetType {
+        case sideMenu
+        case moveFolder
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,15 +25,25 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         tableView.delegate = self
         tableView.dataSource = self
         
-        tableView.register(UINib(nibName: "\(TagListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(TagListItemCell.self)")
+        tableView.register(UINib(nibName: "\(FolderListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(FolderListItemCell.self)")
         
+        //네비게이션바
+        var leftItems: [UIBarButtonItem] = []
+        switch sceneType {
+        case .sideMenu:
+            leftItems = []
+        case .moveFolder:
+            leftItems = [naviBackBarButtonItem()]
+        }
         let naviAddBarBtnItem = UIBarButtonItem(image: SystemUIImage.plus,
                                                 style: .plain,
                                                 target: self,
                                                 action: #selector(addBtnTapped))
         
-        setNaviBar("폴더 관리", leftItems: [naviBackBarButtonItem()], rightItems: [naviAddBarBtnItem])
+        setNaviBar("폴더 관리", leftItems: leftItems, rightItems: [naviAddBarBtnItem])
         
+        
+        //폴더 vm 연결
         FolderService.shared.folders.withUnretained(self).subscribe { owner, event in
             owner.tableView.reloadData()
         }.disposed(by: disposeBag)
@@ -66,7 +82,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "\(TagListItemCell.self)", for: indexPath) as? TagListItemCell else
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "\(FolderListItemCell.self)", for: indexPath) as? FolderListItemCell else
         {return UITableViewCell()}
         let item = FolderService.shared.folders.value[indexPath.row]
         cell.nameLabel.text =  item.lastPathComponent
@@ -79,7 +95,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         //쓸어서 삭제 기능
-        let deleteAction = UIContextualAction(style: .destructive, title: "삭제"){ [weak self] action, view, completion in
+        let deleteAction = UIContextualAction(style: .destructive, title: nil){ [weak self] action, view, completion in
             guard let self else { return }
             Task {
                 let result = await FolderService.shared.deleteFolder(at: indexPath.row)
@@ -91,8 +107,9 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
                 }
             }
         }
+        deleteAction.image = SystemUIImage.trash
         
-        let renameAction = UIContextualAction(style: .normal, title: "이름 변경"){ [weak self] action, view, completion in
+        let renameAction = UIContextualAction(style: .normal, title: nil){ [weak self] action, view, completion in
             guard let self else { return }
             // 수정 팝업 띄우기
             let alert = UIAlertController(title: "이름변경", message: "변경할 이름 입력하세요.", preferredStyle: .alert)
@@ -119,6 +136,8 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
             
             present(alert, animated: true, completion: nil)
         }
+        
+        renameAction.image = SystemUIImage.pencil
         
         
         let swipeActionsConfig =  UISwipeActionsConfiguration(actions: [deleteAction,renameAction])

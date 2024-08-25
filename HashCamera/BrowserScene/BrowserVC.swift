@@ -17,7 +17,7 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     @IBOutlet weak var collectionView: UICollectionView!
     let toolBarLabel = UILabel()
     var selectionModeBtn: UIBarButtonItem?
-    let menu  = SideMenuNavigationController(rootViewController: SideMenuVC())
+    let menu  = SideMenuNavigationController(rootViewController: FolderListVC())
     
     var itemSize: CGSize = .zero
     var itemSpacing: CGFloat = 2.0
@@ -65,6 +65,11 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
         
         // Side Bar
         menu.leftSide = true
+        menu.enableSwipeToDismissGesture = false
+        //TODO: '왼쪽 스와이프해서 사이드바 열기' 동작 범위 넓혀야함
+        SideMenuManager.default.leftMenuNavigationController = menu
+        let sideBarGesture = menu.sideMenuManager.addScreenEdgePanGesturesToPresent(toView: self.view, forMenu: .left)
+        self.collectionView.panGestureRecognizer.require(toFail: sideBarGesture)
         
         // Tool Bar
         let defaultColor = UIColor.colorTeal02
