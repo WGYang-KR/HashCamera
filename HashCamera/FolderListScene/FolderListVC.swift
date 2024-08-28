@@ -9,8 +9,12 @@ import UIKit
 import RxSwift
 import RxRelay
 
-protocol FolderListVCDelegate: AnyObject {
-    func folderListVCDidSelectFolder(index: IndexPath, folderListItem: FolderListItemModel)
+protocol FolderListVMProtocol: AnyObject {
+    var selectedFolderIndexPath: BehaviorRelay<IndexPath> { get }
+    var folders: BehaviorRelay<[[FolderListItemModel]]> { get }
+    func createFolder(folderName: String ) async -> Result<URL, FolderService.CreationError>
+    func renameFolder(at index: IndexPath, newName: String) async -> Result<URL,FolderService.RenameError>
+    func deleteFolder(at index: IndexPath) async -> Result<Void, FolderService.DeleteError>
 }
 
 class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
@@ -18,21 +22,17 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     var disposeBag = DisposeBag()
     @IBOutlet weak var tableView: UITableView!
     
-    var vm: BrowserVM!
-    
-    let section0CellList: [FolderListItemModel] = {
-        if let rootURL = FolderService.shared.rootURL {
-            return [.init(type: .allPhotos, url: rootURL), .init(type: .unclassified, url: rootURL)]
-        } else {
-            return []
-        }
-    }()
+    weak var vm: FolderListVMProtocol!
     
     var sceneType: ScenetType = .sideMenu
+    
     enum ScenetType {
         case sideMenu
         case moveFolder
     }
+    
+    ///moveFolder에 사용될 떄는 확인 버튼이 눌리면 이 값을 selectedFolderIndexPath에 넣는다.
+    var tempSelectedIndexPath: IndexPath?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,7 +59,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         
         
         //폴더 vm 연결
-        FolderService.shared.folders.withUnretained(self).subscribe { owner, event in
+        vm.folders.withUnretained(self).subscribe { owner, event in
             owner.tableView.reloadData()
         }.disposed(by: disposeBag)
         
@@ -80,10 +80,10 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         let alert = UIAlertController(title: "폴더 추가", message: "추가하실 폴더 이름을 입력해 주세요.", preferredStyle: .alert)
         alert.addTextField()
         let saveAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
+            guard let self else { return }
             if let textField = alert.textFields?.first, let newText = textField.text, !newText.isEmpty {
-                guard let self else { return }
                 Task {
-                    let result = await FolderService.shared.createFolder(folderName: newText)
+                    let result = await self.vm.createFolder(folderName: newText)
                 }
             }
         }
@@ -97,45 +97,39 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     //MARK: - UITableViewDataSource
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return vm.folders.value.count
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
-            return section0CellList.count
-        } else {
-            return FolderService.shared.folders.value.count
-        }
+        return vm.folders.value[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "\(FolderListItemCell.self)", for: indexPath) as? FolderListItemCell else
         {return UITableViewCell()}
         
-        if indexPath.section == 0 {
-            let item  = section0CellList[indexPath.row]
-            cell.nameLabel.text = item.name
-            return cell
-        } else {
-         
-            let item = FolderService.shared.folders.value[indexPath.row]
-            cell.nameLabel.text =  item.name
-            //        cell.countLabel.text = "(" + String(describing: item.filePaths.count)  + ")"
-            return cell
-        }
+        let item  = vm.folders.value[indexPath.section][indexPath.row]
+        cell.nameLabel.text = item.name
+        return cell
     }
     
     //MARK: - UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        vm.selectedFolderIndexPath.accept(indexPath)
+        switch sceneType {
+        case .sideMenu:
+            vm.selectedFolderIndexPath.accept(indexPath)
+        case .moveFolder:
+            tempSelectedIndexPath = indexPath
+        }
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
+        guard vm.folders.value[indexPath.section][indexPath.row].type == .folder else { return nil}
         //쓸어서 삭제 기능
         let deleteAction = UIContextualAction(style: .destructive, title: nil){ [weak self] action, view, completion in
             guard let self else { return }
             Task {
-                let result = await FolderService.shared.deleteFolder(at: indexPath.row)
+                let result = await self.vm.deleteFolder(at: indexPath)
                 switch result {
                 case .success(let success):
                     completion(true)
@@ -151,13 +145,13 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
             // 수정 팝업 띄우기
             let alert = UIAlertController(title: "이름변경", message: "변경할 이름 입력하세요.", preferredStyle: .alert)
             alert.addTextField { textField in
-                textField.text = FolderService.shared.folders.value[indexPath.row].name
+                textField.text = self.vm.folders.value[indexPath.section][indexPath.row].name
             }
             let saveAction = UIAlertAction(title: "확인", style: .default) { _ in
                 if let textField = alert.textFields?.first, let newText = textField.text,
                    !newText.isEmpty {
                     Task {
-                        let result = await FolderService.shared.renameFolder(at: indexPath.row, newName: newText)
+                        let result = await self.vm.renameFolder(at: indexPath, newName: newText)
                         switch result {
                         case .success(let success):
                             completion(true)
@@ -182,4 +176,13 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         return swipeActionsConfig
     }
 
+    @objc func cancelBtnTapped() {
+        tableView.selectRow(at: vm.selectedFolderIndexPath.value, animated: true, scrollPosition: .top)
+        moveBackVC(animated: true)
+    }
+    
+    @objc func confirmBtnTapped() {
+        guard let tempSelectedIndexPath else { return }
+        vm.selectedFolderIndexPath.accept(tempSelectedIndexPath)
+    }
 }

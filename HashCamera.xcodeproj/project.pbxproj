@@ -153,7 +153,7 @@
 			path = BrowserScene;
 			sourceTree = "<group>";
 		};
-		6A04864B2C4E8E6C00C3989F /* TagScene */ = {
+		6A04864B2C4E8E6C00C3989F /* FolderListScene */ = {
 			isa = PBXGroup;
 			children = (
 				6A7D4F642C76237C00ED0C59 /* FolderService.swift */,
@@ -164,7 +164,7 @@
 				6A7D4F672C775DED00ED0C59 /* FolderListVC.xib */,
 				6A7D4F6D2C7B4C9A00ED0C59 /* FolderListItemModel.swift */,
 			);
-			path = TagScene;
+			path = FolderListScene;
 			sourceTree = "<group>";
 		};
 		6A3796472BB4513100BAFC19 /* ImageViewer */ = {
@@ -209,7 +209,7 @@
 		6A8B31F82AE7983E00D24E49 /* HashCamera */ = {
 			isa = PBXGroup;
 			children = (
-				6A04864B2C4E8E6C00C3989F /* TagScene */,
+				6A04864B2C4E8E6C00C3989F /* FolderListScene */,
 				6A04863C2C494FAB00C3989F /* BrowserScene */,
 				6A3796592BB5A4FB00BAFC19 /* Utilities */,
 				6A1C2F1B2B0CFBE20085C3E1 /* HashCamera.entitlements */,

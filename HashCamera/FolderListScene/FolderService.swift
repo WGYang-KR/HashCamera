@@ -110,6 +110,7 @@ class FolderService {
         case duplicatedName
         case system(Error)
         case outOfBound
+        case isNotRealFolder
     }
     
     func deleteFolder(at index: Int) async -> Result<Void,DeleteError> {
@@ -128,6 +129,7 @@ class FolderService {
         case unknown
         case system(Error)
         case outOfBound
+        case isNotRealFolder
     }
 
 

@@ -23,13 +23,13 @@ class ImageFileModel {
     }
 }
 
-class BrowserVM {
+class BrowserVM: FolderListVMProtocol {
 
-    var disposeBag = DisposeBag()
-    let fileManager = FileManager.default
-    let qlThumbnailGenerator =  QLThumbnailGenerator.shared
-    let folderService = FolderService.shared
-    let fileService = FileService.shared
+    private var disposeBag = DisposeBag()
+    private let fileManager = FileManager.default
+    private let qlThumbnailGenerator =  QLThumbnailGenerator.shared
+    private let folderService = FolderService.shared
+    private let fileService = FileService.shared
     let folders = BehaviorRelay<[[FolderListItemModel]]>(value: [[]])
     var files: BehaviorRelay<[ImageFileModel]> { fileService.files }
     let selectedFolderIndexPath = BehaviorRelay<IndexPath>(value:.init(row: 0, section: 0))
@@ -144,6 +144,24 @@ class BrowserVM {
         
         return deleteFile(urlList: deletingURLs)
     }
+    
+
+    
+    //MARK: FolderListVMProtocol
+    func createFolder(folderName: String) async -> Result<URL, FolderService.CreationError> {
+        await folderService.createFolder(folderName: folderName)
+    }
+    
+    func renameFolder(at indexPath: IndexPath, newName: String) async -> Result<URL, FolderService.RenameError> {
+        guard folders.value[indexPath.section][indexPath.row].type == .folder else { return .failure(.isNotRealFolder) }
+        return await folderService.renameFolder(at: indexPath.row, newName: newName)
+    }
+    
+    func deleteFolder(at indexPath: IndexPath) async -> Result<Void, FolderService.DeleteError> {
+        guard folders.value[indexPath.section][indexPath.row].type == .folder else { return .failure(.isNotRealFolder) }
+        return await folderService.deleteFolder(at: indexPath.row)
+    }
+    
     
 }
 
