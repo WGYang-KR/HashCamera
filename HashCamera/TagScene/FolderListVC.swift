@@ -17,7 +17,9 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     var disposeBag = DisposeBag()
     @IBOutlet weak var tableView: UITableView!
-
+    
+    var vm: BrowserVM!
+    
     let section0CellList: [FolderListItemModel] = {
         if let rootURL = FolderService.shared.rootURL {
             return [.init(type: .allPhotos, url: rootURL), .init(type: .unclassified, url: rootURL)]
@@ -31,8 +33,6 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         case sideMenu
         case moveFolder
     }
-
-    weak var delegate: FolderListVCDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,16 +63,11 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
             owner.tableView.reloadData()
         }.disposed(by: disposeBag)
         
-        FolderService.shared.prepare()
-        
-        Task { [weak self] in
-            await FolderService.shared.fetchFolders()
-            await MainActor.run {
-                guard let self else { return }
-                self.tableView.selectRow(at:.init(row: 0, section: 0), animated: false, scrollPosition: .top)
-                self.tableView(self.tableView, didSelectRowAt: .init(row: 0, section: 0))
+        vm.selectedFolderIndexPath.subscribe { [weak self] indexPath in
+            Task { @MainActor in
+                self?.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
             }
-        }
+        }.disposed(by: disposeBag)
         
     }
     
@@ -131,11 +126,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     //MARK: - UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 {
-            delegate?.folderListVCDidSelectFolder(index: indexPath, folderListItem:  section0CellList[indexPath.row])
-        } else {
-            delegate?.folderListVCDidSelectFolder(index: indexPath, folderListItem: FolderService.shared.folders.value[indexPath.row])
-        }
+        vm.selectedFolderIndexPath.accept(indexPath)
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

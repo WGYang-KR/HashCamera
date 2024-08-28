@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 import SideMenu
 
-class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, FolderListVCDelegate {
+class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     var disposeBag = DisposeBag()
     let vm = BrowserVM()
@@ -114,20 +114,15 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     }
     
     func initVM() {
-        vm.fileList.subscribe { [weak self] list in
+        folderListVC.vm = self.vm
+        vm.files.subscribe { [weak self] list in
             self?.collectionView.reloadData()
         }.disposed(by: disposeBag)
-        folderListVC.delegate = self
+        vm.prepare()
     }
   
-    //MARK: - SideBar FolderList Delegate
-    func folderListVCDidSelectFolder(index: IndexPath, folderListItem: FolderListItemModel) {
-        vm.selectedURL = folderListItem.url
-        vm.initFileList()
-    }
     
     //MARK: - CollectionView Delegate
-    
     func initCollectionView() {
         
         collectionView.dataSource = self
@@ -147,7 +142,7 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return vm.fileList.value.count
+        return vm.files.value.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
