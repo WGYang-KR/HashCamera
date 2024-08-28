@@ -58,4 +58,27 @@ class FileService {
         }
     }
     
+    func moveFile(at fileURLs: [URL], to folderURL: URL) async -> Result<Void,MoveFileError> {
+
+        var successCount = 0
+        fileURLs.forEach { fileURL in
+            let newFileURL = folderURL.appendingPathExtension(fileURL.lastPathComponent)
+            do {
+                try fileManager.moveItem(at: fileURL, to: newFileURL)
+                successCount += 1
+            } catch(let error) {
+            hcLog(nil, error: error)
+            }
+        }
+        
+        if successCount == fileURLs.count {
+            return .success(Void())
+        } else {
+            return .failure(.unknown)
+        }
+    }
+    enum MoveFileError:Error {
+        case unknown
+    }
+    
 }

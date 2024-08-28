@@ -225,8 +225,12 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     }
     
     @IBAction func tagBtnTapped(_ sender: Any) {
-        toolBarLabel.text = "태그버튼 클릭"
-        toolBarLabel.sizeToFit()
+        guard let selectedURLs = collectionView.indexPathsForSelectedItems?.map({ vm.files.value[$0.item].url }) else {return}
+        let movingFolderList = FolderListVC()
+        let moveVM = MoveFolderVM(fileURLs: selectedURLs)
+        moveVM.prepare()
+        movingFolderList.vm = moveVM
+        present(movingFolderList, modalStyle: .pageSheet, animated: true)
     }
     
 

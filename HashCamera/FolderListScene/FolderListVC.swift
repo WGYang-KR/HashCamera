@@ -22,7 +22,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     var disposeBag = DisposeBag()
     @IBOutlet weak var tableView: UITableView!
     
-    weak var vm: FolderListVMProtocol!
+    var vm: FolderListVMProtocol!
     
     var sceneType: ScenetType = .sideMenu
     
