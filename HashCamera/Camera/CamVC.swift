@@ -195,10 +195,7 @@ class CamVC: UIViewController {
         //뷰어 버튼
         browseButton.rx.tap.bind { [weak self] _ in
             guard let self else { return }
-            let vc = BrowserVC()
-            let naviVC = UINavigationController(rootViewController: vc)
-            naviVC.modalPresentationStyle = .fullScreen
-            self.present(naviVC, animated: true)
+            presentFull(UINavigationController(rootViewController: BrowserVC()), animated: true)
         }.disposed(by: disposeBag)
         
         

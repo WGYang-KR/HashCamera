@@ -44,18 +44,28 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         
         //네비게이션바
         var leftItems: [UIBarButtonItem] = []
+        var rightItems: [UIBarButtonItem] = []
         switch sceneType {
         case .sideMenu:
             leftItems = []
+            rightItems = [UIBarButtonItem(image: SystemUIImage.plus,
+                                           style: .plain,
+                                           target: self,
+                                           action: #selector(addBtnTapped))]
         case .moveFolder:
             leftItems = [naviBackBarButtonItem()]
+            rightItems = [UIBarButtonItem(image: SystemUIImage.checkmarkCircle,
+                                          style: .plain,
+                                          target: self,
+                                          action: #selector(confirmBtnTapped)),
+                          UIBarButtonItem(image: SystemUIImage.plus,
+                                          style: .plain,
+                                          target: self,
+                                          action: #selector(addBtnTapped))]
         }
-        let naviAddBarBtnItem = UIBarButtonItem(image: SystemUIImage.plus,
-                                                style: .plain,
-                                                target: self,
-                                                action: #selector(addBtnTapped))
         
-        setNaviBar("폴더 관리", leftItems: leftItems, rightItems: [naviAddBarBtnItem])
+        
+        setNaviBar("폴더 관리", leftItems: leftItems, rightItems: rightItems)
         
         
         //폴더 vm 연결

@@ -62,12 +62,13 @@ class FileService {
 
         var successCount = 0
         fileURLs.forEach { fileURL in
-            let newFileURL = folderURL.appendingPathExtension(fileURL.lastPathComponent)
-            do {
-                try fileManager.moveItem(at: fileURL, to: newFileURL)
-                successCount += 1
-            } catch(let error) {
-            hcLog(nil, error: error)
+            if let newFileURL = URL(string: folderURL.absoluteString + fileURL.lastPathComponent) {
+                do {
+                    try fileManager.moveItem(at: fileURL, to: newFileURL)
+                    successCount += 1
+                } catch(let error) {
+                    hcLog(nil, error: error)
+                }
             }
         }
         

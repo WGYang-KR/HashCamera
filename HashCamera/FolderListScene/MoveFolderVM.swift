@@ -33,7 +33,7 @@ class MoveFolderVM: FolderListVMProtocol {
         }.disposed(by: disposeBag)
         
         ///선택된 폴더 index가 바뀌면, 바뀐 폴더의 파일목록을 가져온다.
-        selectedFolderIndexPath.subscribe{ [weak self] indexPath in
+        selectedFolderIndexPath.skip(2).subscribe{ [weak self] indexPath in
             guard let self else { return }
             guard indexPath.section < folders.value.count,
                   indexPath.row < folders.value[indexPath.section].count

@@ -115,10 +115,12 @@ extension UIViewController {
         self.present(vcToPresent, animated: animated, completion: completion)
     }
     
-    func present(_ vcToPresent: UIViewController, modalStyle: UIModalPresentationStyle, animated: Bool, completion: (() -> Void)? = nil) {
-        vcToPresent.modalPresentationStyle = modalStyle
+    func present(_ vcToPresent: UIViewController, presentationStyle: UIModalPresentationStyle, transitionStyle: UIModalTransitionStyle, animated: Bool, completion: (() -> Void)? = nil) {
+        vcToPresent.modalPresentationStyle = presentationStyle
+        vcToPresent.modalTransitionStyle = transitionStyle
         self.present(vcToPresent, animated: animated, completion: completion)
     }
+    
     
     ///popVC / dismiss 를 자동으로 결정하여 수행.
     func moveBackVC(animated: Bool, completion: (()-> Void)? = nil) {

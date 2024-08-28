@@ -13,6 +13,7 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     
     var disposeBag = DisposeBag()
     let vm = BrowserVM()
+    var moveFolderVM = MoveFolderVM(fileURLs: [])
     let folderListVC = FolderListVC()
     
     @IBOutlet weak var collectionView: UICollectionView!
@@ -60,7 +61,7 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
                                              target: self,
                                              action: #selector(naviListBtnTapped))]
         
-        let selectionModeBtn = UIBarButtonItem(image: SystemUIImage.checkmarkCircle,
+        let selectionModeBtn = UIBarButtonItem(image: SystemUIImage.checkmarkRectangleStack,
                                               style: .plain,
                                               target: self,
                                               action: #selector(naviSelectionBtnTapped))
@@ -199,7 +200,7 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     func setSelectionMode(_ selectionMode: Bool) {
         guard let navigationController else { return }
         navigationController.setToolbarHidden(!selectionMode, animated: true)
-        selectionModeBtn?.image = selectionMode ? SystemUIImage.checkmarkCircleFill : SystemUIImage.checkmarkCircle
+        selectionModeBtn?.image = selectionMode ? SystemUIImage.checkmarkRectangleStackFill : SystemUIImage.checkmarkRectangleStack
         
         collectionView.indexPathsForSelectedItems?.forEach{collectionView.deselectItem(at: $0, animated: false)}
        
@@ -226,13 +227,12 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     
     @IBAction func tagBtnTapped(_ sender: Any) {
         guard let selectedURLs = collectionView.indexPathsForSelectedItems?.map({ vm.files.value[$0.item].url }) else {return}
+        self.moveFolderVM = MoveFolderVM(fileURLs: selectedURLs)
+        self.moveFolderVM.prepare()
         let movingFolderList = FolderListVC()
-        let moveVM = MoveFolderVM(fileURLs: selectedURLs)
-        moveVM.prepare()
-        movingFolderList.vm = moveVM
-        present(movingFolderList, modalStyle: .pageSheet, animated: true)
+        movingFolderList.sceneType = .moveFolder
+        movingFolderList.vm = self.moveFolderVM
+        present(UINavigationController(rootViewController: movingFolderList), presentationStyle: .pageSheet, transitionStyle: .coverVertical, animated: true)
     }
-    
-
 
 }
