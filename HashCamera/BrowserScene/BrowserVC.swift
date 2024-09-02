@@ -151,15 +151,15 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
         guard let cell =  collectionView
             .dequeueReusableCell(withReuseIdentifier: "\(BrowserItemCell.self)", for: indexPath)
                 as? BrowserItemCell else { return UICollectionViewCell()}
-        hcLog("썸네일 로드요청 index:\(indexPath.item) imageSize: \(itemSize)")
+//        hcLog("썸네일 로드요청 index:\(indexPath.item) imageSize: \(itemSize)")
         vm.startFetchingThumb(index: indexPath.item) { image in
             DispatchQueue.main.async {
                 //셀 indexPath가 바뀌었는지 확인
                 if collectionView.indexPath(for: cell) == indexPath, let image {
                     cell.imageView.image = image
-                    hcLog("썸네일 로드완 index:\(indexPath.item) imageSize: \(image.size)")
+//                    hcLog("썸네일 로드완 index:\(indexPath.item) imageSize: \(image.size)")
                 } else {
-                    hcLog("Cell 위치 변함 or image == nil")
+//                    hcLog("Cell 위치 변함 or image == nil")
                 }
             }
         }

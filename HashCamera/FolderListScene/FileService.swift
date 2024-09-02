@@ -31,13 +31,13 @@ class FileService {
         guard let rootURL else { return }
         
         folderMonitor?.stopMonitoring()
-        folderMonitor = FolderMonitor(url: rootURL)
-        folderMonitor?.folderDidChange = {
+        folderMonitor = FolderMonitor(folderPath: rootURL.absoluteString,
+                                      folderDidChange: { [weak self] folderChangeData in
             hcLog("파일목록 갱신 감지")
             Task { [weak self] in
                await self?.fetchFiles()
             }
-        }
+        })
         folderMonitor?.startMonitoring()
         
         

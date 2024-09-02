@@ -32,15 +32,14 @@ class FolderService {
     func prepare() {
         guard let rootURL else { return }
         
-        if folderMonitor == nil {
-            folderMonitor = FolderMonitor(url: rootURL)
-        }
-        
-        folderMonitor?.folderDidChange = { [weak self] in
+        folderMonitor?.stopMonitoring()
+        folderMonitor = FolderMonitor(folderPath: rootURL.absoluteString,
+                                      folderDidChange: { [weak self] folderChangeData in
+            hcLog("파일목록 갱신 감지")
             Task { [weak self] in
-                await self?.fetchFolders()
+               await self?.fetchFolders()
             }
-        }
+        })
         folderMonitor?.startMonitoring()
     }
     
