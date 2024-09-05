@@ -10,23 +10,35 @@ import Foundation
 class FolderMonitor {
     // MARK: Properties
     
-    private let folderMonitorQueue = DispatchQueue(label: "FolderMonitorQueue", attributes: .concurrent)
+    private let folderMonitorQueue = DispatchQueue(label: "FolderMonitorQueue", qos: .default, attributes: .concurrent)
     private var folderDescriptor: CInt = -1
     private var source: DispatchSourceFileSystemObject?
     private let folderURL: URL?
-    private var previousFileDictionary: [String: Date] = [:]
+    private var fileDictionary: [String: Date] = [:]
+    var folderList: [URL] = []
+    var folderListUpdated: ((FolderUpdateData)-> Void)?
     
-    var folderDidChange: ((FolderChangeData)-> Void)?
-    struct FolderChangeData {
+    struct FolderUpdateData {
+        let newFileList: [URL]
         let addedFiles: [URL]
         let removedFiles: [URL]
     }
     
-    init(folderPath: String, folderDidChange: ((FolderChangeData)-> Void)?) {
+    
+    /// 폴더 모니터를 초기화한다.
+    /// - Parameters:
+    ///   - folderPath: 감시할 폴더
+    ///   - folderListUpdated: 폴더 목록 갱신 시에 불려질 클로저
+    init(folderPath: String, folderListUpdated: ((FolderUpdateData)-> Void)?) {
         self.folderURL = URL(string: folderPath)
-        self.folderDidChange = folderDidChange
+        self.folderListUpdated = folderListUpdated
     }
     
+    deinit {
+        stopMonitoring()
+    }
+    
+    /// 폴더 감시를 시작하고,  초기 파일 상태을 업데이트한다.
     func startMonitoring() {
         
         guard let folderURL, source == nil, folderDescriptor == -1 else { return }
@@ -58,62 +70,93 @@ class FolderMonitor {
         
         // 감시 시작
         source?.resume()
-        print("폴더 감시를 시작합니다: \(folderURL.path)")
+        print("폴더 감시를 시작합니다: \(folderURL.lastPathComponent)")
         
+        //폴더변경 -> 폴더 갱신 ->
         // 초기 파일 상태 저장
-        updatePreviousFileDictionary()
+        initFileListDictionary()
     }
     
     func stopMonitoring() {
         source?.cancel()
-        print("폴더 감시를 중단합니다: \(folderURL?.path ?? "nil")")
+        print("폴더 감시를 중단합니다: \(folderURL?.lastPathComponent ?? "nil")")
     }
     
-    private func updatePreviousFileDictionary() {
-        guard let folderURL else { return }
+    ///파일 상태를 가져온다.
+    private func fetchFileListDictionary() -> (fileList: [URL], fileDictionary: [String: Date]) {
+        guard let folderURL else { return ([],[:])}
+        guard FileManager.default.fileExists(atPath: folderURL.absoluteString) else {
+            hcLog("폴더가 존재하지 않습니다.\(folderURL.lastPathComponent)")
+            stopMonitoring()
+            return([],[:])
+        }
+        
+        // 폴더 내 파일 목록과 수정 날짜 저장
         do {
-            // 폴더 내 파일 목록과 수정 날짜 저장
             let fileList = try FileManager.default.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: [.contentModificationDateKey], options: [])
-            previousFileDictionary = Dictionary(uniqueKeysWithValues: fileList.map { ($0.lastPathComponent, (try? $0.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date.distantPast) })
+            let fileDictionary = Dictionary(uniqueKeysWithValues: fileList.map { ($0.lastPathComponent, (try? $0.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date.distantPast) })
+            return (fileList, fileDictionary)
         } catch {
+            //폴더 변경/삭제 시에 이벤트 발생하여 detectChnage() 호출됨. contentsOfDirectory 에서 없는 폴더라서 오류 발생.
+            //새로운 폴더 경로로 Monitor를 새로 시작해야한다.
             print("폴더 내용을 불러올 수 없습니다: \(error)")
+            return ([],[:])
         }
     }
     
+    ///초기파일상태를 업데이트 한다.
+    private func initFileListDictionary() {
+        guard let folderURL else { return }
+        folderMonitorQueue.async { [weak self] in //감시 Queue
+            guard let self else { return }
+            let fileListDictionary = fetchFileListDictionary() //파일 목록 가져오기
+            fileDictionary = fileListDictionary.fileDictionary
+            folderList = fileListDictionary.fileList
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                //파일목록 업데이트 전달
+                folderListUpdated?(FolderUpdateData(newFileList: folderList, addedFiles: [], removedFiles: []))
+            }
+        }
+    }
+    
+    ///파일 상태 변경 감지시에 변경사항을 탐지하여 업데이트 사항을 전달한다.
     private func detectChanges() {
         guard let folderURL else { return }
-        do {
-            // 현재 파일 목록과 수정 날짜 가져오기
-            let currentFileList = try FileManager.default.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: [.contentModificationDateKey], options: [])
-            let currentFileDictionary = Dictionary(uniqueKeysWithValues: currentFileList.map { ($0.lastPathComponent, (try? $0.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date.distantPast) })
-            
-            // 키를 Set으로 변환하여 집합 연산 수행
-            let previousKeys = Set(previousFileDictionary.keys)
-            let currentKeys = Set(currentFileDictionary.keys)
-            
-            
-            // 추가된 파일
-            let addedFiles = currentKeys.subtracting(previousKeys).map{ folderURL.appendingPathComponent($0)}
-            for file in addedFiles {
-                print("새 파일이 추가되었습니다: \(file.lastPathComponent)")
-            }
-            
-            // 삭제된 파일
-            let removedFiles = previousKeys.subtracting(currentKeys).map{ folderURL.appendingPathComponent($0)}
-            for file in removedFiles {
-                print("파일이 삭제되었습니다: \(file.lastPathComponent)")
-            }
-            
-            // 현재 상태를 이전 상태로 갱신
-            previousFileDictionary = currentFileDictionary
-            
-            folderDidChange?(FolderChangeData(addedFiles: addedFiles, removedFiles: removedFiles))
-        } catch {
-            print("폴더 변경을 감지할 수 없습니다: \(error)")
+        guard FileManager.default.fileExists(atPath: folderURL.absoluteString) else {
+            hcLog("폴더가 존재하지 않습니다.\(folderURL.lastPathComponent)")
+            stopMonitoring()
+            return
         }
+        
+        let fileListDictionary = fetchFileListDictionary()
+        let newFileDictionary = fileListDictionary.fileDictionary
+        let newFileList = fileListDictionary.fileList
+        
+        // 키를 Set으로 변환하여 집합 연산 수행
+        let previousKeys = Set(fileDictionary.keys)
+        let currentKeys = Set(newFileDictionary.keys)
+        
+        
+        // 추가된 파일
+        let addedFiles = currentKeys.subtracting(previousKeys).map{ folderURL.appendingPathComponent($0)}
+        for file in addedFiles {
+            print("새 파일이 추가되었습니다: \(file.lastPathComponent)")
+        }
+        
+        // 삭제된 파일
+        let removedFiles = previousKeys.subtracting(currentKeys).map{ folderURL.appendingPathComponent($0)}
+        for file in removedFiles {
+            print("파일이 삭제되었습니다: \(file.lastPathComponent)")
+        }
+        
+        // 새로운 상태로 갱신
+        fileDictionary = newFileDictionary
+        folderList = newFileList
+        DispatchQueue.main.async { [weak self] in
+            self?.folderListUpdated?(FolderUpdateData(newFileList: newFileList, addedFiles: addedFiles, removedFiles: removedFiles))
+        }
+        
     }
     
-    deinit {
-        stopMonitoring()
-    }
 }

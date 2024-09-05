@@ -9,27 +9,20 @@ import UIKit
 import RxSwift
 import RxRelay
 
-protocol FolderListVMProtocol: AnyObject {
-    var selectedFolderIndexPath: BehaviorRelay<IndexPath> { get }
-    var folders: BehaviorRelay<[[FolderListItemModel]]> { get }
-    func createFolder(folderName: String ) async -> Result<URL, FolderService.CreationError>
-    func renameFolder(at index: IndexPath, newName: String) async -> Result<URL,FolderService.RenameError>
-    func deleteFolder(at index: IndexPath) async -> Result<Void, FolderService.DeleteError>
-}
+//protocol FolderListVMProtocol: AnyObject {
+//    var selectedFolderIndexPath: BehaviorRelay<IndexPath> { get }
+//    var folders: BehaviorRelay<[[FolderListItemModel]]> { get }
+//    func createFolder(folderName: String ) async -> Result<URL, FolderService.CreationError>
+//    func renameFolder(at index: IndexPath, newName: String) async -> Result<URL,FolderService.RenameError>
+//    func deleteFolder(at index: IndexPath) async -> Result<Void, FolderService.DeleteError>
+//}
 
 class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     var disposeBag = DisposeBag()
     @IBOutlet weak var tableView: UITableView!
     
-    var vm: FolderListVMProtocol!
-    
-    var sceneType: ScenetType = .sideMenu
-    
-    enum ScenetType {
-        case sideMenu
-        case moveFolder
-    }
+    var vm: BrowserVM!
     
     ///moveFolder에 사용될 떄는 확인 버튼이 눌리면 이 값을 selectedFolderIndexPath에 넣는다.
     var tempSelectedIndexPath: IndexPath?
@@ -43,41 +36,18 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         tableView.register(UINib(nibName: "\(FolderListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(FolderListItemCell.self)")
         
         //네비게이션바
-        var leftItems: [UIBarButtonItem] = []
-        var rightItems: [UIBarButtonItem] = []
-        switch sceneType {
-        case .sideMenu:
-            leftItems = []
-            rightItems = [UIBarButtonItem(image: SystemUIImage.plus,
-                                           style: .plain,
-                                           target: self,
-                                           action: #selector(addBtnTapped))]
-        case .moveFolder:
-            leftItems = [naviBackBarButtonItem()]
-            rightItems = [UIBarButtonItem(image: SystemUIImage.checkmarkCircle,
-                                          style: .plain,
-                                          target: self,
-                                          action: #selector(confirmBtnTapped)),
-                          UIBarButtonItem(image: SystemUIImage.plus,
-                                          style: .plain,
-                                          target: self,
-                                          action: #selector(addBtnTapped))]
-        }
-        
-        
-        setNaviBar("폴더 관리", leftItems: leftItems, rightItems: rightItems)
+        let rightItems = [UIBarButtonItem(image: SystemUIImage.plus,
+                                      style: .plain,
+                                      target: self,
+                                      action: #selector(addBtnTapped))]
+
+        setNaviBar("폴더 관리", leftItems: [], rightItems: rightItems)
         
         
         //폴더 vm 연결
-        vm.folders.withUnretained(self).subscribe { owner, event in
-            owner.tableView.reloadData()
-        }.disposed(by: disposeBag)
-        
-        vm.selectedFolderIndexPath.subscribe { [weak self] indexPath in
-            Task { @MainActor in
-                self?.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
-            }
-        }.disposed(by: disposeBag)
+        vm.folderListUpdated = {
+            
+        }
         
     }
     
@@ -124,12 +94,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     //MARK: - UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch sceneType {
-        case .sideMenu:
             vm.selectedFolderIndexPath.accept(indexPath)
-        case .moveFolder:
-            tempSelectedIndexPath = indexPath
-        }
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

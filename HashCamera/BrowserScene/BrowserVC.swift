@@ -226,13 +226,13 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     }
     
     @IBAction func tagBtnTapped(_ sender: Any) {
-        guard let selectedURLs = collectionView.indexPathsForSelectedItems?.map({ vm.files.value[$0.item].url }) else {return}
-        self.moveFolderVM = MoveFolderVM(fileURLs: selectedURLs)
-        self.moveFolderVM.prepare()
-        let movingFolderList = FolderListVC()
-        movingFolderList.sceneType = .moveFolder
-        movingFolderList.vm = self.moveFolderVM
-        present(UINavigationController(rootViewController: movingFolderList), presentationStyle: .pageSheet, transitionStyle: .coverVertical, animated: true)
+//        guard let selectedURLs = collectionView.indexPathsForSelectedItems?.map({ vm.files.value[$0.item].url }) else {return}
+//        self.moveFolderVM = MoveFolderVM(fileURLs: selectedURLs)
+//        self.moveFolderVM.prepare()
+//        let movingFolderList = FolderListVC()
+//        movingFolderList.sceneType = .moveFolder
+//        movingFolderList.vm = self.moveFolderVM
+//        present(UINavigationController(rootViewController: movingFolderList), presentationStyle: .pageSheet, transitionStyle: .coverVertical, animated: true)
     }
 
 }
