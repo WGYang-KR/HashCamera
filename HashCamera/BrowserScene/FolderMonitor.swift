@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 
 enum FileSystemChangeType {
     case initiate
@@ -22,6 +23,7 @@ class FolderMonitor {
     private var source: DispatchSourceFileSystemObject?
     private let folderURL: URL?
     private var fileDictionary: [String: Date] = [:]
+    private var contentType: [UTType] = []
     var folderList: [URL] = []
     var folderListUpdated: ((FolderUpdateData)-> Void)?
     
@@ -34,10 +36,11 @@ class FolderMonitor {
     /// 폴더 모니터를 초기화한다.
     /// - Parameters:
     ///   - folderPath: 감시할 폴더
+    ///   - contentType: 폴더 안에서 감시할 파일 유형
     ///   - eventMask: 감시할 이벤트. 폴더목록 감시는 write, 폴더 안 감시는 write, delete를 감시하여 자기자신이 삭제되는 것을 인식하면 될듯
     ///   - folderListUpdated: 폴더 목록 갱신 시에 불려질 클로저
-
-    init(folderPath: String, eventMask: DispatchSource.FileSystemEvent, folderListUpdated: ((FolderUpdateData)-> Void)?) {
+    init(folderPath: String, contentType: [UTType], eventMask: DispatchSource.FileSystemEvent, folderListUpdated: ((FolderUpdateData)-> Void)?) {
+        self.contentType = contentType
         self.folderURL = URL(string: folderPath)
         self.folderListUpdated = folderListUpdated
     }
@@ -102,7 +105,12 @@ class FolderMonitor {
         
         // 폴더 내 파일 목록과 수정 날짜 저장
         do {
-            let fileList = try FileManager.default.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: [.contentModificationDateKey], options: [])
+            let fileList = try FileManager.default.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: [.contentModificationDateKey], options: []).filter { url in
+                //설정된 파일유형만 필터링
+                guard let type = try? url.resourceValues(forKeys: [.contentTypeKey]).contentType else { return false}
+                return contentType.contains(type)
+            }
+            
             let fileDictionary = Dictionary(uniqueKeysWithValues: fileList.map { ($0.lastPathComponent, (try? $0.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date.distantPast) })
             return (fileList, fileDictionary)
         } catch {
