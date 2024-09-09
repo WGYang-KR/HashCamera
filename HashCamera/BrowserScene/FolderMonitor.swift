@@ -7,6 +7,13 @@
 
 import Foundation
 
+enum FileSystemChangeType {
+    case initiate
+    case add(newIndex: Int)
+    case rename(oldIndex: Int, newIndex: Int)
+    case delete(deletedIndex: Int)
+}
+
 class FolderMonitor {
     // MARK: Properties
     
@@ -20,16 +27,17 @@ class FolderMonitor {
     
     struct FolderUpdateData {
         let newFileList: [URL]
-        let addedFiles: [URL]
-        let removedFiles: [URL]
+        let changeType: FileSystemChangeType
     }
     
     
     /// 폴더 모니터를 초기화한다.
     /// - Parameters:
     ///   - folderPath: 감시할 폴더
+    ///   - eventMask: 감시할 이벤트. 폴더목록 감시는 write, 폴더 안 감시는 write, delete를 감시하여 자기자신이 삭제되는 것을 인식하면 될듯
     ///   - folderListUpdated: 폴더 목록 갱신 시에 불려질 클로저
-    init(folderPath: String, folderListUpdated: ((FolderUpdateData)-> Void)?) {
+
+    init(folderPath: String, eventMask: DispatchSource.FileSystemEvent, folderListUpdated: ((FolderUpdateData)-> Void)?) {
         self.folderURL = URL(string: folderPath)
         self.folderListUpdated = folderListUpdated
     }
@@ -58,6 +66,7 @@ class FolderMonitor {
         
         // 변경 감지 핸들러
         source?.setEventHandler { [weak self] in
+            hcLog("변경감지")
             self?.detectChanges()
         }
         
@@ -70,7 +79,7 @@ class FolderMonitor {
         
         // 감시 시작
         source?.resume()
-        print("폴더 감시를 시작합니다: \(folderURL.lastPathComponent)")
+        print("폴더 감시 시작: \(folderURL.lastPathComponent)")
         
         //폴더변경 -> 폴더 갱신 ->
         // 초기 파일 상태 저장
@@ -79,14 +88,14 @@ class FolderMonitor {
     
     func stopMonitoring() {
         source?.cancel()
-        print("폴더 감시를 중단합니다: \(folderURL?.lastPathComponent ?? "nil")")
+        print("폴더 감시 중단: \(folderURL?.lastPathComponent ?? "nil")")
     }
     
     ///파일 상태를 가져온다.
     private func fetchFileListDictionary() -> (fileList: [URL], fileDictionary: [String: Date]) {
         guard let folderURL else { return ([],[:])}
         guard FileManager.default.fileExists(atPath: folderURL.absoluteString) else {
-            hcLog("폴더가 존재하지 않습니다.\(folderURL.lastPathComponent)")
+            hcLog("폴더가 존재안함.\(folderURL.lastPathComponent)")
             stopMonitoring()
             return([],[:])
         }
@@ -99,7 +108,7 @@ class FolderMonitor {
         } catch {
             //폴더 변경/삭제 시에 이벤트 발생하여 detectChnage() 호출됨. contentsOfDirectory 에서 없는 폴더라서 오류 발생.
             //새로운 폴더 경로로 Monitor를 새로 시작해야한다.
-            print("폴더 내용을 불러올 수 없습니다: \(error)")
+            print("폴더목록 Fetch 실패: \(error)")
             return ([],[:])
         }
     }
@@ -115,7 +124,7 @@ class FolderMonitor {
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
                 //파일목록 업데이트 전달
-                folderListUpdated?(FolderUpdateData(newFileList: folderList, addedFiles: [], removedFiles: []))
+                folderListUpdated?(FolderUpdateData(newFileList: folderList, changeType: .initiate ))
             }
         }
     }
@@ -129,34 +138,68 @@ class FolderMonitor {
             return
         }
         
+        let currentFileDictionary = fileDictionary
+        let currentFileList = folderList
+        
         let fileListDictionary = fetchFileListDictionary()
         let newFileDictionary = fileListDictionary.fileDictionary
         let newFileList = fileListDictionary.fileList
         
         // 키를 Set으로 변환하여 집합 연산 수행
-        let previousKeys = Set(fileDictionary.keys)
+        let previousKeys = Set(currentFileDictionary.keys)
         let currentKeys = Set(newFileDictionary.keys)
         
         
         // 추가된 파일
         let addedFiles = currentKeys.subtracting(previousKeys).map{ folderURL.appendingPathComponent($0)}
         for file in addedFiles {
-            print("새 파일이 추가되었습니다: \(file.lastPathComponent)")
+            hcLog("새 파일 추가됨: \(file.lastPathComponent)")
+        }
+        
+        // 추가된 파일 Index
+        var addedFileIndex: Int?
+        if let fileURL = addedFiles.first, let fileIndex = newFileList.firstIndex(of: fileURL) {
+            addedFileIndex = fileIndex
+            hcLog("새 파일 Index: \(fileIndex)")
         }
         
         // 삭제된 파일
-        let removedFiles = previousKeys.subtracting(currentKeys).map{ folderURL.appendingPathComponent($0)}
-        for file in removedFiles {
-            print("파일이 삭제되었습니다: \(file.lastPathComponent)")
+        let deletedFiles = previousKeys.subtracting(currentKeys).map{ folderURL.appendingPathComponent($0)}
+        for file in deletedFiles {
+            print("파일 삭제됨: \(file.lastPathComponent)")
+        }
+        
+        // 삭제된 파일 Index
+        var deletedFileIndex: Int?
+        if let fileURL = deletedFiles.first, let fileIndex = currentFileList.firstIndex(of: fileURL) {
+            deletedFileIndex = fileIndex
+            hcLog("삭제 파일 Index: \(fileIndex)")
         }
         
         // 새로운 상태로 갱신
         fileDictionary = newFileDictionary
         folderList = newFileList
+        
         DispatchQueue.main.async { [weak self] in
-            self?.folderListUpdated?(FolderUpdateData(newFileList: newFileList, addedFiles: addedFiles, removedFiles: removedFiles))
+            guard let self else  { return }
+            if addedFiles.count > 0, deletedFiles.count > 0 { //이름 변경
+                guard let addedFileIndex, let deletedFileIndex else { return }
+                folderListUpdated?(FolderUpdateData(newFileList: newFileList, changeType: .rename(oldIndex: deletedFileIndex, newIndex: addedFileIndex)))
+            } else if addedFiles.count > 0 { //추가
+                guard let addedFileIndex else { return }
+                folderListUpdated?(FolderUpdateData(newFileList: newFileList, changeType: .add(newIndex: addedFileIndex)))
+            } else if deletedFiles.count > 0 { //삭제
+                guard let deletedFileIndex else { return }
+                folderListUpdated?(FolderUpdateData(newFileList: newFileList, changeType: .delete(deletedIndex: deletedFileIndex)))
+            } else {
+                //무시
+            }
         }
+        
+        hcLog("감시 1개 이벤트 완료")
         
     }
     
 }
+
+
