@@ -13,7 +13,6 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     
     var disposeBag = DisposeBag()
     let vm = BrowserVM()
-    var moveFolderVM = MoveFolderVM(fileURLs: [])
     let folderListVC = FolderListVC()
     
     @IBOutlet weak var collectionView: UICollectionView!
@@ -115,19 +114,19 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     }
     
     func initVM() {
-        folderListVC.vm = self.vm
-        vm.files.subscribe { [weak self] list in
-            self?.collectionView.reloadData()
-        }.disposed(by: disposeBag)
-        vm.prepare()
+//        folderListVC.vm = self.vm
+//        vm.files.subscribe { [weak self] list in
+//            self?.collectionView.reloadData()
+//        }.disposed(by: disposeBag)
+//        vm.prepare()
     }
   
     
     //MARK: - CollectionView Delegate
     func initCollectionView() {
         
-        collectionView.dataSource = self
-        collectionView.delegate = self
+//        collectionView.dataSource = self
+//        collectionView.delegate = self
         collectionView.allowsMultipleSelection = true
     
         collectionView.register(UINib(nibName: "\(BrowserItemCell.self)",

@@ -202,7 +202,8 @@ extension UINavigationController { //navigation controller completion 추가
     
 }
 
-// UIColor+Utils
+
+//MARK: - UIColor+Utils
 extension UIColor {
     static func by(r: Int, g: Int, b: Int, a: CGFloat = 1) -> UIColor {
         let d = CGFloat(255)
@@ -223,5 +224,16 @@ extension UIColor {
             green: (rgb >> 8) & 0xFF,
             blue: rgb & 0xFF
         )
+    }
+}
+
+//MARK: - TableView
+extension UITableView {
+    func reloadData(completion: @escaping () -> Void) {
+        UIView.animate(withDuration: 0, animations: {
+            self.reloadData()
+        }) { _ in
+            completion()
+        }
     }
 }

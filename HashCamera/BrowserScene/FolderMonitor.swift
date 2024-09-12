@@ -24,6 +24,7 @@ class FolderMonitor {
     private let folderURL: URL?
     private var fileDictionary: [String: Date] = [:]
     private var contentType: [UTType] = []
+    private var eventMask: DispatchSource.FileSystemEvent
     var folderList: [URL] = []
     var folderListUpdated: ((FolderUpdateData)-> Void)?
     
@@ -39,10 +40,12 @@ class FolderMonitor {
     ///   - contentType: 폴더 안에서 감시할 파일 유형
     ///   - eventMask: 감시할 이벤트. 폴더목록 감시는 write, 폴더 안 감시는 write, delete를 감시하여 자기자신이 삭제되는 것을 인식하면 될듯
     ///   - folderListUpdated: 폴더 목록 갱신 시에 불려질 클로저
-    init(folderPath: String, contentType: [UTType], eventMask: DispatchSource.FileSystemEvent, folderListUpdated: ((FolderUpdateData)-> Void)?) {
+    init(folderURL: URL, contentType: [UTType], eventMask: DispatchSource.FileSystemEvent, folderListUpdated: ((FolderUpdateData)-> Void)?) {
+        self.folderURL = folderURL
         self.contentType = contentType
-        self.folderURL = URL(string: folderPath)
+        self.eventMask = eventMask
         self.folderListUpdated = folderListUpdated
+ 
     }
     
     deinit {
@@ -97,7 +100,7 @@ class FolderMonitor {
     ///파일 상태를 가져온다.
     private func fetchFileListDictionary() -> (fileList: [URL], fileDictionary: [String: Date]) {
         guard let folderURL else { return ([],[:])}
-        guard FileManager.default.fileExists(atPath: folderURL.absoluteString) else {
+        guard FileManager.default.fileExists(atPath: folderURL.path) else {
             hcLog("폴더가 존재안함.\(folderURL.lastPathComponent)")
             stopMonitoring()
             return([],[:])
@@ -140,7 +143,7 @@ class FolderMonitor {
     ///파일 상태 변경 감지시에 변경사항을 탐지하여 업데이트 사항을 전달한다.
     private func detectChanges() {
         guard let folderURL else { return }
-        guard FileManager.default.fileExists(atPath: folderURL.absoluteString) else {
+        guard FileManager.default.fileExists(atPath: folderURL.path) else {
             hcLog("폴더가 존재하지 않습니다.\(folderURL.lastPathComponent)")
             stopMonitoring()
             return
@@ -165,8 +168,9 @@ class FolderMonitor {
         }
         
         // 추가된 파일 Index
+        //TODO: URL 형식이 달라 index 못 찾는중
         var addedFileIndex: Int?
-        if let fileURL = addedFiles.first, let fileIndex = newFileList.firstIndex(of: fileURL) {
+        if let fileURL = addedFiles.first, let fileIndex = newFileList.firstIndex(where: {$0.lastPathComponent == fileURL.lastPathComponent }) {
             addedFileIndex = fileIndex
             hcLog("새 파일 Index: \(fileIndex)")
         }
@@ -178,8 +182,9 @@ class FolderMonitor {
         }
         
         // 삭제된 파일 Index
+        //TODO: URL 형식이 달라 index 못 찾는중
         var deletedFileIndex: Int?
-        if let fileURL = deletedFiles.first, let fileIndex = currentFileList.firstIndex(of: fileURL) {
+        if let fileURL = deletedFiles.first, let fileIndex = currentFileList.firstIndex(where: {$0.lastPathComponent == fileURL.lastPathComponent }) {
             deletedFileIndex = fileIndex
             hcLog("삭제 파일 Index: \(fileIndex)")
         }

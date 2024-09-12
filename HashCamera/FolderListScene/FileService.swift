@@ -28,19 +28,19 @@ class FileService {
         self.rootURL = rootURL
         self.fileListUpdated = fileListUpdated
         
-        folderMonitor?.stopMonitoring()
-        folderMonitor = FolderMonitor(folderPath: rootURL.absoluteString,
-                                      folderListUpdated: { [weak self] folderUpdatedData in
-            hcLog("파일목록 갱신 감지")
-            guard let self else { return }
-            let newFileList = folderUpdatedData.newFileList.filter { $0.isPhoto }
-            let addedList = folderUpdatedData.addedFiles.filter { $0.isPhoto }
-            let deletedList = folderUpdatedData.removedFiles.filter{$0.isPhoto}
-            self.fileList = newFileList
-            self.fileListUpdated?(.init(newFileList: newFileList, addedFiles: addedList, removedFiles: deletedList))
-        })
-        
-        folderMonitor?.startMonitoring()
+//        folderMonitor?.stopMonitoring()
+//        folderMonitor = FolderMonitor(folderPath: rootURL.absoluteString,
+//                                      folderListUpdated: { [weak self] folderUpdatedData in
+//            hcLog("파일목록 갱신 감지")
+//            guard let self else { return }
+//            let newFileList = folderUpdatedData.newFileList.filter { $0.isPhoto }
+//            let addedList = folderUpdatedData.addedFiles.filter { $0.isPhoto }
+//            let deletedList = folderUpdatedData.removedFiles.filter{$0.isPhoto}
+//            self.fileList = newFileList
+//            self.fileListUpdated?(.init(newFileList: newFileList, addedFiles: addedList, removedFiles: deletedList))
+//        })
+//        
+//        folderMonitor?.startMonitoring()
     }
     
     func moveFile(at fileURLs: [URL], to folderURL: URL) async -> Result<Void,MoveFileError> {

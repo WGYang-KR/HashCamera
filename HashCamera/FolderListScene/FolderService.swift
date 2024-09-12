@@ -12,9 +12,14 @@ import RxRelay
 class FolderService {
     
     let fileManager = FileManager.default
+    
+    ///대상 폴더
     var rootURL: URL?
+    ///폴더 내 폴더 변경 감시자
     var folderMonitor: FolderMonitor?
+    ///폴더 내 폴더 목록
     var folderList: [URL] = []
+    ///폴더 내 폴더 변경 이벤트 핸들러
     var folderListUpdated: ((FolderMonitor.FolderUpdateData) -> Void)?
     
     init() { }
@@ -25,18 +30,18 @@ class FolderService {
     
     ///폴더 목록 불러오기. 폴더 변경 감시 시작.
     func configure(rootURL: URL, folderListUpdated: ((FolderMonitor.FolderUpdateData) -> Void)? ) {
+        
         self.rootURL = rootURL
         self.folderListUpdated = folderListUpdated
         
         folderMonitor?.stopMonitoring()
-        folderMonitor = FolderMonitor(folderPath: rootURL.absoluteString,
-                                      folderListUpdated: { [weak self] folderUpdatedData in
-            hcLog("파일목록 갱신 감지")
+        folderMonitor = FolderMonitor(folderURL: rootURL,
+                                      contentType: [.directory, .folder],
+                                      eventMask: [.write],
+                                      folderListUpdated: { [weak self] updateData in
             guard let self else { return }
-            self.folderList = folderUpdatedData.newFileList
-            self.folderListUpdated?(folderUpdatedData)
-        })
-        
+            folderList = updateData.newFileList
+            folderListUpdated?(updateData) })
         folderMonitor?.startMonitoring()
     }
     

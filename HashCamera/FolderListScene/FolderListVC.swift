@@ -22,10 +22,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     var disposeBag = DisposeBag()
     @IBOutlet weak var tableView: UITableView!
     
-    var vm: BrowserVM!
-    
-    ///moveFolder에 사용될 떄는 확인 버튼이 눌리면 이 값을 selectedFolderIndexPath에 넣는다.
-    var tempSelectedIndexPath: IndexPath?
+    var vm: FolderListVM = FolderListVM()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,18 +38,41 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
                                       target: self,
                                       action: #selector(addBtnTapped))]
 
-        setNaviBar("폴더 관리", leftItems: [], rightItems: rightItems)
+        setNaviBar("폴더 목록", leftItems: [], rightItems: rightItems)
         
+        vm.configure(folderListUpdated: { [weak self] updateData in
+            guard let self else { return }
+            switch updateData.folderUpdateData.changeType {
+            case .initiate:
+                tableView.reloadData { [weak self] in
+                    guard let self else { return }
+                    if tableView.indexPathForSelectedRow != updateData.selectedIndexPath {
+                        tableView.selectRow(at: updateData.selectedIndexPath, animated: true, scrollPosition: .top)
+                    }
+                }
+            case .add(let newIndex):
+                tableView.insertRows(at: [.init(row: newIndex, section: 1)], with: .automatic)
+                if tableView.indexPathForSelectedRow != updateData.selectedIndexPath {
+                    tableView.selectRow(at: updateData.selectedIndexPath, animated: true, scrollPosition: .top)
+                }
+            case .rename(let oldIndex, let newIndex):
+                tableView.beginUpdates()
+                tableView.deleteRows(at: [.init(row: oldIndex, section: 1)], with: .automatic)
+                tableView.insertRows(at: [.init(row: newIndex, section: 1)], with: .automatic)
+                if tableView.indexPathForSelectedRow != updateData.selectedIndexPath {
+                    tableView.selectRow(at: updateData.selectedIndexPath, animated: true, scrollPosition: .top)
+                }
+                tableView.endUpdates()
+            case .delete(let deletedIndex):
+                tableView.beginUpdates()
+                tableView.deleteRows(at: [.init(row: deletedIndex, section: 1)], with: .automatic)
+                if tableView.indexPathForSelectedRow != updateData.selectedIndexPath {
+                    tableView.selectRow(at: updateData.selectedIndexPath, animated: true, scrollPosition: .top)
+                }
+                tableView.endUpdates()
+            }
+        })
         
-        //폴더 vm 연결
-        vm.folderListUpdated = {
-            
-        }
-        
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
     }
     
     @objc func addBtnTapped() {
@@ -77,29 +97,29 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     //MARK: - UITableViewDataSource
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return vm.folders.value.count
+        return vm.folderList.count >= 2 ? vm.folderList.count : 0
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return vm.folders.value[section].count
+        return vm.folderList[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "\(FolderListItemCell.self)", for: indexPath) as? FolderListItemCell else
         {return UITableViewCell()}
         
-        let item  = vm.folders.value[indexPath.section][indexPath.row]
+        let item  = vm.folderList[indexPath.section][indexPath.row]
         cell.nameLabel.text = item.name
         return cell
     }
     
     //MARK: - UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            vm.selectedFolderIndexPath.accept(indexPath)
+        vm.selectedIndexPath = indexPath
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
-        guard vm.folders.value[indexPath.section][indexPath.row].type == .folder else { return nil}
+        guard indexPath.section == 1, vm.folderList[indexPath.section][indexPath.row].type == .folder else { return nil}
         //쓸어서 삭제 기능
         let deleteAction = UIContextualAction(style: .destructive, title: nil){ [weak self] action, view, completion in
             guard let self else { return }
@@ -120,7 +140,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
             // 수정 팝업 띄우기
             let alert = UIAlertController(title: "이름변경", message: "변경할 이름 입력하세요.", preferredStyle: .alert)
             alert.addTextField { textField in
-                textField.text = self.vm.folders.value[indexPath.section][indexPath.row].name
+                textField.text = self.vm.folderList[indexPath.section][indexPath.row].name
             }
             let saveAction = UIAlertAction(title: "확인", style: .default) { _ in
                 if let textField = alert.textFields?.first, let newText = textField.text,
@@ -151,13 +171,4 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         return swipeActionsConfig
     }
 
-    @objc func cancelBtnTapped() {
-        tableView.selectRow(at: vm.selectedFolderIndexPath.value, animated: true, scrollPosition: .top)
-        moveBackVC(animated: true)
-    }
-    
-    @objc func confirmBtnTapped() {
-        guard let tempSelectedIndexPath else { return }
-        vm.selectedFolderIndexPath.accept(tempSelectedIndexPath)
-    }
 }
