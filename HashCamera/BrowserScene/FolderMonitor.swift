@@ -112,7 +112,7 @@ class FolderMonitor {
                 //설정된 파일유형만 필터링
                 guard let type = try? url.resourceValues(forKeys: [.contentTypeKey]).contentType else { return false}
                 return contentType.contains(type)
-            }
+            }.sorted(by: {$0.lastPathComponent < $1.lastPathComponent})
             
             let fileDictionary = Dictionary(uniqueKeysWithValues: fileList.map { ($0.lastPathComponent, (try? $0.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date.distantPast) })
             return (fileList, fileDictionary)
