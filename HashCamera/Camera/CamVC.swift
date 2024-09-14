@@ -195,7 +195,7 @@ class CamVC: UIViewController {
         //뷰어 버튼
         browseButton.rx.tap.bind { [weak self] _ in
             guard let self else { return }
-            presentFull(UINavigationController(rootViewController: BrowserVC()), animated: true)
+            presentFull(UINavigationController(rootViewController: PhotoListVC()), animated: true)
         }.disposed(by: disposeBag)
         
         

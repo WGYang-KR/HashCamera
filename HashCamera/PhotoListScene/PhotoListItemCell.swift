@@ -1,5 +1,5 @@
 //
-//  BrowserItemCell.swift
+//  PhotoListItemCell.swift
 //  HashCamera
 //
 //  Created by WG-MacHome on 11/28/23.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class BrowserItemCell: UICollectionViewCell {
+class PhotoListItemCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var selectionCoverView: UIView!

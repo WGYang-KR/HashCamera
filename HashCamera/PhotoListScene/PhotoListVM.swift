@@ -1,5 +1,5 @@
 //
-//  BrowserVM.swift
+//  PhotoListVM.swift
 //  HashCamera
 //
 //  Created by Anto-Yang on 7/18/24.
@@ -23,7 +23,7 @@ class ImageFileModel {
     }
 }
 
-class BrowserVM {
+class PhotoListVM {
 
     private var disposeBag = DisposeBag()
     private let fileManager = FileManager.default

@@ -1,5 +1,5 @@
 //
-//  BrowserVC.swift
+//  PhotoListVC.swift
 //  HashCamera
 //
 //  Created by Anto-Yang on 7/18/24.
@@ -9,10 +9,10 @@ import UIKit
 import RxSwift
 import SideMenu
 
-class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     var disposeBag = DisposeBag()
-    let vm = BrowserVM()
+    let vm = PhotoListVM()
     let folderListVC = FolderListVC()
     
     @IBOutlet weak var collectionView: UICollectionView!
@@ -129,9 +129,9 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
 //        collectionView.delegate = self
         collectionView.allowsMultipleSelection = true
     
-        collectionView.register(UINib(nibName: "\(BrowserItemCell.self)",
+        collectionView.register(UINib(nibName: "\(PhotoListItemCell.self)",
                                       bundle: nil),
-                                forCellWithReuseIdentifier: "\(BrowserItemCell.self)")
+                                forCellWithReuseIdentifier: "\(PhotoListItemCell.self)")
         
         if let collectionLayout = collectionView.collectionViewLayout as?  UICollectionViewFlowLayout {
             collectionLayout.scrollDirection = .vertical
@@ -148,8 +148,8 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
         guard let cell =  collectionView
-            .dequeueReusableCell(withReuseIdentifier: "\(BrowserItemCell.self)", for: indexPath)
-                as? BrowserItemCell else { return UICollectionViewCell()}
+            .dequeueReusableCell(withReuseIdentifier: "\(PhotoListItemCell.self)", for: indexPath)
+                as? PhotoListItemCell else { return UICollectionViewCell()}
 //        hcLog("썸네일 로드요청 index:\(indexPath.item) imageSize: \(itemSize)")
         vm.startFetchingThumb(index: indexPath.item) { image in
             DispatchQueue.main.async {
