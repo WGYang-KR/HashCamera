@@ -23,7 +23,6 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     }()
 
     
-    
     var itemSize: CGSize = .zero
     var itemSpacing: CGFloat = 2.0
     
@@ -114,19 +113,55 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     }
     
     func initVM() {
-//        folderListVC.vm = self.vm
-//        vm.files.subscribe { [weak self] list in
-//            self?.collectionView.reloadData()
-//        }.disposed(by: disposeBag)
-//        vm.prepare()
+        
+        //선택 폴더 갱신시 처리
+        folderListVC.vm.selectedFolderUpdated = { [weak self] url in
+            guard let self, let url else {return }
+            
+            //폴더 내 파일 변경 이벤트 처리
+            vm.configure(rootURL: url){ [weak self] updateData in
+                guard let self else { return }
+                
+                //모든 셀 선택해제
+                if let indexPaths = self.collectionView.indexPathsForSelectedItems {
+                    let _ = indexPaths.map({self.collectionView.deselectItem(at: $0, animated: false)})
+                }
+                
+                //이벤트별 갱신
+                switch updateData.folderUpdateData.changeType {
+                case .initiate:
+                    collectionView.reloadData()
+                case .add(let newIndex):
+                    collectionView.performBatchUpdates {
+                        self.collectionView.insertItems(at: [.init(item: newIndex, section: 0)])
+                    }
+                    
+                case .delete(let deletedIndex):
+                    collectionView.performBatchUpdates {
+                        self.collectionView.deleteItems(at: [.init(item: deletedIndex, section: 0)])
+                    }
+                    
+                case .rename(let oldIndex, let newIndex):
+                    collectionView.performBatchUpdates {
+                        self.collectionView.moveItem(at: .init(item: oldIndex, section: 0),
+                                                to: .init(item: newIndex, section: 0))
+                    }
+                    
+                }
+            }
+        }
+        
+        let _ = folderListVC.view //폴더 목록 VM 활성화.
+
     }
+
   
     
     //MARK: - CollectionView Delegate
     func initCollectionView() {
         
-//        collectionView.dataSource = self
-//        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.delegate = self
         collectionView.allowsMultipleSelection = true
     
         collectionView.register(UINib(nibName: "\(PhotoListItemCell.self)",
@@ -142,7 +177,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return vm.files.value.count
+        return vm.fileList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -150,6 +185,13 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         guard let cell =  collectionView
             .dequeueReusableCell(withReuseIdentifier: "\(PhotoListItemCell.self)", for: indexPath)
                 as? PhotoListItemCell else { return UICollectionViewCell()}
+       
+        
+        return cell
+    }
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let cell = cell as? PhotoListItemCell else { return }
+        
 //        hcLog("썸네일 로드요청 index:\(indexPath.item) imageSize: \(itemSize)")
         vm.startFetchingThumb(index: indexPath.item) { image in
             DispatchQueue.main.async {
@@ -158,12 +200,10 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
                     cell.imageView.image = image
 //                    hcLog("썸네일 로드완 index:\(indexPath.item) imageSize: \(image.size)")
                 } else {
-//                    hcLog("Cell 위치 변함 or image == nil")
+                    hcLog("Cell 위치 변함 or image == nil")
                 }
             }
         }
-        
-        return cell
     }
     
     //MARK: - CollectionView Delegate

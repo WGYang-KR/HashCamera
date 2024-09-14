@@ -31,9 +31,8 @@ class PhotoListVM {
     }
     
     ///파일 목록 불러오기. 파일 변경 감시 시작. 호출할 때마다 reset 된다.
-    func configure(rootURL: URL, thumbnailSize: CGSize, fileListUpdated: ((FileListUpdateData) -> Void)?) {
+    func configure(rootURL: URL, fileListUpdated: ((FileListUpdateData) -> Void)?) {
         self.rootURL = rootURL
-        self.thumbnailSize = thumbnailSize
         self.fileList = []
         self.fileListUpdated = fileListUpdated
         self.selectedIndexPaths = []

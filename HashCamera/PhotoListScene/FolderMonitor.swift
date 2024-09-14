@@ -54,6 +54,8 @@ class FolderMonitor {
     
     /// 폴더 감시를 시작하고,  초기 파일 상태을 업데이트한다.
     func startMonitoring() {
+        fileDictionary = [:]
+        folderList = []
         
         guard let folderURL, source == nil, folderDescriptor == -1 else { return }
         // 폴더 파일 디스크립터 생성
