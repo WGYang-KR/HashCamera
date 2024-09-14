@@ -6,12 +6,9 @@
 //
 
 import Foundation
-import QuickLookThumbnailing
 
 class FolderListVM {
     
-    private let qlThumbnailGenerator =  QLThumbnailGenerator.shared
-    //TODO: 사실 private로 선언하고, VM이 브릿지 역할을 해야함
     private let folderService = FolderService()
     
     var rootURL: URL? = URL(string: "./", relativeTo: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first)

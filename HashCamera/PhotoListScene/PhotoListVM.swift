@@ -10,60 +10,75 @@ import RxSwift
 import RxRelay
 import QuickLookThumbnailing
 
-class ImageFileModel {
-    
-    let url: URL
-    var thumbnailRequest: QLThumbnailGenerator.Request?
-    
-    init(url: URL, 
-         thumbnailRequest: QLThumbnailGenerator.Request? = nil) {
-        
-        self.url = url
-        self.thumbnailRequest = thumbnailRequest
-    }
-}
+
 
 class PhotoListVM {
-
-    private var disposeBag = DisposeBag()
-    private let fileManager = FileManager.default
-    private let qlThumbnailGenerator =  QLThumbnailGenerator.shared
-    private let folderService = FolderService()
-    private let fileService = FileService.shared
     
-    var rootURL: URL? = URL(string: "./", relativeTo: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first)
+    private var fileService = FileService()
+    private let qlThumbnailGenerator =  QLThumbnailGenerator.shared
+
+    var rootURL: URL?
     var thumbnailSize: CGSize = .zero
     
-    var folderList: [[FolderListItemModel]]?
-    var files = BehaviorRelay(value:[ImageFileModel]())
-    var selectedFolderIndexPath: IndexPath?
-
-    var folderListUpdated: ((FolderMonitor.FolderUpdateData) -> Void)?
-    var fileListUpdated: ((FolderMonitor.FolderUpdateData) -> Void)?
-    typealias SelectionChangeData = (indexPath: IndexPath, animated: Bool)
-    var seletedFolderChanged: ((SelectionChangeData) -> Void)?
+    var fileList: [ImageFileModel] = []
+    var fileListUpdated: ((FileListUpdateData) -> Void)?
     
-    func prepare() {
-        guard let rootURL else { return }
-        
-        fileService.configure(rootURL: rootURL, fileListUpdated: {  [weak self] folderUpdatedData in
-            guard let self else { return }
-//            let newFileList = folderUpdatedData.newFileList.filter { $0.isPhoto }
-//            let addedList = folderUpdatedData..addedFiles.filter { $0.isPhoto }
-//            let deletedList = folderUpdatedData.removedFiles.filter{$0.isPhoto}
-//            self.fileList = newFileList.map({.init(url: $0)})
-//            self.fileListUpdated?(.init(newFileList: newFileList, addedFiles: addedList, removedFiles: deletedList))
-        })
-        
-        
-        
-        
+    var selectedIndexPaths: [IndexPath] = []
+    
+    struct FileListUpdateData {
+        let folderUpdateData: FolderMonitor.FolderUpdateData
+        let selectedIndexPaths: [IndexPath]
     }
+    
+    ///파일 목록 불러오기. 파일 변경 감시 시작. 호출할 때마다 reset 된다.
+    func configure(rootURL: URL, thumbnailSize: CGSize, fileListUpdated: ((FileListUpdateData) -> Void)?) {
+        self.rootURL = rootURL
+        self.thumbnailSize = thumbnailSize
+        self.fileList = []
+        self.fileListUpdated = fileListUpdated
+        self.selectedIndexPaths = []
+       
+        fileService.configure(rootURL: rootURL,
+                              fileListUpdated: {[weak self] updateData in
+            //업데이트 이벤트 핸들러
+            guard let self else { return }
+            
+            //각 상황에 맞게 파일목록 업데이트
+            switch updateData.changeType {
+            case .initiate:
+                fileList = updateData.newFileList.map({ImageFileModel(url: $0)})
+            case .add(let newIndex):
+                guard newIndex <= fileList.count else { return }
+                let newItem = ImageFileModel(url: updateData.newFileList[newIndex])
+                fileList.insert(newItem, at: newIndex)
+                selectedIndexPaths = []
+            case .delete(let deletedIndex):
+                guard deletedIndex < fileList.count else { return }
+                fileList.remove(at: deletedIndex)
+                selectedIndexPaths = []
+            case .rename(let oldIndex, let newIndex):
+                guard oldIndex < fileList.count, newIndex <= fileList.count else { return }
+                //새 이름을 갱신해야하므로 swap 안하고 삭제,삽입.
+                fileList.remove(at: oldIndex)
+                let newItem = ImageFileModel(url: updateData.newFileList[newIndex])
+                fileList.insert(newItem, at: newIndex)
+                selectedIndexPaths = []
+            }
+            
+            //선택된 폴더정보 유지되도록 작업
+            selectedIndexPaths = []
+            
+            //VC에 업데이트 이벤트 전달
+            fileListUpdated?(.init(folderUpdateData: updateData, selectedIndexPaths: self.selectedIndexPaths))
+            
+        })
+    }
+    
     
     
     func startFetchingThumb(index: Int, completion: @escaping (UIImage?) -> Void ) {
-        guard index >= 0, index < files.value.count else { return }
-        let item = files.value[index]
+        guard index >= 0, index < fileList.count else { return }
+        let item = fileList[index]
         
         //기존 Request 있으면 취소
         if let request = item.thumbnailRequest {
@@ -90,56 +105,16 @@ class PhotoListVM {
     }
     
     func stopFetchingThumb(index: Int) {
-        guard index >= 0, index < files.value.count else { return }
-        if let request = files.value[index].thumbnailRequest {
+        guard index >= 0, index < fileList.count else { return }
+        if let request = fileList[index].thumbnailRequest {
             QLThumbnailGenerator.shared.cancel(request)
         }
     }
     
-    
-    
-    ///해당 Index 파일들의 URL을 반환한다.
-    func sharingFiles(_ indices:[Int]) -> [URL]? {
-        var shareObject = [URL]()
-        indices.forEach { index in
-            shareObject.append(files.value[index].url)
-        }
-        return shareObject
+    func deleteFiles(at indexPaths: [IndexPath]) async -> Result<Void, FileService.DeleteError> {
+        return await fileService.deleteFiles(indexPaths.map({$0.row}))
     }
     
-    ///파일을 삭제한다. 일부 파일이 삭제 실패했을 경우에는 false를 반환하면서 error와 실패한 url 리스트를 반환한다.
-    /// - Parameter urlList: 삭제할 파일 url 배열
-    /// - Returns: (모든 파일 삭제 성공여부, 실패시 에러, 실패한 파일목록)
-    func deleteFiles(_ indices:[Int]) -> (success: Bool, error: Error?, failedURLs: [URL]) {
-        var deletingURLs = [URL]()
-        indices.forEach { index in
-            deletingURLs.append(files.value[index].url)
-        }
-        
-        /// 파일을 삭제한다. 일부 파일이 삭제 실패했을 경우에는 false를 반환하면서 error와 실패한 url 리스트를 반환한다.
-        /// - Parameter urlList: 삭제할 파일 url 배열
-        /// - Returns: (모든 파일 삭제 성공여부, 실패시 에러, 실패한 파일목록)
-        func deleteFile(urlList: [URL]) -> (success: Bool, error: Error?, failedURLs: [URL]) {
-            
-            var failedURLs = [URL]() //삭제 실패한 파일목록
-            var lastError:Error? = nil //삭제 실패 에러
-            
-            urlList.forEach { url in
-                do {
-                    try fileManager.removeItem(at: url)
-                } catch(let error) {
-                    failedURLs.append(url)
-                    lastError = error
-                }
-            }
-            
-            return (success: failedURLs.count == 0 , error: lastError, failedURLs: failedURLs)
-            
-        }
-        
-        return deleteFile(urlList: deletingURLs)
-    }
-
 }
 
 
