@@ -112,7 +112,7 @@ class FolderListVM {
             selectedIndexPath = .init(row: 0, section: 0)
             selectedFolder = folderList[0][0]
             
-        case .add(let newIndex):
+        case .add(_):
             //virtual 폴더 선택이었으면 아무 동작 X
             guard let selectedIndexPath, selectedIndexPath.section == 1 else { return }
             //폴더 선택되어 있었으면 선택되었던 폴더 찾아서 selctedIndexPath 갱신
@@ -120,17 +120,21 @@ class FolderListVM {
             guard let newSelectedIndex = folderList[1].firstIndex(where: { $0.url == selectedFolder.url }) else { return }
             self.selectedIndexPath = .init(row: newSelectedIndex, section: 1)
 
-            //TODO: 테이블뷰가 스스로 선택된 셀을 유지하는지 확인해보자!
-        case .delete(let deletedIndex):
+        case .delete(_):
             //virtual 폴더 선택이었으면 아무 동작 X
             //폴더 선택되어 있었으면 선택되었던 폴더 찾아서 selctedIndexPath 갱신
             guard let selectedFolder, selectedFolder.type == .folder else { return }
-                //선택되었던 폴더가 폴더목록에 존재하면 아무 동작 X
-            guard folderList[1].firstIndex(where: { $0.url == selectedFolder.url }) == nil else { return }
-                //존재 안하면 allPhotos로 지정
-            self.selectedIndexPath = .init(row: 0, section: 0)
-            self.selectedFolder = folderList[0][0]
             
+            //선택되었던 폴더를 폴더목록에서 찾는다.
+            if let index = folderList[1].firstIndex(where: { $0.url == selectedFolder.url }) {
+                self.selectedIndexPath = .init(row: index, section: 1)
+                self.selectedFolder = folderList[1][index]
+            } else {
+                //존재 안하면 allPhotos로 지정
+                self.selectedIndexPath = .init(row: 0, section: 0)
+                self.selectedFolder = folderList[0][0]
+            }
+
         case .rename(let oldIndex, let newIndex):
             self.selectedIndexPath = .init(row: newIndex, section: 1)
             let newItemURL = updateData.newFileList[newIndex]
