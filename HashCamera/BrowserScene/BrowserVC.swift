@@ -13,7 +13,6 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     
     var disposeBag = DisposeBag()
     let vm = BrowserVM()
-    var moveFolderVM = MoveFolderVM(fileURLs: [])
     let folderListVC = FolderListVC()
     
     @IBOutlet weak var collectionView: UICollectionView!
@@ -115,19 +114,19 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     }
     
     func initVM() {
-        folderListVC.vm = self.vm
-        vm.files.subscribe { [weak self] list in
-            self?.collectionView.reloadData()
-        }.disposed(by: disposeBag)
-        vm.prepare()
+//        folderListVC.vm = self.vm
+//        vm.files.subscribe { [weak self] list in
+//            self?.collectionView.reloadData()
+//        }.disposed(by: disposeBag)
+//        vm.prepare()
     }
   
     
     //MARK: - CollectionView Delegate
     func initCollectionView() {
         
-        collectionView.dataSource = self
-        collectionView.delegate = self
+//        collectionView.dataSource = self
+//        collectionView.delegate = self
         collectionView.allowsMultipleSelection = true
     
         collectionView.register(UINib(nibName: "\(BrowserItemCell.self)",
@@ -226,13 +225,13 @@ class BrowserVC: UIViewController, UICollectionViewDataSource, UICollectionViewD
     }
     
     @IBAction func tagBtnTapped(_ sender: Any) {
-        guard let selectedURLs = collectionView.indexPathsForSelectedItems?.map({ vm.files.value[$0.item].url }) else {return}
-        self.moveFolderVM = MoveFolderVM(fileURLs: selectedURLs)
-        self.moveFolderVM.prepare()
-        let movingFolderList = FolderListVC()
-        movingFolderList.sceneType = .moveFolder
-        movingFolderList.vm = self.moveFolderVM
-        present(UINavigationController(rootViewController: movingFolderList), presentationStyle: .pageSheet, transitionStyle: .coverVertical, animated: true)
+//        guard let selectedURLs = collectionView.indexPathsForSelectedItems?.map({ vm.files.value[$0.item].url }) else {return}
+//        self.moveFolderVM = MoveFolderVM(fileURLs: selectedURLs)
+//        self.moveFolderVM.prepare()
+//        let movingFolderList = FolderListVC()
+//        movingFolderList.sceneType = .moveFolder
+//        movingFolderList.vm = self.moveFolderVM
+//        present(UINavigationController(rootViewController: movingFolderList), presentationStyle: .pageSheet, transitionStyle: .coverVertical, animated: true)
     }
 
 }

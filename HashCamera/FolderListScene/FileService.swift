@@ -10,52 +10,37 @@ import RxSwift
 import RxRelay
 
 class FileService {
-    
-    let fileManager = FileManager.default
-    
+
     static let shared = FileService()
+    let fileManager = FileManager.default
+    var rootURL: URL?
+    var folderMonitor: FolderMonitor?
+    var fileList: [URL] = []
+    var fileListUpdated: ((FolderMonitor.FolderUpdateData) -> Void)?
+
     private init() { }
     deinit {
         folderMonitor?.stopMonitoring()
     }
     
-    var rootURL: URL?
-    let files = BehaviorRelay<[ImageFileModel]>(value: [])
-    var folderMonitor: FolderMonitor? //폴더 변경 감시자
-
-    
-    func fetchFiles(of newRootURL: URL? = nil) async -> Void {
-        if let newRootURL {
-            rootURL = newRootURL
-        }
-        guard let rootURL else { return }
+    ///폴더 목록 불러오기. 폴더 변경 감시 시작.
+    func configure(rootURL: URL, fileListUpdated: ((FolderMonitor.FolderUpdateData) -> Void)? ) {
+        self.rootURL = rootURL
+        self.fileListUpdated = fileListUpdated
         
-        folderMonitor?.stopMonitoring()
-        folderMonitor = FolderMonitor(folderPath: rootURL.absoluteString,
-                                      folderDidChange: { [weak self] folderChangeData in
-            hcLog("파일목록 갱신 감지")
-            Task { [weak self] in
-               await self?.fetchFiles()
-            }
-        })
-        folderMonitor?.startMonitoring()
-        
-        
-        do {
-            let fetchedList =  try fileManager.contentsOfDirectory(at: rootURL,
-                                                                   includingPropertiesForKeys: nil)
-            let photoList = fetchedList.filter{$0.isPhoto}
-            hcLog("파일 갯수: \(fetchedList.count), 사진파일갯수 \(photoList.count)")
-            
-            await MainActor.run {
-                files.accept(photoList.map{ImageFileModel(url: $0)})
-            }
-        } catch {
-            hcLog("fetch error")
-            await MainActor.run {
-                files.accept([])
-            }
-        }
+//        folderMonitor?.stopMonitoring()
+//        folderMonitor = FolderMonitor(folderPath: rootURL.absoluteString,
+//                                      folderListUpdated: { [weak self] folderUpdatedData in
+//            hcLog("파일목록 갱신 감지")
+//            guard let self else { return }
+//            let newFileList = folderUpdatedData.newFileList.filter { $0.isPhoto }
+//            let addedList = folderUpdatedData.addedFiles.filter { $0.isPhoto }
+//            let deletedList = folderUpdatedData.removedFiles.filter{$0.isPhoto}
+//            self.fileList = newFileList
+//            self.fileListUpdated?(.init(newFileList: newFileList, addedFiles: addedList, removedFiles: deletedList))
+//        })
+//        
+//        folderMonitor?.startMonitoring()
     }
     
     func moveFile(at fileURLs: [URL], to folderURL: URL) async -> Result<Void,MoveFileError> {

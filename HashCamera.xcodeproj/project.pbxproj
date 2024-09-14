@@ -26,6 +26,7 @@
 		6A3796542BB5A44000BAFC19 /* PhotoFileFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3796532BB5A44000BAFC19 /* PhotoFileFormat.swift */; };
 		6A3796562BB5A47900BAFC19 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3796552BB5A47900BAFC19 /* SettingsView.swift */; };
 		6A3796582BB5A4CD00BAFC19 /* AppStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3796572BB5A4CD00BAFC19 /* AppStatus.swift */; };
+		6A6C4C572C8A049B007F794F /* FolderListVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6C4C562C8A049B007F794F /* FolderListVM.swift */; };
 		6A73A1022C5143B2007B6CAE /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1012C5143B2007B6CAE /* Utils.swift */; };
 		6A73A1052C610A2D007B6CAE /* FolderListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */; };
 		6A73A1062C610A2D007B6CAE /* FolderListItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A73A1042C610A2D007B6CAE /* FolderListItemCell.xib */; };
@@ -34,7 +35,6 @@
 		6A7D4F682C775DED00ED0C59 /* FolderListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7D4F662C775DED00ED0C59 /* FolderListVC.swift */; };
 		6A7D4F692C775DED00ED0C59 /* FolderListVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A7D4F672C775DED00ED0C59 /* FolderListVC.xib */; };
 		6A7D4F6E2C7B4C9A00ED0C59 /* FolderListItemModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7D4F6D2C7B4C9A00ED0C59 /* FolderListItemModel.swift */; };
-		6A7D4F702C7F5B5800ED0C59 /* MoveFolderVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7D4F6F2C7F5B5800ED0C59 /* MoveFolderVM.swift */; };
 		6A8B31FA2AE7983E00D24E49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B31F92AE7983E00D24E49 /* AppDelegate.swift */; };
 		6A8B31FC2AE7983E00D24E49 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B31FB2AE7983E00D24E49 /* SceneDelegate.swift */; };
 		6A8B31FE2AE7983E00D24E49 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B31FD2AE7983E00D24E49 /* ViewController.swift */; };
@@ -85,6 +85,7 @@
 		6A3796532BB5A44000BAFC19 /* PhotoFileFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoFileFormat.swift; sourceTree = "<group>"; };
 		6A3796552BB5A47900BAFC19 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		6A3796572BB5A4CD00BAFC19 /* AppStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStatus.swift; sourceTree = "<group>"; };
+		6A6C4C562C8A049B007F794F /* FolderListVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListVM.swift; sourceTree = "<group>"; };
 		6A73A1012C5143B2007B6CAE /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListItemCell.swift; sourceTree = "<group>"; };
 		6A73A1042C610A2D007B6CAE /* FolderListItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FolderListItemCell.xib; sourceTree = "<group>"; };
@@ -93,7 +94,6 @@
 		6A7D4F662C775DED00ED0C59 /* FolderListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListVC.swift; sourceTree = "<group>"; };
 		6A7D4F672C775DED00ED0C59 /* FolderListVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FolderListVC.xib; sourceTree = "<group>"; };
 		6A7D4F6D2C7B4C9A00ED0C59 /* FolderListItemModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListItemModel.swift; sourceTree = "<group>"; };
-		6A7D4F6F2C7F5B5800ED0C59 /* MoveFolderVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveFolderVM.swift; sourceTree = "<group>"; };
 		6A8B31F62AE7983E00D24E49 /* HashCamera.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HashCamera.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A8B31F92AE7983E00D24E49 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6A8B31FB2AE7983E00D24E49 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -161,9 +161,9 @@
 				6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */,
 				6A73A1042C610A2D007B6CAE /* FolderListItemCell.xib */,
 				6A7D4F662C775DED00ED0C59 /* FolderListVC.swift */,
+				6A6C4C562C8A049B007F794F /* FolderListVM.swift */,
 				6A7D4F672C775DED00ED0C59 /* FolderListVC.xib */,
 				6A7D4F6D2C7B4C9A00ED0C59 /* FolderListItemModel.swift */,
-				6A7D4F6F2C7F5B5800ED0C59 /* MoveFolderVM.swift */,
 			);
 			path = FolderListScene;
 			sourceTree = "<group>";
@@ -488,8 +488,8 @@
 				6AFB72D42B0113D00029592F /* CaptureBtnView.swift in Sources */,
 				6A133E4D2B0503690018A769 /* AppLifeCycle.swift in Sources */,
 				6AA61AD42AFD22E3002E3725 /* TopMenuBarView.swift in Sources */,
-				6A7D4F702C7F5B5800ED0C59 /* MoveFolderVM.swift in Sources */,
 				6AE8CF9F2AF4BF0D0063C8C6 /* HCError.swift in Sources */,
+				6A6C4C572C8A049B007F794F /* FolderListVM.swift in Sources */,
 				6A8B321F2AE7A1D000D24E49 /* SelectStorageBarView.swift in Sources */,
 				6A7D4F682C775DED00ED0C59 /* FolderListVC.swift in Sources */,
 				6A2529D72B162BAA00721202 /* BrowserItemCell.swift in Sources */,

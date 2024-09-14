@@ -23,46 +23,41 @@ class ImageFileModel {
     }
 }
 
-class BrowserVM: FolderListVMProtocol {
+class BrowserVM {
 
     private var disposeBag = DisposeBag()
     private let fileManager = FileManager.default
     private let qlThumbnailGenerator =  QLThumbnailGenerator.shared
-    private let folderService = FolderService.shared
+    private let folderService = FolderService()
     private let fileService = FileService.shared
-    let folders = BehaviorRelay<[[FolderListItemModel]]>(value: [[]])
-    var files: BehaviorRelay<[ImageFileModel]> { fileService.files }
-    let selectedFolderIndexPath = BehaviorRelay<IndexPath>(value:.init(row: 0, section: 0))
     
+    var rootURL: URL? = URL(string: "./", relativeTo: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first)
     var thumbnailSize: CGSize = .zero
     
-    func prepare() {
-        
-        folderService.folders.withUnretained(self).subscribe{owner, list in
-            guard let rootURL = owner.folderService.rootURL else { return }
-            //모든 사진, 분류안됨 폴더를 section 0에 추가하면서 폴더 목록 갱신한다.
-            let virtualFolders: [FolderListItemModel] = [.init(type: .allPhotos, url: rootURL),
-                                                         .init(type: .unclassified, url: rootURL)]
-            owner.folders.accept([virtualFolders,list])
-            owner.selectedFolderIndexPath.accept(.init(row: 0, section: 0))
-        }.disposed(by: disposeBag)
+    var folderList: [[FolderListItemModel]]?
+    var files = BehaviorRelay(value:[ImageFileModel]())
+    var selectedFolderIndexPath: IndexPath?
 
-        ///선택된 폴더 index가 바뀌면, 바뀐 폴더의 파일목록을 가져온다.
-        selectedFolderIndexPath.subscribe{ [weak self] indexPath in
-            guard let self else { return }
-            guard indexPath.section < folders.value.count,
-                  indexPath.row < folders.value[indexPath.section].count
-            else { return }
-            Task { [weak self] in
-                guard let self else {return }
-                await fileService.fetchFiles(of: folders.value[indexPath.section][indexPath.row].url)
-            }
-        }.disposed(by: disposeBag)
+    var folderListUpdated: ((FolderMonitor.FolderUpdateData) -> Void)?
+    var fileListUpdated: ((FolderMonitor.FolderUpdateData) -> Void)?
+    typealias SelectionChangeData = (indexPath: IndexPath, animated: Bool)
+    var seletedFolderChanged: ((SelectionChangeData) -> Void)?
+    
+    func prepare() {
+        guard let rootURL else { return }
         
-        Task {
-            folderService.prepare()
-            await folderService.fetchFolders() //폴더 조회
-        }
+        fileService.configure(rootURL: rootURL, fileListUpdated: {  [weak self] folderUpdatedData in
+            guard let self else { return }
+//            let newFileList = folderUpdatedData.newFileList.filter { $0.isPhoto }
+//            let addedList = folderUpdatedData..addedFiles.filter { $0.isPhoto }
+//            let deletedList = folderUpdatedData.removedFiles.filter{$0.isPhoto}
+//            self.fileList = newFileList.map({.init(url: $0)})
+//            self.fileListUpdated?(.init(newFileList: newFileList, addedFiles: addedList, removedFiles: deletedList))
+        })
+        
+        
+        
+        
     }
     
     
@@ -144,25 +139,7 @@ class BrowserVM: FolderListVMProtocol {
         
         return deleteFile(urlList: deletingURLs)
     }
-    
 
-    
-    //MARK: FolderListVMProtocol
-    func createFolder(folderName: String) async -> Result<URL, FolderService.CreationError> {
-        await folderService.createFolder(folderName: folderName)
-    }
-    
-    func renameFolder(at indexPath: IndexPath, newName: String) async -> Result<URL, FolderService.RenameError> {
-        guard folders.value[indexPath.section][indexPath.row].type == .folder else { return .failure(.isNotRealFolder) }
-        return await folderService.renameFolder(at: indexPath.row, newName: newName)
-    }
-    
-    func deleteFolder(at indexPath: IndexPath) async -> Result<Void, FolderService.DeleteError> {
-        guard folders.value[indexPath.section][indexPath.row].type == .folder else { return .failure(.isNotRealFolder) }
-        return await folderService.deleteFolder(at: indexPath.row)
-    }
-    
-    
 }
 
 

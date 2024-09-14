@@ -10,36 +10,38 @@ import RxSwift
 import RxRelay
 
 class FolderService {
-    static let shared = FolderService()
-    private init() { }
+    
+    let fileManager = FileManager.default
+    
+    ///대상 폴더
+    var rootURL: URL?
+    ///폴더 내 폴더 변경 감시자
+    var folderMonitor: FolderMonitor?
+    ///폴더 내 폴더 목록
+    var folderList: [URL] = []
+    ///폴더 내 폴더 변경 이벤트 핸들러
+    var folderListUpdated: ((FolderMonitor.FolderUpdateData) -> Void)?
+    
+    init() { }
     
     deinit {
         folderMonitor?.stopMonitoring()
     }
     
-    ///폴더 변경 감시자
-    var folderMonitor: FolderMonitor?
-
-    let fileManager = FileManager.default
-    
-    let folders = BehaviorRelay<[FolderListItemModel]>(value: [])
- 
-    var rootURL: URL? = {
-        let baseURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        return URL(string: "./", relativeTo: baseURL)
-    }()
-    
-    func prepare() {
-        guard let rootURL else { return }
+    ///폴더 목록 불러오기. 폴더 변경 감시 시작.
+    func configure(rootURL: URL, folderListUpdated: ((FolderMonitor.FolderUpdateData) -> Void)? ) {
+        
+        self.rootURL = rootURL
+        self.folderListUpdated = folderListUpdated
         
         folderMonitor?.stopMonitoring()
-        folderMonitor = FolderMonitor(folderPath: rootURL.absoluteString,
-                                      folderDidChange: { [weak self] folderChangeData in
-            hcLog("파일목록 갱신 감지")
-            Task { [weak self] in
-               await self?.fetchFolders()
-            }
-        })
+        folderMonitor = FolderMonitor(folderURL: rootURL,
+                                      contentType: [.directory, .folder],
+                                      eventMask: [.write],
+                                      folderListUpdated: { [weak self] updateData in
+            guard let self else { return }
+            folderList = updateData.newFileList
+            folderListUpdated?(updateData) })
         folderMonitor?.startMonitoring()
     }
     
@@ -58,41 +60,17 @@ class FolderService {
             return .failure(.system(error))
         }
     }
-
     enum CreationError: Error {
         case unknown
         case system(Error)
         case duplicatedName
     }
     
-    ///폴더 조회
-    func fetchFolders() async {
-        ///로컬폴더 rootURL 세팅
-        guard let rootURL else { return }
-        
-        do {
-            let list =  try fileManager.contentsOfDirectory(at: rootURL,
-                                                            includingPropertiesForKeys: nil).filter { $0.isDirectory }
-                .sorted{ $0.lastPathComponent < $1.lastPathComponent }
-            hcLog("fetched folders count = \(list.count)")
-            await MainActor.run { [weak self] in
-                self?.folders.accept(list.map{.init(type: .folder, url: $0)} )
-            }
-        }
-        catch {
-            hcLog("폴더 읽기 실패", error: error)
-            await MainActor.run { [weak self] in
-                self?.folders.accept([])
-            }
-        }
-        
-    }
-    
     ///폴더 이름바꾸기. 성공시 바뀐 URL 반환. 실패시 에러 반환.
     func renameFolder(at index: Int, newName: String) async -> Result<URL,RenameError> {
-        guard index < folders.value.count else { return .failure(.outOfBound)}
+        guard index < folderList.count else { return .failure(.outOfBound)}
         
-        let originURL = folders.value[index].url
+        let originURL = folderList[index]
         let newURL = originURL.deletingLastPathComponent().appendingPathComponent(newName)
         guard fileManager.fileExists(atPath: newURL.path) == false else { return .failure(.duplicatedName) }
         do {
@@ -113,8 +91,8 @@ class FolderService {
     }
     
     func deleteFolder(at index: Int) async -> Result<Void,DeleteError> {
-        guard index < folders.value.count else { return .failure(.outOfBound)}
-        let url = folders.value[index].url
+        guard index < folderList.count else { return .failure(.outOfBound)}
+        let url = folderList[index]
         
         do {
             try fileManager.removeItem(at: url)
