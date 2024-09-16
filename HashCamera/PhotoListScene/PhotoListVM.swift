@@ -91,7 +91,7 @@ class PhotoListVM {
                                                    size: self.thumbnailSize,
                                                    scale: scale,
                                                    representationTypes: [.lowQualityThumbnail, .thumbnail])
-        
+        item.thumbnailRequest = request
         QLThumbnailGenerator.shared.generateRepresentations(for: request) { thumbnail, type, error in
             if let thumbnail {
                 completion(thumbnail.uiImage)
