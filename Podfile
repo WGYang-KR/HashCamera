@@ -11,6 +11,7 @@ target 'HashCamera' do
   pod 'RxGesture'
   pod 'SnapKit', '5.6.0'
   pod 'SideMenu'
+  pod 'SDWebImage', '~> 5.0'
   
   post_install do |installer|
     installer.generated_projects.each do |project|
