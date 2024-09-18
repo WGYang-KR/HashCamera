@@ -59,7 +59,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
                                              target: self,
                                              action: #selector(naviListBtnTapped))]
         
-        let selectionModeBtn = UIBarButtonItem(image: SystemUIImage.checkmarkRectangleStack,
+        let selectionModeBtn = UIBarButtonItem(title: "선택",
                                               style: .plain,
                                               target: self,
                                               action: #selector(naviSelectionBtnTapped))
@@ -118,6 +118,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         folderListVC.vm.selectedFolderUpdated = { [weak self] url in
             guard let self, let url else {return }
             
+            setSelectionMode(false)
             //폴더 내 파일 변경 이벤트 처리
             vm.configure(rootURL: url){ [weak self] updateData in
                 guard let self else { return }
@@ -206,11 +207,6 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
                 }
             }
         }
-        
-        // 이미지뷰어에 정보를 셋팅
-        cell.imageView.setupImageViewer(photoListVM: vm,
-                                        initialIndex: indexPath.item,
-                                        from: self)
     }
     
     //MARK: - CollectionView Delegate
@@ -223,7 +219,12 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
             
         } else {
             collectionView.deselectItem(at: indexPath, animated: true)
+            
             //뷰어이동
+            guard let cell = collectionView.cellForItem(at: indexPath) as? PhotoListItemCell else { return }
+            let sourceView: UIImageView = cell.imageView
+            let imageCarousel = ImageCarouselViewController(sourceView: sourceView, photoListVM: vm, initialIndex: indexPath.item)
+            present(imageCarousel, animated: true)
         }
     }
     
@@ -246,7 +247,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     func setSelectionMode(_ selectionMode: Bool) {
         guard let navigationController else { return }
         navigationController.setToolbarHidden(!selectionMode, animated: true)
-        selectionModeBtn?.image = selectionMode ? SystemUIImage.checkmarkRectangleStackFill : SystemUIImage.checkmarkRectangleStack
+        selectionModeBtn?.title = selectionMode ? "취소" : "선택"
         
         collectionView.indexPathsForSelectedItems?.forEach{collectionView.deselectItem(at: $0, animated: false)}
        
