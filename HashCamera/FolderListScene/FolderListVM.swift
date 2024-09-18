@@ -6,12 +6,9 @@
 //
 
 import Foundation
-import QuickLookThumbnailing
 
 class FolderListVM {
     
-    private let qlThumbnailGenerator =  QLThumbnailGenerator.shared
-    //TODO: 사실 private로 선언하고, VM이 브릿지 역할을 해야함
     private let folderService = FolderService()
     
     var rootURL: URL? = URL(string: "./", relativeTo: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first)
@@ -19,6 +16,7 @@ class FolderListVM {
     
     var folderList: [[FolderListItemModel]] = [[],[]]
     var folderListUpdated: ((FolderListUpdateData) -> Void)?
+    var selectedFolderUpdated: ((URL?) -> Void)?
     
     ///선택된 폴더 인덱스 정보
     var selectedIndexPath: IndexPath? {
@@ -32,7 +30,11 @@ class FolderListVM {
         }
     }
     ///선택된 폴더 정보
-    private var selectedFolder: FolderListItemModel?
+    private var selectedFolder: FolderListItemModel? {
+        didSet {
+            selectedFolderUpdated?(selectedFolder?.url)
+        }
+    }
 
     lazy var virtualFolders: [FolderListItemModel] = {
         guard let rootURL else { return [] }

@@ -237,3 +237,11 @@ extension UITableView {
         }
     }
 }
+
+
+//MARK: - 배열 OutOfBound 체크
+extension Array {
+    subscript(safe index: Int) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
+}

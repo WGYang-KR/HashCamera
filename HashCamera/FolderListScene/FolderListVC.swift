@@ -6,20 +6,9 @@
 //
 
 import UIKit
-import RxSwift
-import RxRelay
-
-//protocol FolderListVMProtocol: AnyObject {
-//    var selectedFolderIndexPath: BehaviorRelay<IndexPath> { get }
-//    var folders: BehaviorRelay<[[FolderListItemModel]]> { get }
-//    func createFolder(folderName: String ) async -> Result<URL, FolderService.CreationError>
-//    func renameFolder(at index: IndexPath, newName: String) async -> Result<URL,FolderService.RenameError>
-//    func deleteFolder(at index: IndexPath) async -> Result<Void, FolderService.DeleteError>
-//}
 
 class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    var disposeBag = DisposeBag()
     @IBOutlet weak var tableView: UITableView!
     
     var vm: FolderListVM = FolderListVM()
