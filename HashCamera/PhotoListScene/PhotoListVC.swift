@@ -193,6 +193,8 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         guard let cell = cell as? PhotoListItemCell else { return }
         
 //        hcLog("썸네일 로드요청 index:\(indexPath.item) imageSize: \(itemSize)")
+        
+        //썸네일 설정
         vm.startFetchingThumb(index: indexPath.item) { image in
             DispatchQueue.main.async {
                 //셀 indexPath가 바뀌었는지 확인
@@ -204,6 +206,11 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
                 }
             }
         }
+        
+        // 이미지뷰어에 정보를 셋팅
+        cell.imageView.setupImageViewer(photoListVM: vm,
+                                        initialIndex: indexPath.item,
+                                        from: self)
     }
     
     //MARK: - CollectionView Delegate

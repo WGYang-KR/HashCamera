@@ -6,12 +6,17 @@
 //
 
 import Foundation
+import UIKit
 import QuickLookThumbnailing
 
 class ImageFileModel {
     
     let url: URL
     var thumbnailRequest: QLThumbnailGenerator.Request?
+    var thumbnailImage: UIImage?
+    var name: String {
+        url.lastPathComponent
+    }
     
     init(url: URL,
          thumbnailRequest: QLThumbnailGenerator.Request? = nil) {

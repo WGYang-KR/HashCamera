@@ -14,7 +14,7 @@ UIGestureRecognizerDelegate {
     }
     
     var index:Int = 0
-    var imageItem:ImageItem!
+    var imageItem:ImageFileModel!
 
     var navBar:UINavigationBar? {
         guard let _parent = parent as? ImageCarouselViewController
@@ -36,7 +36,7 @@ UIGestureRecognizerDelegate {
     
     init(
         index: Int,
-        imageItem:ImageItem,
+        imageItem:ImageFileModel,
         imageLoader: ImageLoader) {
 
         self.index = index
@@ -85,18 +85,10 @@ UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        switch imageItem {
-        case .image(let img):
-            imageView.image = img
-            imageView.layoutIfNeeded()
-        case .url(let url, let placeholder):
-            imageLoader.loadImage(url, placeholder: placeholder, imageView: imageView) { (image) in
-                DispatchQueue.main.async {[weak self] in
-                    self?.layout()
-                }
+        imageLoader.loadImage(imageItem.url, placeholder: imageItem.thumbnailImage, imageView: imageView) { (image) in
+            DispatchQueue.main.async {[weak self] in
+                self?.layout()
             }
-        default:
-            break
         }
         
         addGestureRecognizers()

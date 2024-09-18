@@ -5,9 +5,11 @@ public protocol ImageDataSource: AnyObject {
     func imageItem(at index:Int) -> ImageItem
 }
 
-public class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionViewControllerConvertible {
+class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionViewControllerConvertible {
     
     unowned var initialSourceView: UIImageView?
+    weak var photoListVM: PhotoListVM?
+    
     
     ///이 VC를 호출한 ImageView
     var sourceView: UIImageView? {
@@ -24,8 +26,6 @@ public class ImageCarouselViewController:UIPageViewController, ImageViewerTransi
         return vc.imageView
     }
     
-    weak var imageDatasource:ImageDataSource?
-    let imageLoader:ImageLoader
  
     var initialIndex = 0
     
@@ -60,32 +60,18 @@ public class ImageCarouselViewController:UIPageViewController, ImageViewerTransi
     
     private let imageViewerPresentationDelegate: ImageViewerTransitionPresentationManager
     
-    public init(
-        sourceView:UIImageView,
-        imageDataSource: ImageDataSource?,
-        imageLoader: ImageLoader,
-        options:[ImageViewerOption] = [],
-        initialIndex:Int = 0) {
+    public init(sourceView: UIImageView, photoListVM: PhotoListVM?, initialIndex:Int = 0) {
         
         self.initialSourceView = sourceView
         self.initialIndex = initialIndex
-        self.options = options
-        self.imageDatasource = imageDataSource
-        self.imageLoader = imageLoader
+        self.photoListVM = photoListVM
+        
         let pageOptions = [UIPageViewController.OptionsKey.interPageSpacing: 20]
         
-        var _imageContentMode = imageContentMode
-        options.forEach {
-            switch $0 {
-            case .contentMode(let contentMode):
-                _imageContentMode = contentMode
-            default:
-                break
-            }
-        }
-        imageContentMode = _imageContentMode
+        imageContentMode = .scaleAspectFill
         
         self.imageViewerPresentationDelegate = ImageViewerTransitionPresentationManager(imageContentMode: imageContentMode)
+       
         super.init(
             transitionStyle: .scroll,
             navigationOrientation: .horizontal,
@@ -102,14 +88,10 @@ public class ImageCarouselViewController:UIPageViewController, ImageViewerTransi
     
     private func addNavBar() {
         // Add Navigation Bar
-        let closeBarButton = UIBarButtonItem(
-            title: NSLocalizedString("Close", comment: "Close button title"),
-            style: .plain,
-            target: self,
-            action: #selector(dismiss(_:)))
+        let closeBarButton = naviBackBarButtonItem()
         
         navItem.leftBarButtonItem = closeBarButton
-        navItem.leftBarButtonItem?.tintColor = theme.tintColor
+//        navItem.leftBarButtonItem?.tintColor = theme.tintColor
         navBar.alpha = 0.0
         navBar.items = [navItem]
         navBar.insert(to: view)
@@ -122,49 +104,19 @@ public class ImageCarouselViewController:UIPageViewController, ImageViewerTransi
         view.sendSubviewToBack(backgroundView)
     }
     
-    private func applyOptions() {
-        
-        options.forEach {
-            switch $0 {
-                case .theme(let theme):
-                    self.theme = theme
-                case .contentMode(let contentMode):
-                    self.imageContentMode = contentMode
-                case .closeIcon(let icon):
-                    navItem.leftBarButtonItem?.image = icon
-                case .rightNavItemTitle(let title, let onTap):
-                    navItem.rightBarButtonItem = UIBarButtonItem(
-                        title: title,
-                        style: .plain,
-                        target: self,
-                        action: #selector(diTapRightNavBarItem(_:)))
-                    onRightNavBarTapped = onTap
-                case .rightNavItemIcon(let icon, let onTap):
-                    navItem.rightBarButtonItem = UIBarButtonItem(
-                        image: icon,
-                        style: .plain,
-                        target: self,
-                        action: #selector(diTapRightNavBarItem(_:)))
-                    onRightNavBarTapped = onTap
-            }
-        }
-    }
-    
     override public func viewDidLoad() {
         super.viewDidLoad()
         
         addBackgroundView()
         addNavBar()
-        applyOptions()
         
         dataSource = self
 
         //첫번째 사진을 세팅한다
-        if let imageDatasource = imageDatasource {
-            let initialVC:ImageViewerController = .init(
-                index: initialIndex,
-                imageItem: imageDatasource.imageItem(at: initialIndex),
-                imageLoader: imageLoader)
+        if let photoListVM, let item = photoListVM.fileList[safe: initialIndex] {
+            let initialVC:ImageViewerController = .init(index: initialIndex,
+                                                        imageItem: item,
+                                                        imageLoader: SDWebImageLoader())
             setViewControllers([initialVC], direction: .forward, animated: true)
         }
         
@@ -196,33 +148,31 @@ public class ImageCarouselViewController:UIPageViewController, ImageViewerTransi
 }
 
 extension ImageCarouselViewController:UIPageViewControllerDataSource {
-    public func pageViewController(
-        _ pageViewController: UIPageViewController,
-        viewControllerBefore viewController: UIViewController) -> UIViewController? {
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         
         guard let vc = viewController as? ImageViewerController else { return nil }
-        guard let imageDatasource = imageDatasource else { return nil }
+        guard let photoListVM else { return nil }
         guard vc.index > 0 else { return nil }
- 
+        
         let newIndex = vc.index - 1
+        guard let item = photoListVM.fileList[safe: newIndex] else { return nil}
         return ImageViewerController.init(
             index: newIndex,
-            imageItem:  imageDatasource.imageItem(at: newIndex),
+            imageItem: item,
             imageLoader: vc.imageLoader)
     }
     
-    public func pageViewController(
-        _ pageViewController: UIPageViewController,
-        viewControllerAfter viewController: UIViewController) -> UIViewController? {
+    func pageViewController( _ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         
         guard let vc = viewController as? ImageViewerController else { return nil }
-        guard let imageDatasource = imageDatasource else { return nil }
-        guard vc.index <= (imageDatasource.numberOfImages() - 2) else { return nil }
+        guard let photoListVM else { return nil }
+        guard vc.index <= (photoListVM.fileList.count - 2) else { return nil }
         
         let newIndex = vc.index + 1
+        guard let item = photoListVM.fileList[safe: newIndex] else { return nil}
         return ImageViewerController.init(
             index: newIndex,
-            imageItem: imageDatasource.imageItem(at: newIndex),
+            imageItem: item,
             imageLoader: vc.imageLoader)
     }
 }

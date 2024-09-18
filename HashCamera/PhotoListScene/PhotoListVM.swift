@@ -9,10 +9,7 @@ import UIKit
 import RxSwift
 import RxRelay
 import QuickLookThumbnailing
-
-
-
-class PhotoListVM {
+public class PhotoListVM {
     
     private var fileService = FileService()
     private let qlThumbnailGenerator =  QLThumbnailGenerator.shared
@@ -94,10 +91,12 @@ class PhotoListVM {
         item.thumbnailRequest = request
         QLThumbnailGenerator.shared.generateRepresentations(for: request) { thumbnail, type, error in
             if let thumbnail {
+                item.thumbnailImage = thumbnail.uiImage
                 completion(thumbnail.uiImage)
             } else if let error {
                 hcLog("\(error): \(error.localizedDescription)")
                 hcLog("\(item.url.lastPathComponent) Thumnail error")
+                item.thumbnailImage = nil
                 completion(nil)
             }
         }
