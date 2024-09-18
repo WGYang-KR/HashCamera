@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 import RxRelay
 import QuickLookThumbnailing
-public class PhotoListVM {
+class PhotoListVM {
     
     private var fileService = FileService()
     private let qlThumbnailGenerator =  QLThumbnailGenerator.shared

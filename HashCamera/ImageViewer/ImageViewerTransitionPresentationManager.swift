@@ -168,7 +168,7 @@ final class ImageViewerTransitionPresentationController: UIPresentationControlle
 final class ImageViewerTransitionPresentationManager: NSObject {
     private let imageContentMode: UIView.ContentMode
     
-    public init(imageContentMode: UIView.ContentMode) {
+    init(imageContentMode: UIView.ContentMode) {
         self.imageContentMode = imageContentMode
     }
     

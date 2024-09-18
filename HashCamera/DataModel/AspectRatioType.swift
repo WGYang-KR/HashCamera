@@ -40,7 +40,7 @@ enum AspectRatioType {
 }
 
 extension AspectRatioType: CaseIterable {
-    public static var allCases: [AspectRatioType] {
+    static var allCases: [AspectRatioType] {
         return [.standard, .wide, .square]
     }
 }

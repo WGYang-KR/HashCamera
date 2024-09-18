@@ -3,14 +3,14 @@ import Foundation
 import SDWebImage
 #endif
 
-public protocol ImageLoader {
+protocol ImageLoader {
     func loadImage(_ url: URL, placeholder: UIImage?, imageView: UIImageView, completion: @escaping (_ image: UIImage?) -> Void)
 }
 
-public struct URLSessionImageLoader: ImageLoader {
-    public init() {}
+struct URLSessionImageLoader: ImageLoader {
+    init() {}
 
-    public func loadImage(_ url: URL, placeholder: UIImage?, imageView: UIImageView, completion: @escaping (UIImage?) -> Void) {
+    func loadImage(_ url: URL, placeholder: UIImage?, imageView: UIImageView, completion: @escaping (UIImage?) -> Void) {
         if let placeholder = placeholder {
             imageView.image = placeholder
         }

@@ -1,6 +1,6 @@
 import UIKit
 
-public enum ImageViewerTheme {
+enum ImageViewerTheme {
     case light
     case dark
     

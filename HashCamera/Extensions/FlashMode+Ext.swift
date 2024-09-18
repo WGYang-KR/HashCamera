@@ -25,7 +25,7 @@ extension AVCaptureDevice.FlashMode {
     
 }
 
-extension AVCaptureDevice.FlashMode: CaseIterable {
+extension AVCaptureDevice.FlashMode: @retroactive CaseIterable {
     public static var allCases: [AVCaptureDevice.FlashMode] {
         return [.off, .on, .auto]
     }

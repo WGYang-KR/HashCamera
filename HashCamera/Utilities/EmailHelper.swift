@@ -10,7 +10,7 @@ import UIKit
 import MessageUI
 
 class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
-    public static let shared = EmailHelper()
+    static let shared = EmailHelper()
     private override init() {
         //
     }

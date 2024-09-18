@@ -1,10 +1,5 @@
 import UIKit
 
-public protocol ImageDataSource: AnyObject {
-    func numberOfImages() -> Int
-    func imageItem(at index:Int) -> ImageItem
-}
-
 class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionViewControllerConvertible {
     
     unowned var initialSourceView: UIImageView?
@@ -37,7 +32,6 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     }
     
     var imageContentMode: UIView.ContentMode = .scaleAspectFill
-    var options:[ImageViewerOption] = []
     
     private var onRightNavBarTapped:((Int) -> Void)?
     
@@ -60,7 +54,7 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     
     private let imageViewerPresentationDelegate: ImageViewerTransitionPresentationManager
     
-    public init(sourceView: UIImageView, photoListVM: PhotoListVM?, initialIndex:Int = 0) {
+    init(sourceView: UIImageView, photoListVM: PhotoListVM?, initialIndex:Int = 0) {
         
         self.initialSourceView = sourceView
         self.initialIndex = initialIndex
@@ -104,7 +98,7 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
         view.sendSubviewToBack(backgroundView)
     }
     
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
         addBackgroundView()
@@ -139,7 +133,7 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
         onTap(_firstVC.index)
     }
     
-    override public var preferredStatusBarStyle: UIStatusBarStyle {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
         if theme == .dark {
             return .lightContent
         }

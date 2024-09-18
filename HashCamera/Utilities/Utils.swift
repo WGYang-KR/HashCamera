@@ -20,7 +20,7 @@ class Utils {
 
 
 //MARK: - 로그
-public func hcLog(_ message: String?, file: String = #file, functionName: String = #function , line: UInt = #line) {
+func hcLog(_ message: String?, file: String = #file, functionName: String = #function , line: UInt = #line) {
     
 #if RELEASE
     return
@@ -30,7 +30,7 @@ public func hcLog(_ message: String?, file: String = #file, functionName: String
     os_log("%@",type:.default ,"\(Timestamp.timestamp())<\(className)> \(functionName) [#\(line)] \(message ?? "")")
 }
 
-public func hcLog(_ message: String?, file: String = #file, functionName: String = #function , line: UInt = #line, error: Error?) {
+func hcLog(_ message: String?, file: String = #file, functionName: String = #function , line: UInt = #line, error: Error?) {
     
 #if RELEASE
     return
