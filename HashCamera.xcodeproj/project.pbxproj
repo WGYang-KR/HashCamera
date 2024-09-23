@@ -192,8 +192,8 @@
 				6A7D4F642C76237C00ED0C59 /* FolderService.swift */,
 				6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */,
 				6A73A1042C610A2D007B6CAE /* FolderListItemCell.xib */,
-				6A7D4F662C775DED00ED0C59 /* FolderListVC.swift */,
 				6A6C4C562C8A049B007F794F /* FolderListVM.swift */,
+				6A7D4F662C775DED00ED0C59 /* FolderListVC.swift */,
 				6A7D4F672C775DED00ED0C59 /* FolderListVC.xib */,
 				6A7D4F6D2C7B4C9A00ED0C59 /* FolderListItemModel.swift */,
 			);
@@ -234,6 +234,7 @@
 		6A8B31F82AE7983E00D24E49 /* HashCamera */ = {
 			isa = PBXGroup;
 			children = (
+				6ACAB0842C9C78350009553E /* SelectFolderScene */,
 				6A04864B2C4E8E6C00C3989F /* FolderListScene */,
 				6A04863C2C494FAB00C3989F /* PhotoListScene */,
 				6A0188662C988CA1006F0A85 /* ImageViewer */,
@@ -317,6 +318,13 @@
 				6A961E5F2B011FA100A05F9B /* CALayer+Ext.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		6ACAB0842C9C78350009553E /* SelectFolderScene */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = SelectFolderScene;
 			sourceTree = "<group>";
 		};
 		6AE8CFA22AF4D5A70063C8C6 /* Components */ = {

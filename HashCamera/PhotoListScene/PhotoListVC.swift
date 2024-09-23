@@ -72,8 +72,9 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         menu.enableSwipeToDismissGesture = false
         //TODO: '왼쪽 스와이프해서 사이드바 열기' 동작 범위 넓혀야함
         SideMenuManager.default.leftMenuNavigationController = menu
-        let sideBarGesture = menu.sideMenuManager.addScreenEdgePanGesturesToPresent(toView: self.view, forMenu: .left)
-        self.collectionView.panGestureRecognizer.require(toFail: sideBarGesture)
+//        let sideBarGesture = menu.sideMenuManager.addScreenEdgePanGesturesToPresent(toView: self.view, forMenu: .left)
+        menu.sideMenuManager.addPanGestureToPresent(toView: self.view)
+//        self.collectionView.panGestureRecognizer.require(toFail: sideBarGesture)
         
         // Tool Bar
         let defaultColor = UIColor.colorTeal02

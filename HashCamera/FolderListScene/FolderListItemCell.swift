@@ -9,26 +9,25 @@ import UIKit
 
 class FolderListItemCell: UITableViewCell {
 
-    @IBOutlet weak var selectedImageView: UIImageView!
+    @IBOutlet weak var iconImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var countLabel: UILabel!
     
-    let normalColor = UIColor(resource: .colorTeal02)
-    let selectedColor = UIColor(resource: .colorTeal01)
-    let normalFont = UIFont.systemFont(ofSize: 17.0, weight: .regular)
-    let selectedFont = UIFont.systemFont(ofSize: 17.0, weight: .bold)
+    let normalTextColor: UIColor = .secondaryLabel
+    let selectedTextColor: UIColor = .white
     
+    let selectedBoxColor: UIColor = .color01
+   
     override func awakeFromNib() {
         super.awakeFromNib()
-        selectionStyle = .none
-        selectedImageView.isHidden = true
+        selectionStyle = .blue
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        nameLabel.font = selected ? selectedFont : normalFont
-        nameLabel.textColor = selected ? selectedColor : normalColor
-        selectedImageView.isHidden = !selected
+//        nameLabel.textColor = selected ? selectedTextColor : normalTextColor
+//        iconImageView.tintColor = selected ? selectedTextColor : normalTextColor
+//        selectedBoxView.backgroundColor = selected ? selectedBoxColor : .clear
+        
     }
     
 }

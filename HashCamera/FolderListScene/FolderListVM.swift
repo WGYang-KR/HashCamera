@@ -38,8 +38,7 @@ class FolderListVM {
 
     lazy var virtualFolders: [FolderListItemModel] = {
         guard let rootURL else { return [] }
-        return [.init(type: .allPhotos, url: rootURL),
-                .init(type: .unclassified, url: rootURL)]
+        return [.init(type: .unclassified, url: rootURL)]
     }()
                     
     struct FolderListUpdateData {

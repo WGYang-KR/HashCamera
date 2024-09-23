@@ -77,27 +77,25 @@ extension UIViewController {
         self.navigationItem.title = title
         self.navigationItem.leftBarButtonItems = leftItems
         self.navigationItem.rightBarButtonItems = rightItems
-
+    
         
         // 네비게이션 바 색상 설정
-        let defaultColor = UIColor.colorTeal02
-        self.navigationController?.navigationBar.titleTextAttributes = [
-            .foregroundColor: defaultColor // 타이틀 텍스트 색상 변경
-        ]
+        let appearance = UINavigationBarAppearance()
         
-        if let leftBarButtonItems = self.navigationItem.leftBarButtonItems {
-            for item in leftBarButtonItems {
-                item.tintColor = defaultColor
-                item.setTitleTextAttributes([.foregroundColor: defaultColor], for: .normal)
-            }
-        }
+        // 투명한 배경을 유지하고 색상을 설정
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .naviBarBackground.withAlphaComponent(0.5)  // 반투명 효과
+        appearance.backgroundEffect = UIBlurEffect(style: .light)  // Blur 효과 추가
         
-        if let rightBarButtonItems = self.navigationItem.rightBarButtonItems {
-            for item in rightBarButtonItems {
-                item.tintColor = defaultColor
-                item.setTitleTextAttributes([.foregroundColor: defaultColor], for: .normal)
-            }
-        }
+        // 제목 텍스트 색상 설정
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.label]
+
+        // 버튼 텍스트 색상 설정
+        navigationController?.navigationBar.tintColor = .systemCyan
+        
+        // standardAppearance와 scrollEdgeAppearance 모두에 적용
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
         
     }
 }

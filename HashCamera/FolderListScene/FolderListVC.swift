@@ -22,6 +22,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         tableView.dataSource = self
         
         tableView.register(UINib(nibName: "\(FolderListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(FolderListItemCell.self)")
+        tableView.backgroundColor = .sidebarBackground
         
         //네비게이션바
         let rightItems = [UIBarButtonItem(image: SystemUIImage.plus,
@@ -115,6 +116,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         hcLog("셀 선택: \(indexPath)")
         vm.selectedIndexPath = indexPath
+        dismiss(animated: true)
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
