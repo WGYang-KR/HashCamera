@@ -113,9 +113,15 @@ extension UIViewController {
         self.present(vcToPresent, animated: animated, completion: completion)
     }
     
-    func present(_ vcToPresent: UIViewController, presentationStyle: UIModalPresentationStyle, transitionStyle: UIModalTransitionStyle, animated: Bool, completion: (() -> Void)? = nil) {
-        vcToPresent.modalPresentationStyle = presentationStyle
-        vcToPresent.modalTransitionStyle = transitionStyle
+    func present(_ vcToPresent: UIViewController, presentationStyle: UIModalPresentationStyle?, transitionStyle: UIModalTransitionStyle?, animated: Bool, completion: (() -> Void)? = nil) {
+        if let presentationStyle {
+            vcToPresent.modalPresentationStyle = presentationStyle
+        }
+   
+        if let transitionStyle {
+            vcToPresent.modalTransitionStyle = transitionStyle
+        }
+       
         self.present(vcToPresent, animated: animated, completion: completion)
     }
     

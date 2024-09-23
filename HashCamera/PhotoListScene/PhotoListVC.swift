@@ -96,12 +96,12 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
                                        style: .plain,
                                        target: self,
                                        action: #selector(trashBtnTapped))
-        let tagBtn =  UIBarButtonItem(image: SystemUIImage.tag,
+        let folderBtn =  UIBarButtonItem(image: SystemUIImage.folder,
                                       style: .done,
                                       target: self,
-                                      action: #selector(tagBtnTapped))
+                                      action: #selector(moveBtnTapped))
    
-        let items = [shareBtn, .fixedSpace(spacing), dummyBtn, .fixedSpace(spacing), .flexibleSpace(), labelItem, .flexibleSpace(),  .fixedSpace(spacing), trashBtn, .fixedSpace(spacing), tagBtn]
+        let items = [shareBtn, .fixedSpace(spacing), dummyBtn, .fixedSpace(spacing), .flexibleSpace(), labelItem, .flexibleSpace(),  .fixedSpace(spacing), trashBtn, .fixedSpace(spacing), folderBtn]
         
      
         for item in items {
@@ -273,14 +273,9 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         toolBarLabel.sizeToFit()
     }
     
-    @IBAction func tagBtnTapped(_ sender: Any) {
-//        guard let selectedURLs = collectionView.indexPathsForSelectedItems?.map({ vm.files.value[$0.item].url }) else {return}
-//        self.moveFolderVM = MoveFolderVM(fileURLs: selectedURLs)
-//        self.moveFolderVM.prepare()
-//        let movingFolderList = FolderListVC()
-//        movingFolderList.sceneType = .moveFolder
-//        movingFolderList.vm = self.moveFolderVM
-//        present(UINavigationController(rootViewController: movingFolderList), presentationStyle: .pageSheet, transitionStyle: .coverVertical, animated: true)
+    @IBAction func moveBtnTapped(_ sender: Any) {
+        let nextVC = MoveToFolderVC()
+        present(UINavigationController(rootViewController: nextVC), presentationStyle: .pageSheet, transitionStyle: nil, animated: true)
     }
 
 }

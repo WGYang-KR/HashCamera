@@ -19,6 +19,11 @@
 		6A0486432C49519000C3989F /* PhotoListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0486412C49519000C3989F /* PhotoListVC.swift */; };
 		6A0486442C49519000C3989F /* PhotoListVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0486422C49519000C3989F /* PhotoListVC.xib */; };
 		6A04864A2C49617500C3989F /* PhotoListVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0486492C49617500C3989F /* PhotoListVM.swift */; };
+		6A0CAA932CA1AF88006BC4D3 /* MoveToFolderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0CAA912CA1AF88006BC4D3 /* MoveToFolderVC.swift */; };
+		6A0CAA942CA1AF88006BC4D3 /* MoveToFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0CAA922CA1AF88006BC4D3 /* MoveToFolderVC.xib */; };
+		6A0CAA962CA1AFFE006BC4D3 /* MoveToFolderVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0CAA952CA1AFF8006BC4D3 /* MoveToFolderVM.swift */; };
+		6A0CAA992CA1B196006BC4D3 /* MoveToFolderListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0CAA972CA1B196006BC4D3 /* MoveToFolderListItemCell.swift */; };
+		6A0CAA9A2CA1B196006BC4D3 /* MoveToFolderListItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0CAA982CA1B196006BC4D3 /* MoveToFolderListItemCell.xib */; };
 		6A133E3E2B0268FF0018A769 /* StorageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A133E3D2B0268FF0018A769 /* StorageModel.swift */; };
 		6A133E4D2B0503690018A769 /* AppLifeCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A133E4C2B0503690018A769 /* AppLifeCycle.swift */; };
 		6A133E512B0655320018A769 /* CamVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A133E502B0655320018A769 /* CamVM.swift */; };
@@ -85,6 +90,11 @@
 		6A0486412C49519000C3989F /* PhotoListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListVC.swift; sourceTree = "<group>"; };
 		6A0486422C49519000C3989F /* PhotoListVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PhotoListVC.xib; sourceTree = "<group>"; };
 		6A0486492C49617500C3989F /* PhotoListVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListVM.swift; sourceTree = "<group>"; };
+		6A0CAA912CA1AF88006BC4D3 /* MoveToFolderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveToFolderVC.swift; sourceTree = "<group>"; };
+		6A0CAA922CA1AF88006BC4D3 /* MoveToFolderVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MoveToFolderVC.xib; sourceTree = "<group>"; };
+		6A0CAA952CA1AFF8006BC4D3 /* MoveToFolderVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveToFolderVM.swift; sourceTree = "<group>"; };
+		6A0CAA972CA1B196006BC4D3 /* MoveToFolderListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveToFolderListItemCell.swift; sourceTree = "<group>"; };
+		6A0CAA982CA1B196006BC4D3 /* MoveToFolderListItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MoveToFolderListItemCell.xib; sourceTree = "<group>"; };
 		6A133E3D2B0268FF0018A769 /* StorageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageModel.swift; sourceTree = "<group>"; };
 		6A133E4C2B0503690018A769 /* AppLifeCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLifeCycle.swift; sourceTree = "<group>"; };
 		6A133E502B0655320018A769 /* CamVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CamVM.swift; sourceTree = "<group>"; };
@@ -234,7 +244,7 @@
 		6A8B31F82AE7983E00D24E49 /* HashCamera */ = {
 			isa = PBXGroup;
 			children = (
-				6ACAB0842C9C78350009553E /* SelectFolderScene */,
+				6ACAB0842C9C78350009553E /* MoveToFolderScene */,
 				6A04864B2C4E8E6C00C3989F /* FolderListScene */,
 				6A04863C2C494FAB00C3989F /* PhotoListScene */,
 				6A0188662C988CA1006F0A85 /* ImageViewer */,
@@ -320,11 +330,16 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		6ACAB0842C9C78350009553E /* SelectFolderScene */ = {
+		6ACAB0842C9C78350009553E /* MoveToFolderScene */ = {
 			isa = PBXGroup;
 			children = (
+				6A0CAA952CA1AFF8006BC4D3 /* MoveToFolderVM.swift */,
+				6A0CAA912CA1AF88006BC4D3 /* MoveToFolderVC.swift */,
+				6A0CAA922CA1AF88006BC4D3 /* MoveToFolderVC.xib */,
+				6A0CAA972CA1B196006BC4D3 /* MoveToFolderListItemCell.swift */,
+				6A0CAA982CA1B196006BC4D3 /* MoveToFolderListItemCell.xib */,
 			);
-			path = SelectFolderScene;
+			path = MoveToFolderScene;
 			sourceTree = "<group>";
 		};
 		6AE8CFA22AF4D5A70063C8C6 /* Components */ = {
@@ -426,6 +441,8 @@
 				6AA61AD02AFA8337002E3725 /* TopMenuBarView.xib in Resources */,
 				6A73A1062C610A2D007B6CAE /* FolderListItemCell.xib in Resources */,
 				6A8B32032AE7983F00D24E49 /* Assets.xcassets in Resources */,
+				6A0CAA9A2CA1B196006BC4D3 /* MoveToFolderListItemCell.xib in Resources */,
+				6A0CAA942CA1AF88006BC4D3 /* MoveToFolderVC.xib in Resources */,
 				6AA61AD62AFD2605002E3725 /* CaptureBtnView.xib in Resources */,
 				6A8B32012AE7983E00D24E49 /* Main.storyboard in Resources */,
 				6A7D4F692C775DED00ED0C59 /* FolderListVC.xib in Resources */,
@@ -499,6 +516,7 @@
 				6A0188782C988CF2006F0A85 /* UIView_Extensions.swift in Sources */,
 				6A73A1022C5143B2007B6CAE /* Utils.swift in Sources */,
 				6A73A1082C6A3DF5007B6CAE /* SystemUIImage.swift in Sources */,
+				6A0CAA962CA1AFFE006BC4D3 /* MoveToFolderVM.swift in Sources */,
 				6A3796502BB5A3C300BAFC19 /* MediaFileModel.swift in Sources */,
 				6A8B31FE2AE7983E00D24E49 /* ViewController.swift in Sources */,
 				6A3796562BB5A47900BAFC19 /* SettingsView.swift in Sources */,
@@ -518,9 +536,11 @@
 				6A37964E2BB5A34700BAFC19 /* EmailHelper.swift in Sources */,
 				6A7D4F6E2C7B4C9A00ED0C59 /* FolderListItemModel.swift in Sources */,
 				6AA61AC62AE810F0002E3725 /* HCFileManager.swift in Sources */,
+				6A0CAA992CA1B196006BC4D3 /* MoveToFolderListItemCell.swift in Sources */,
 				6AE8CFA12AF4D32D0063C8C6 /* CamPreviewView.swift in Sources */,
 				6A3796582BB5A4CD00BAFC19 /* AppStatus.swift in Sources */,
 				6A73A1052C610A2D007B6CAE /* FolderListItemCell.swift in Sources */,
+				6A0CAA932CA1AF88006BC4D3 /* MoveToFolderVC.swift in Sources */,
 				6AFB72D42B0113D00029592F /* CaptureBtnView.swift in Sources */,
 				6A133E4D2B0503690018A769 /* AppLifeCycle.swift in Sources */,
 				6AA61AD42AFD22E3002E3725 /* TopMenuBarView.swift in Sources */,

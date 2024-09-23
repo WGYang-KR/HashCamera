@@ -1,17 +1,17 @@
 //
-//  FolderListVC.swift
+//  MoveToFolderVC.swift
 //  HashCamera
 //
-//  Created by Anto-Yang on 8/22/24.
+//  Created by Anto-Yang on 9/23/24.
 //
 
 import UIKit
 
-class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var tableView: UITableView!
     
-    var vm: FolderListVM = FolderListVM()
+    var vm: MoveToFolderVM = MoveToFolderVM()
     
     var tempSelectedIndexPath: IndexPath?
     
@@ -21,16 +21,24 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         tableView.delegate = self
         tableView.dataSource = self
         
-        tableView.register(UINib(nibName: "\(FolderListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(FolderListItemCell.self)")
+        tableView.register(UINib(nibName: "\(MoveToFolderListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(MoveToFolderListItemCell.self)")
         tableView.backgroundColor = .sidebarBackground
         
         //네비게이션바
-        let rightItems = [UIBarButtonItem(image: SystemUIImage.folderBadgePlus,
-                                      style: .plain,
-                                      target: self,
-                                      action: #selector(addBtnTapped))]
-
-        setNaviBar("폴더 목록", leftItems: [], rightItems: rightItems)
+        let leftItems = [UIBarButtonItem(title: "취소",
+                                         style: .plain,
+                                         target: self,
+                                         action: #selector(cancelBtnTapped))]
+        let rightItems = [UIBarButtonItem(title: "이동",
+                                          style: .plain,
+                                          target: self,
+                                          action: #selector(moveBtnTapped)),
+                          UIBarButtonItem(image: SystemUIImage.folderBadgePlus,
+                                          style: .plain,
+                                          target: self,
+                                          action: #selector(addBtnTapped))]
+        
+        setNaviBar("이동할 폴더 선택", leftItems: leftItems, rightItems: rightItems)
         
         vm.configure(folderListUpdated: { [weak self] updateData in
             guard let self else { return }
@@ -75,6 +83,14 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         
     }
     
+    @objc func moveBtnTapped() {
+        
+    }
+    
+    @objc func cancelBtnTapped() {
+        moveBackVC(animated: true)
+    }
+    
     @objc func addBtnTapped() {
         // 수정 팝업 띄우기
         let alert = UIAlertController(title: "폴더 추가", message: "추가하실 폴더 이름을 입력해 주세요.", preferredStyle: .alert)
@@ -104,7 +120,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "\(FolderListItemCell.self)", for: indexPath) as? FolderListItemCell else
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "\(MoveToFolderListItemCell.self)", for: indexPath) as? MoveToFolderListItemCell else
         {return UITableViewCell()}
         
         let item  = vm.folderList[indexPath.section][indexPath.row]
@@ -116,7 +132,6 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         hcLog("셀 선택: \(indexPath)")
         vm.selectedIndexPath = indexPath
-        dismiss(animated: true)
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
