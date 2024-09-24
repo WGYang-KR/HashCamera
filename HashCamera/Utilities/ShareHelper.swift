@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import LinkPresentation
 
 class ShareHelper {
     static let shared = ShareHelper()
@@ -64,16 +64,18 @@ class FileShareItem: NSObject, UIActivityItemSource {
     let fileURL: URL
     let previewImage: UIImage?
     let fileTitle: String
+    let data: Data?
 
     init(fileURL: URL, previewImage: UIImage?, fileTitle: String) {
         self.fileURL = fileURL
         self.previewImage = previewImage
         self.fileTitle = fileTitle
+        self.data = try? Data(contentsOf: fileURL)
     }
 
     // 실제 공유할 파일을 반환
     func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
-        return fileURL
+        return data ?? fileURL
     }
 
     // 공유할 파일의 URL을 반환
@@ -89,6 +91,19 @@ class FileShareItem: NSObject, UIActivityItemSource {
     // 공유할 파일의 타이틀 제공
     func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
         return fileTitle
+    }
+    
+    func activityViewControllerLinkMetadata(_ activityViewController: UIActivityViewController) -> LPLinkMetadata? {
+        let metadata = LPLinkMetadata()
+        metadata.title = fileTitle
+        metadata.url = fileURL
+        metadata.originalURL = fileURL
+        if let provider = NSItemProvider(contentsOf: fileURL) {
+            provider.suggestedName = fileTitle
+            metadata.imageProvider = provider
+        }
+        
+        return metadata
     }
 }
 
