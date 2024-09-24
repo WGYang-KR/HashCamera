@@ -217,7 +217,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView.allowsMultipleSelection {
-            
+            vm.selectedIndexPaths.append(indexPath)
         } else {
             collectionView.deselectItem(at: indexPath, animated: true)
             
@@ -227,6 +227,11 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
             let imageCarousel = ImageCarouselViewController(sourceView: sourceView, photoListVM: vm, initialIndex: indexPath.item)
             present(imageCarousel, animated: true)
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let deselectedIndex = vm.selectedIndexPaths.firstIndex(where: {$0 == indexPath}) else { return }
+        vm.selectedIndexPaths.remove(at: deselectedIndex)
     }
     
     //MARK: - CollectionView Delegate FlowLayout
@@ -263,17 +268,23 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         selectionMode = !selectionMode
     }
     
-    @IBAction func shareBtnTapped(_ sender: Any) {
-        toolBarLabel.text = "공유버튼 클릭"
+    @objc func shareBtnTapped(_ sender: Any) {
+        
+        ShareHelper.shared
+            .share(files: vm.selectedFiles()
+                .map({ FileShareItem(fileURL: $0.url,
+                                     previewImage: $0.thumbnailImage,
+                                     fileTitle: $0.name) }),
+                   viewController: self)
         toolBarLabel.sizeToFit()
     }
     
-    @IBAction func trashBtnTapped(_ sender: Any) {
+    @objc func trashBtnTapped(_ sender: Any) {
         toolBarLabel.text = "삭제버튼 클릭 레이블 내용이 굉장히 길 때를 테스트해 보겠습니다. Ipsem lorem"
         toolBarLabel.sizeToFit()
     }
     
-    @IBAction func moveBtnTapped(_ sender: Any) {
+    @objc func moveBtnTapped(_ sender: Any) {
         let nextVC = MoveToFolderVC()
         present(UINavigationController(rootViewController: nextVC), presentationStyle: .pageSheet, transitionStyle: nil, animated: true)
     }

@@ -113,6 +113,9 @@ class PhotoListVM {
         return await fileService.deleteFiles(indexPaths.map({$0.row}))
     }
     
+    func selectedFiles() -> [ImageFileModel] {
+        return self.selectedIndexPaths.map({ fileList[$0.item] })
+    }
 }
 
 
