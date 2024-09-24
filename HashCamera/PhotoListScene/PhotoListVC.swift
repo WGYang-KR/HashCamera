@@ -256,8 +256,10 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         selectionModeBtn?.title = selectionMode ? "취소" : "선택"
         
         collectionView.indexPathsForSelectedItems?.forEach{collectionView.deselectItem(at: $0, animated: false)}
-       
+        vm.selectedIndexPaths.removeAll()
+        
         collectionView.allowsMultipleSelection = selectionMode
+        
     }
     
     @objc func naviListBtnTapped() {

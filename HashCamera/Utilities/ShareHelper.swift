@@ -7,6 +7,7 @@
 
 import UIKit
 import LinkPresentation
+import UniformTypeIdentifiers
 
 class ShareHelper {
     static let shared = ShareHelper()
@@ -43,6 +44,7 @@ class ShareHelper {
         let shareItems = newFiles
         
         // UIActivityViewController 생성
+        
         let activityVC = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
         
         // iPad에서 충돌 방지 (iPad에서는 팝오버 스타일이 필요함)
@@ -65,32 +67,36 @@ class FileShareItem: NSObject, UIActivityItemSource {
     let previewImage: UIImage?
     let fileTitle: String
     let data: Data?
-
+    
     init(fileURL: URL, previewImage: UIImage?, fileTitle: String) {
         self.fileURL = fileURL
         self.previewImage = previewImage
         self.fileTitle = fileTitle
         self.data = try? Data(contentsOf: fileURL)
     }
-
-    // 실제 공유할 파일을 반환
+    
+    // 공유할 예비 파일 반환
     func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
         return data ?? fileURL
     }
-
-    // 공유할 파일의 URL을 반환
+    
+    // 공유할 실제 URL을 반환
     func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
         return fileURL
     }
-
+    
     // 미리보기 이미지 제공
     func activityViewController(_ activityViewController: UIActivityViewController, thumbnailImageForActivityType activityType: UIActivity.ActivityType?, suggestedSize size: CGSize) -> UIImage? {
         return previewImage
     }
-
+    
     // 공유할 파일의 타이틀 제공
     func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
         return fileTitle
+    }
+    
+   func activityViewController(_ activityViewController: UIActivityViewController, dataTypeIdentifierForActivityType activityType: UIActivity.ActivityType?) -> String {
+        return UTType.image.identifier
     }
     
     func activityViewControllerLinkMetadata(_ activityViewController: UIActivityViewController) -> LPLinkMetadata? {
