@@ -54,6 +54,8 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         let width = (self.view.bounds.width - (itemSpacing * 2) ) / 3
         self.itemSize = CGSize(width: width, height: width)
         vm.thumbnailSize = self.itemSize
+        
+        menu.menuWidth = view.bounds.width / 3 * 2
     }
     
     func initUI() {
@@ -78,8 +80,6 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         menu.sideMenuManager.addPanGestureToPresent(toView: self.view)
         
         // Tool Bar
-  
-        
         shareBtn = UIBarButtonItem(image: SystemUIImage.squareAndArrowUp,
                                        style: .plain,
                                        target: self,

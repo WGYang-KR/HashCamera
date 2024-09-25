@@ -75,6 +75,11 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        tableView.setEditing(false, animated: true) // Swipe 취소
+    }
+    
     @objc func addBtnTapped() {
         // 수정 팝업 띄우기
         let alert = UIAlertController(title: "폴더 추가", message: "추가하실 폴더 이름을 입력해 주세요.", preferredStyle: .alert)
@@ -201,4 +206,5 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         }
         
     }
+ 
 }
