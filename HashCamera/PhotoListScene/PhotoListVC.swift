@@ -17,7 +17,12 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     
     @IBOutlet weak var collectionView: UICollectionView!
     let toolBarLabel = UILabel()
-    var selectionModeBtn: UIBarButtonItem?
+    var selectionModeBtn: UIBarButtonItem!
+    var shareBtn: UIBarButtonItem!
+    var trashBtn: UIBarButtonItem!
+    var folderBtn: UIBarButtonItem!
+
+    
     lazy var menu = {
         return SideMenuNavigationController(rootViewController: folderListVC)
     }()
@@ -59,57 +64,58 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
                                              target: self,
                                              action: #selector(naviListBtnTapped))]
         
-        let selectionModeBtn = UIBarButtonItem(title: "선택",
+        selectionModeBtn = UIBarButtonItem(title: "선택",
                                               style: .plain,
                                               target: self,
                                               action: #selector(naviSelectionBtnTapped))
-        self.selectionModeBtn = selectionModeBtn
-        let naviRightItems = [selectionModeBtn]
-        setNaviBar("Browser", leftItems: naviLeftItems, rightItems: naviRightItems)
+        setNaviBar("Browser", leftItems: naviLeftItems, rightItems: [selectionModeBtn])
         
         // Side Bar
         menu.leftSide = true
         menu.enableSwipeToDismissGesture = false
-        //TODO: '왼쪽 스와이프해서 사이드바 열기' 동작 범위 넓혀야함
         SideMenuManager.default.leftMenuNavigationController = menu
 //        let sideBarGesture = menu.sideMenuManager.addScreenEdgePanGesturesToPresent(toView: self.view, forMenu: .left)
         menu.sideMenuManager.addPanGestureToPresent(toView: self.view)
-//        self.collectionView.panGestureRecognizer.require(toFail: sideBarGesture)
         
         // Tool Bar
-        let defaultColor = UIColor.colorTeal02
-        let spacing = 8.0
-        let shareBtn = UIBarButtonItem(image: SystemUIImage.squareAndArrowUp,
+  
+        
+        shareBtn = UIBarButtonItem(image: SystemUIImage.squareAndArrowUp,
                                        style: .plain,
                                        target: self,
                                        action: #selector(shareBtnTapped))
+        trashBtn = UIBarButtonItem(image: SystemUIImage.trash,
+                                       style: .plain,
+                                       target: self,
+                                       action: #selector(trashBtnTapped))
+        folderBtn =  UIBarButtonItem(image: SystemUIImage.folder,
+                                      style: .done,
+                                      target: self,
+                                      action: #selector(moveBtnTapped))
+        
         let dummyBtn = UIBarButtonItem(image: nil,
                                        style: .plain,
                                        target: nil,
                                        action: nil)
+        
         let labelItem = UIBarButtonItem(customView: toolBarLabel)
         toolBarLabel.font = .systemFont(ofSize: 14.0, weight: .regular)
-        toolBarLabel.textColor = defaultColor
+        toolBarLabel.textColor = .label
         toolBarLabel.lineBreakMode = .byTruncatingTail
         toolBarLabel.numberOfLines = 1
-        let trashBtn = UIBarButtonItem(image: SystemUIImage.trash,
-                                       style: .plain,
-                                       target: self,
-                                       action: #selector(trashBtnTapped))
-        let folderBtn =  UIBarButtonItem(image: SystemUIImage.folder,
-                                      style: .done,
-                                      target: self,
-                                      action: #selector(moveBtnTapped))
+      
    
-        let items = [shareBtn, .fixedSpace(spacing), dummyBtn, .fixedSpace(spacing), .flexibleSpace(), labelItem, .flexibleSpace(),  .fixedSpace(spacing), trashBtn, .fixedSpace(spacing), folderBtn]
+        let iconColor = UIColor.systemCyan
+        let spacing = 10.0
+        let items: [UIBarButtonItem] = [shareBtn, .fixedSpace(spacing), dummyBtn, .fixedSpace(spacing), .flexibleSpace(), labelItem, .flexibleSpace(),  .fixedSpace(spacing), trashBtn, .fixedSpace(spacing), folderBtn]
         
-     
         for item in items {
-            item.tintColor = defaultColor
-            item.setTitleTextAttributes([.foregroundColor: defaultColor], for: .normal)
+            item.tintColor = iconColor
+            item.setTitleTextAttributes([.foregroundColor: iconColor], for: .normal)
         }
         
-        self.setToolbarItems(items, animated: false)
+        setToolbarItems(items, animated: false)
+        updateToolbarUI()
 
     }
     
@@ -218,6 +224,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView.allowsMultipleSelection {
             vm.selectedIndexPaths.append(indexPath)
+            updateToolbarUI()
         } else {
             collectionView.deselectItem(at: indexPath, animated: true)
             
@@ -232,6 +239,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         guard let deselectedIndex = vm.selectedIndexPaths.firstIndex(where: {$0 == indexPath}) else { return }
         vm.selectedIndexPaths.remove(at: deselectedIndex)
+        updateToolbarUI()
     }
     
     //MARK: - CollectionView Delegate FlowLayout
@@ -253,13 +261,14 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     func setSelectionMode(_ selectionMode: Bool) {
         guard let navigationController else { return }
         navigationController.setToolbarHidden(!selectionMode, animated: true)
-        selectionModeBtn?.title = selectionMode ? "취소" : "선택"
+        selectionModeBtn.title = selectionMode ? "취소" : "선택"
         
         collectionView.indexPathsForSelectedItems?.forEach{collectionView.deselectItem(at: $0, animated: false)}
         vm.selectedIndexPaths.removeAll()
         
         collectionView.allowsMultipleSelection = selectionMode
         
+        updateToolbarUI()
     }
     
     @objc func naviListBtnTapped() {
@@ -289,6 +298,17 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     @objc func moveBtnTapped(_ sender: Any) {
         let nextVC = MoveToFolderVC()
         present(UINavigationController(rootViewController: nextVC), presentationStyle: .pageSheet, transitionStyle: nil, animated: true)
+    }
+    
+    @objc func updateToolbarUI() {
+        toolBarLabel.text = "\(vm.selectedFiles().count)개 선택"
+        toolBarLabel.sizeToFit()
+        
+        let hasSelection = vm.selectedFiles().count > 0
+        shareBtn.isEnabled = hasSelection
+        trashBtn.isEnabled = hasSelection
+        folderBtn.isEnabled = hasSelection
+
     }
 
 }
