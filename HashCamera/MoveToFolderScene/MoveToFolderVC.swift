@@ -10,10 +10,15 @@ import UIKit
 class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var tableView: UITableView!
+    private var vm: MoveToFolderVM = MoveToFolderVM()
+    private var tempSelectedIndexPath: IndexPath?
     
-    var vm: MoveToFolderVM = MoveToFolderVM()
+    var initialSelectedFolder: URL?
     
-    var tempSelectedIndexPath: IndexPath?
+    func configure(initialSelectedFolder: URL?, targetFileList: [ImageFileModel]) {
+        self.initialSelectedFolder = initialSelectedFolder
+        self.vm.targetFileList = targetFileList
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,7 +45,8 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
         
         setNaviBar("이동할 폴더 선택", leftItems: leftItems, rightItems: rightItems)
         
-        vm.configure(folderListUpdated: { [weak self] updateData in
+        vm.configure(initialSelectedFolder: initialSelectedFolder, folderListUpdated: { [weak self] updateData in
+            
             guard let self else { return }
             switch updateData.folderUpdateData.changeType {
             case .initiate:
@@ -84,7 +90,13 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     @objc func moveBtnTapped() {
-        
+        Task {
+            let result = await vm.moveFilesToFolder()
+            await MainActor.run {
+                moveBackVC(animated: true)
+            }
+        }
+      
     }
     
     @objc func cancelBtnTapped() {

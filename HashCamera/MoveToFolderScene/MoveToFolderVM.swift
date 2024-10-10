@@ -18,6 +18,12 @@ class MoveToFolderVM {
     var folderListUpdated: ((FolderListUpdateData) -> Void)?
     var selectedFolderUpdated: ((URL?) -> Void)?
     
+    ///이동 진행할 파일목록
+    var targetFileList: [ImageFileModel] = []
+    
+    ///초기 선택된 폴더
+    private var initialSelectedFolder: URL?
+    
     ///선택된 폴더 인덱스 정보
     var selectedIndexPath: IndexPath? {
         didSet {
@@ -30,7 +36,7 @@ class MoveToFolderVM {
         }
     }
     ///선택된 폴더 정보
-    private var selectedFolder: FolderListItemModel? {
+    private(set) var selectedFolder: FolderListItemModel? {
         didSet {
             selectedFolderUpdated?(selectedFolder?.url)
         }
@@ -46,8 +52,9 @@ class MoveToFolderVM {
         let selectedIndexPath: IndexPath?
     }
     
-    func configure(folderListUpdated: ((FolderListUpdateData) -> Void)?) {
+    func configure(initialSelectedFolder: URL?, folderListUpdated: ((FolderListUpdateData) -> Void)?) {
         self.folderListUpdated = folderListUpdated
+        self.initialSelectedFolder = initialSelectedFolder
         
         guard let rootURL else { return }
         folderService.configure(rootURL: rootURL,
@@ -86,7 +93,7 @@ class MoveToFolderVM {
         })
     }
     
-    //MARK: FolderListVMProtocol
+    //MARK: - Folder and File CRUD
     func createFolder(folderName: String) async -> Result<URL, FolderService.CreationError> {
         await folderService.createFolder(folderName: folderName)
     }
@@ -101,17 +108,31 @@ class MoveToFolderVM {
         return await folderService.deleteFolder(at: indexPath.row)
     }
     
-    
-    
+    func moveFilesToFolder() async -> Result<Void,FileService.MoveFileError> {
+        guard let folderUrl = selectedFolder?.url else { return .failure(.unknown)}
+        return await FileService.moveFile(at: targetFileList.map({ $0.url }), to: folderUrl)
+    }
+
+    //MARK: -
     ///folderList는 갱신되었고, selectedIndexPAth, selectedFolder는 업데이트 안된 상태일 때 호출된다. 이전 폴더 선택정보를 유지한다.
     private func updateSelection(updateData: FolderMonitor.FolderUpdateData) {
         
         switch updateData.changeType {
         case .initiate:
-            //All Photos 선택
             guard folderList[0].count > 0 else { return }
-            selectedIndexPath = .init(row: 0, section: 0)
-            selectedFolder = folderList[0][0]
+            
+            if let initialSelectedFolder,
+               let index = folderList[1].firstIndex(where: { $0.url == initialSelectedFolder }) {
+                //초기 폴더 선택값 세팅
+                selectedIndexPath = .init(row: index, section: 1)
+                selectedFolder = folderList[1][index]
+            }
+            else {
+                //All Photos 선택
+                
+                selectedIndexPath = .init(row: 0, section: 0)
+                selectedFolder = folderList[0][0]
+            }
             
         case .add(_):
             //virtual 폴더 선택이었으면 아무 동작 X
@@ -141,7 +162,7 @@ class MoveToFolderVM {
             let newItemURL = updateData.newFileList[newIndex]
             self.selectedFolder = .init(type: .folder, url: newItemURL)
         }
-        
     }
+    
     
 }

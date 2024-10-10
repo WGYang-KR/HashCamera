@@ -297,6 +297,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     
     @objc func moveBtnTapped(_ sender: Any) {
         let nextVC = MoveToFolderVC()
+        nextVC.configure(initialSelectedFolder: vm.rootURL, targetFileList: vm.selectedFiles())
         present(UINavigationController(rootViewController: nextVC), presentationStyle: .pageSheet, transitionStyle: nil, animated: true)
     }
     

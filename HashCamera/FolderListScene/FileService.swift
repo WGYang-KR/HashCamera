@@ -41,13 +41,13 @@ class FileService {
         folderMonitor?.startMonitoring()
     }
     
-    func moveFile(at fileURLs: [URL], to folderURL: URL) async -> Result<Void,MoveFileError> {
+    static func moveFile(at fileURLs: [URL], to folderURL: URL) async -> Result<Void,MoveFileError> {
 
         var successCount = 0
         fileURLs.forEach { fileURL in
             if let newFileURL = URL(string: folderURL.absoluteString + fileURL.lastPathComponent) {
                 do {
-                    try fileManager.moveItem(at: fileURL, to: newFileURL)
+                    try FileManager.default.moveItem(at: fileURL, to: newFileURL)
                     successCount += 1
                 } catch(let error) {
                     hcLog(nil, error: error)
