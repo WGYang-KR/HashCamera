@@ -6,20 +6,9 @@
 //
 
 import UIKit
-import RxSwift
-import RxRelay
-
-//protocol FolderListVMProtocol: AnyObject {
-//    var selectedFolderIndexPath: BehaviorRelay<IndexPath> { get }
-//    var folders: BehaviorRelay<[[FolderListItemModel]]> { get }
-//    func createFolder(folderName: String ) async -> Result<URL, FolderService.CreationError>
-//    func renameFolder(at index: IndexPath, newName: String) async -> Result<URL,FolderService.RenameError>
-//    func deleteFolder(at index: IndexPath) async -> Result<Void, FolderService.DeleteError>
-//}
 
 class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    var disposeBag = DisposeBag()
     @IBOutlet weak var tableView: UITableView!
     
     var vm: FolderListVM = FolderListVM()
@@ -33,9 +22,10 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         tableView.dataSource = self
         
         tableView.register(UINib(nibName: "\(FolderListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(FolderListItemCell.self)")
+        tableView.backgroundColor = .sidebarBackground
         
         //네비게이션바
-        let rightItems = [UIBarButtonItem(image: SystemUIImage.plus,
+        let rightItems = [UIBarButtonItem(image: SystemUIImage.folderBadgePlus,
                                       style: .plain,
                                       target: self,
                                       action: #selector(addBtnTapped))]
@@ -85,6 +75,11 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        tableView.setEditing(false, animated: true) // Swipe 취소
+    }
+    
     @objc func addBtnTapped() {
         // 수정 팝업 띄우기
         let alert = UIAlertController(title: "폴더 추가", message: "추가하실 폴더 이름을 입력해 주세요.", preferredStyle: .alert)
@@ -126,6 +121,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         hcLog("셀 선택: \(indexPath)")
         vm.selectedIndexPath = indexPath
+        dismiss(animated: true)
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -210,4 +206,5 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         }
         
     }
+ 
 }

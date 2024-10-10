@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "CaptureButton@1x.png",
+      "filename" : "hashCamera_captureBtnIcon.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "CaptureButton@2x.png",
+      "filename" : "hashCamera_captureBtnIcon@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "CaptureButton@3x.png",
+      "filename" : "hashCamera_captureBtnIcon@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

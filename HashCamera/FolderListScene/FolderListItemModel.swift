@@ -13,8 +13,6 @@ struct FolderListItemModel {
     let url: URL
     var name: String {
         switch type {
-        case .allPhotos:
-            return "All"
         case .unclassified:
             return "Unclassified"
         case .folder:
@@ -23,7 +21,6 @@ struct FolderListItemModel {
     }
     
     enum FolderListItemType {
-        case allPhotos
         case unclassified
         case folder
     }

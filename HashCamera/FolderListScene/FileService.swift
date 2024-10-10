@@ -10,37 +10,35 @@ import RxSwift
 import RxRelay
 
 class FileService {
-
-    static let shared = FileService()
+    
     let fileManager = FileManager.default
-    var rootURL: URL?
     var folderMonitor: FolderMonitor?
+    
+    var rootURL: URL?
     var fileList: [URL] = []
     var fileListUpdated: ((FolderMonitor.FolderUpdateData) -> Void)?
 
-    private init() { }
+    init() { }
     deinit {
         folderMonitor?.stopMonitoring()
     }
     
-    ///폴더 목록 불러오기. 폴더 변경 감시 시작.
+    ///파일 목록 불러오기. 파일 변경 감시 시작. 호출할 때마다 reset 된다.
     func configure(rootURL: URL, fileListUpdated: ((FolderMonitor.FolderUpdateData) -> Void)? ) {
-        self.rootURL = rootURL
-        self.fileListUpdated = fileListUpdated
+        folderMonitor?.stopMonitoring()
         
-//        folderMonitor?.stopMonitoring()
-//        folderMonitor = FolderMonitor(folderPath: rootURL.absoluteString,
-//                                      folderListUpdated: { [weak self] folderUpdatedData in
-//            hcLog("파일목록 갱신 감지")
-//            guard let self else { return }
-//            let newFileList = folderUpdatedData.newFileList.filter { $0.isPhoto }
-//            let addedList = folderUpdatedData.addedFiles.filter { $0.isPhoto }
-//            let deletedList = folderUpdatedData.removedFiles.filter{$0.isPhoto}
-//            self.fileList = newFileList
-//            self.fileListUpdated?(.init(newFileList: newFileList, addedFiles: addedList, removedFiles: deletedList))
-//        })
-//        
-//        folderMonitor?.startMonitoring()
+        self.rootURL = rootURL
+        self.fileList = []
+        self.fileListUpdated = fileListUpdated
+    
+        folderMonitor = FolderMonitor(folderURL: rootURL,
+                                      contentType: [.jpeg, .png, .heic,],
+                                      eventMask: [.all],
+                                      folderListUpdated: { [weak self] updateData in
+            guard let self else { return }
+            fileList = updateData.newFileList
+            fileListUpdated?(updateData) })
+        folderMonitor?.startMonitoring()
     }
     
     func moveFile(at fileURLs: [URL], to folderURL: URL) async -> Result<Void,MoveFileError> {
@@ -65,6 +63,41 @@ class FileService {
     }
     enum MoveFileError:Error {
         case unknown
+    }
+    
+    
+    func deleteFiles(_ indices:[Int]) async -> Result<Void,DeleteError> {
+        
+
+        var deletingURLs = indices.compactMap({ index in
+           return index < fileList.count ? fileList[index] : nil
+        })
+        
+        var failedURLs = [URL]() //삭제 실패한 파일목록
+        var lastError:Error? = nil //삭제 실패 에러
+        
+        deletingURLs.forEach { url in
+            do {
+                try fileManager.removeItem(at: url)
+            } catch(let error) {
+                failedURLs.append(url)
+                lastError = error
+            }
+        }
+        
+        if let lastError {
+            hcLog("삭제 실패: \(lastError) | \(lastError.localizedDescription)")
+            hcLog(failedURLs.map({"\($0.lastPathComponent)"}).reduce("", {$0 + $1}))
+            return .failure(.system(lastError))
+        } else {
+            return .success(())
+        }
+        
+
+    }
+    enum DeleteError: Error {
+        case unknown
+        case system(Error)
     }
     
 }
