@@ -16,7 +16,7 @@ class FolderListVM {
     
     var folderList: [[FolderListItemModel]] = [[],[]]
     var folderListUpdated: ((FolderListUpdateData) -> Void)?
-    var selectedFolderUpdated: ((URL?) -> Void)?
+    var selectedFolderUpdated: ((FolderListItemModel?) -> Void)?
     
     ///선택된 폴더 인덱스 정보
     var selectedIndexPath: IndexPath? {
@@ -32,7 +32,7 @@ class FolderListVM {
     ///선택된 폴더 정보
     private var selectedFolder: FolderListItemModel? {
         didSet {
-            selectedFolderUpdated?(selectedFolder?.url)
+            selectedFolderUpdated?(selectedFolder)
         }
     }
 

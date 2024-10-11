@@ -70,7 +70,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
                                               style: .plain,
                                               target: self,
                                               action: #selector(naviSelectionBtnTapped))
-        setNaviBar("Browser", leftItems: naviLeftItems, rightItems: [selectionModeBtn])
+        setNaviBar("", leftItems: naviLeftItems, rightItems: [selectionModeBtn])
         
         // Side Bar
         menu.leftSide = true
@@ -122,8 +122,10 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     func initVM() {
         
         //선택 폴더 갱신시 처리
-        folderListVC.vm.selectedFolderUpdated = { [weak self] url in
-            guard let self, let url else {return }
+        folderListVC.vm.selectedFolderUpdated = { [weak self] folderListItemModel in
+            guard let self, let url = folderListItemModel?.url else {return }
+            //네비바 타이틀
+            navigationItem.title = folderListItemModel?.name
             
             setSelectionMode(false)
             //폴더 내 파일 변경 이벤트 처리
