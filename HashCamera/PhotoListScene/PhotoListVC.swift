@@ -285,7 +285,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
             .share(files: vm.selectedFiles()
                 .map({ FileShareItem(fileURL: $0.url,
                                      previewImage: $0.thumbnailImage,
-                                     fileTitle: $0.name) }),
+                                     fileTitle: $0.fileName) }),
                    viewController: self)
         toolBarLabel.sizeToFit()
     }
