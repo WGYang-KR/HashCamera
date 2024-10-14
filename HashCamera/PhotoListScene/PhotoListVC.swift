@@ -88,10 +88,10 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
                                        style: .plain,
                                        target: self,
                                        action: #selector(trashBtnTapped))
-        folderBtn =  UIBarButtonItem(image: SystemUIImage.folder,
-                                      style: .done,
-                                      target: self,
-                                      action: #selector(moveBtnTapped))
+        folderBtn = UIBarButtonItem(title: "이동",
+                                    style: .done,
+                                    target: self,
+                                    action: #selector(moveBtnTapped))
         
         let dummyBtn = UIBarButtonItem(image: nil,
                                        style: .plain,

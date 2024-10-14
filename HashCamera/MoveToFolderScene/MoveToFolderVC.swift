@@ -83,20 +83,29 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
                 if tableView.indexPathForSelectedRow != updateData.selectedIndexPath {
                     tempSelectedIndexPath = updateData.selectedIndexPath
                 }
-          
+                
             }
         })
         
     }
     
     @objc func moveBtnTapped() {
-        Task {
-            let result = await vm.moveFilesToFolder()
-            await MainActor.run {
-                moveBackVC(animated: true)
-            }
+        // 1. 중복 파일을 미리 체크
+        guard let duplicates = try? vm.checkDuplicateFiles() else {
+            //MARK: 기본 확인알람
+            return
         }
-      
+        
+        // 2. 중복 파일이 있을 경우 알림창 띄우기
+        if !duplicates.isEmpty {
+            hcLog("Duplicate files found: \(duplicates)")
+            // 중복 파일이 있을 때 사용자에게 덮어쓰기, 이름 변경, 취소 옵션 제공
+            showDuplicateFilesAlert(duplicates)
+        } else {
+            hcLog("No duplicates found. Moving files directly.")
+            // 중복이 없으면 바로 파일 이동
+            self.moveFilesOperation(overrite: false)
+        }
     }
     
     @objc func cancelBtnTapped() {
@@ -120,6 +129,90 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
         alert.addAction(cancelAction)
         
         present(alert, animated: true, completion: nil)
+    }
+    
+    //MARK: - 중복파일 처리 팝업
+    
+    /// 중복 파일 확인 후 알림창을 띄우는 함수
+    func showDuplicateFilesAlert(_ duplicates: [String]) {
+        // 알림창 생성
+        let alert = UIAlertController(title: "Duplicate Files Found", message: "There are \(duplicates.count) duplicate files. How would you like to proceed?", preferredStyle: .alert)
+        
+        // 덮어쓰기 옵션
+        alert.addAction(UIAlertAction(title: "Overwrite All", style: .destructive, handler: { _ in
+            print("User chose to overwrite all duplicate files.")
+            // 덮어쓰기 옵션으로 파일 이동 실행
+            self.moveFilesOperation(overrite: true)
+        }))
+        
+        // 이름 변경 옵션
+        alert.addAction(UIAlertAction(title: "Rename All", style: .default, handler: { _ in
+            print("User chose to rename all duplicate files.")
+            // 이름 변경 옵션으로 파일 이동 실행
+            self.moveFilesOperation(overrite: false)
+        }))
+        
+        // 취소 옵션
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+            print("User cancelled the operation.")
+            // 취소 시 아무것도 하지 않음
+        }))
+        
+        // 알림창 띄우기
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func moveFilesOperation(overrite: Bool) {
+        Task {
+            let results = try? await self.vm.moveFiles(overwrite: true)
+            await MainActor.run {
+                if let results {
+                    self.handleFileMoveResults(results)
+                } else {
+                    //TODO: 선택된 폴더 오류 팝업
+                    
+                }
+                
+            }
+        }
+    }
+    
+    // 파일 이동 결과를 처리하는 함수
+    func handleFileMoveResults(_ results: [Result<URL, MoveToFolderVM.FileMoveError>]) {
+        var errorMessage = ""
+        
+        for result in results {
+            switch result {
+            case .success(let fileURL):
+                hcLog("Successfully moved: \(fileURL.lastPathComponent)")
+            case .failure(let error):
+                switch error {
+                case .unknown:
+                    hcLog("Failed to move")
+                case .fileOverwriteFailed(let file, let error):
+                    let message = "Failed to overwrite: \(file.lastPathComponent)."
+                    hcLog(message + " " + "Error: \(error)")
+                    errorMessage += message + "\n"
+                    
+                case .fileRenameFailed(let file, let error):
+                    let message = "Failed to move: \(file.lastPathComponent)."
+                    hcLog(message + " " + "Error: \(error)")
+                    errorMessage += message + "\n"
+                    
+                case .fileMoveFailed(let file, let error):
+                    let message = "Failed to move: \(file.lastPathComponent)/"
+                    hcLog(message + " " + "Error: \(error)")
+                    errorMessage += message + "\n"
+                }
+            }
+        }
+        
+        if !errorMessage.isEmpty {
+            //TODO: 알림 팝업 띄우기
+        } else {
+            //성공
+            moveBackVC(animated: true)
+        }
     }
     
     //MARK: - UITableViewDataSource

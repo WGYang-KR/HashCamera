@@ -41,31 +41,6 @@ class FileService {
         folderMonitor?.startMonitoring()
     }
     
-    static func moveFile(at fileURLs: [URL], to folderURL: URL) async -> Result<Void,MoveFileError> {
-
-        var successCount = 0
-        fileURLs.forEach { fileURL in
-            if let newFileURL = URL(string: folderURL.absoluteString + fileURL.lastPathComponent) {
-                do {
-                    try FileManager.default.moveItem(at: fileURL, to: newFileURL)
-                    successCount += 1
-                } catch(let error) {
-                    hcLog(nil, error: error)
-                }
-            }
-        }
-        
-        if successCount == fileURLs.count {
-            return .success(Void())
-        } else {
-            return .failure(.unknown)
-        }
-    }
-    enum MoveFileError:Error {
-        case unknown
-    }
-    
-    
     func deleteFiles(_ indices:[Int]) async -> Result<Void,DeleteError> {
         
 
