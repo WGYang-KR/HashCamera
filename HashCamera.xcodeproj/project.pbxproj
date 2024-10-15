@@ -55,6 +55,9 @@
 		6A961E602B011FA100A05F9B /* CALayer+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A961E5F2B011FA100A05F9B /* CALayer+Ext.swift */; };
 		6AA609632CBE5E880011BB59 /* SelectSaveFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AA609622CBE5E880011BB59 /* SelectSaveFolderVC.xib */; };
 		6AA609642CBE5E880011BB59 /* SelectSaveFolderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA609612CBE5E880011BB59 /* SelectSaveFolderVC.swift */; };
+		6AA609672CBE60110011BB59 /* SelectSaveFolderVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA609662CBE600B0011BB59 /* SelectSaveFolderVM.swift */; };
+		6AA6096A2CBEAE060011BB59 /* SelectSaveFolderItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AA609692CBEAE060011BB59 /* SelectSaveFolderItemCell.xib */; };
+		6AA6096B2CBEAE060011BB59 /* SelectSaveFolderItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA609682CBEAE060011BB59 /* SelectSaveFolderItemCell.swift */; };
 		6AA61AC82AE81555002E3725 /* AuthorizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA61AC72AE81555002E3725 /* AuthorizationManager.swift */; };
 		6AA61ACC2AF14A5C002E3725 /* CameraModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA61ACB2AF14A5C002E3725 /* CameraModel.swift */; };
 		6AA61AD02AFA8337002E3725 /* TopMenuBarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AA61ACF2AFA8337002E3725 /* TopMenuBarView.xib */; };
@@ -124,6 +127,9 @@
 		6A961E5F2B011FA100A05F9B /* CALayer+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Ext.swift"; sourceTree = "<group>"; };
 		6AA609612CBE5E880011BB59 /* SelectSaveFolderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectSaveFolderVC.swift; sourceTree = "<group>"; };
 		6AA609622CBE5E880011BB59 /* SelectSaveFolderVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectSaveFolderVC.xib; sourceTree = "<group>"; };
+		6AA609662CBE600B0011BB59 /* SelectSaveFolderVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectSaveFolderVM.swift; sourceTree = "<group>"; };
+		6AA609682CBEAE060011BB59 /* SelectSaveFolderItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectSaveFolderItemCell.swift; sourceTree = "<group>"; };
+		6AA609692CBEAE060011BB59 /* SelectSaveFolderItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectSaveFolderItemCell.xib; sourceTree = "<group>"; };
 		6AA61AC72AE81555002E3725 /* AuthorizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationManager.swift; sourceTree = "<group>"; };
 		6AA61ACB2AF14A5C002E3725 /* CameraModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraModel.swift; sourceTree = "<group>"; };
 		6AA61ACF2AFA8337002E3725 /* TopMenuBarView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TopMenuBarView.xib; sourceTree = "<group>"; };
@@ -242,6 +248,7 @@
 				6A8B32292AE7AB8400D24E49 /* Model */,
 				6A3796592BB5A4FB00BAFC19 /* Utilities */,
 				6A8B320D2AE79ED300D24E49 /* Camera */,
+				6AA6096C2CBEAE180011BB59 /* SelectSaveFolder */,
 				6A04864B2C4E8E6C00C3989F /* FolderListScene */,
 				6A04863C2C494FAB00C3989F /* PhotoListScene */,
 				6A0188662C988CA1006F0A85 /* ImageViewer */,
@@ -268,8 +275,6 @@
 				6A755F772CBE3286008B5F95 /* CamVC.xib */,
 				6A133E502B0655320018A769 /* CamVM.swift */,
 				6AA61ACB2AF14A5C002E3725 /* CameraModel.swift */,
-				6AA609612CBE5E880011BB59 /* SelectSaveFolderVC.swift */,
-				6AA609622CBE5E880011BB59 /* SelectSaveFolderVC.xib */,
 			);
 			path = Camera;
 			sourceTree = "<group>";
@@ -281,6 +286,18 @@
 				6A3796532BB5A44000BAFC19 /* PhotoFileFormat.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		6AA6096C2CBEAE180011BB59 /* SelectSaveFolder */ = {
+			isa = PBXGroup;
+			children = (
+				6AA609662CBE600B0011BB59 /* SelectSaveFolderVM.swift */,
+				6AA609612CBE5E880011BB59 /* SelectSaveFolderVC.swift */,
+				6AA609622CBE5E880011BB59 /* SelectSaveFolderVC.xib */,
+				6AA609682CBEAE060011BB59 /* SelectSaveFolderItemCell.swift */,
+				6AA609692CBEAE060011BB59 /* SelectSaveFolderItemCell.xib */,
+			);
+			path = SelectSaveFolder;
 			sourceTree = "<group>";
 		};
 		6ACAB0842C9C78350009553E /* MoveToFolderScene */ = {
@@ -398,6 +415,7 @@
 				6A0CAA942CA1AF88006BC4D3 /* MoveToFolderVC.xib in Resources */,
 				6AA61AD62AFD2605002E3725 /* CaptureBtnView.xib in Resources */,
 				6A755F782CBE3286008B5F95 /* CamVC.xib in Resources */,
+				6AA6096A2CBEAE060011BB59 /* SelectSaveFolderItemCell.xib in Resources */,
 				6AA609632CBE5E880011BB59 /* SelectSaveFolderVC.xib in Resources */,
 				6A8B32012AE7983E00D24E49 /* Main.storyboard in Resources */,
 				6A7D4F692C775DED00ED0C59 /* FolderListVC.xib in Resources */,
@@ -455,6 +473,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A01887B2C988CF2006F0A85 /* ImageCarouselViewController.swift in Sources */,
+				6AA609672CBE60110011BB59 /* SelectSaveFolderVM.swift in Sources */,
 				6A3796522BB5A42600BAFC19 /* CameraSetting.swift in Sources */,
 				6A0188762C988CF2006F0A85 /* ImageLoader.swift in Sources */,
 				6AA61AC82AE81555002E3725 /* AuthorizationManager.swift in Sources */,
@@ -490,6 +509,7 @@
 				6A73A1052C610A2D007B6CAE /* FolderListItemCell.swift in Sources */,
 				6A0CAA932CA1AF88006BC4D3 /* MoveToFolderVC.swift in Sources */,
 				6AFB72D42B0113D00029592F /* CaptureBtnView.swift in Sources */,
+				6AA6096B2CBEAE060011BB59 /* SelectSaveFolderItemCell.swift in Sources */,
 				6A133E4D2B0503690018A769 /* AppLifeCycle.swift in Sources */,
 				6AA61AD42AFD22E3002E3725 /* TopMenuBarView.swift in Sources */,
 				6AA609642CBE5E880011BB59 /* SelectSaveFolderVC.swift in Sources */,
