@@ -43,6 +43,7 @@
 		6A73A1052C610A2D007B6CAE /* FolderListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */; };
 		6A73A1062C610A2D007B6CAE /* FolderListItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A73A1042C610A2D007B6CAE /* FolderListItemCell.xib */; };
 		6A73A1082C6A3DF5007B6CAE /* SystemUIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1072C6A3DF5007B6CAE /* SystemUIImage.swift */; };
+		6A755F782CBE3286008B5F95 /* CamVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A755F772CBE3286008B5F95 /* CamVC.xib */; };
 		6A7D4F652C76237C00ED0C59 /* FolderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7D4F642C76237C00ED0C59 /* FolderService.swift */; };
 		6A7D4F682C775DED00ED0C59 /* FolderListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7D4F662C775DED00ED0C59 /* FolderListVC.swift */; };
 		6A7D4F692C775DED00ED0C59 /* FolderListVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A7D4F672C775DED00ED0C59 /* FolderListVC.xib */; };
@@ -116,6 +117,7 @@
 		6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListItemCell.swift; sourceTree = "<group>"; };
 		6A73A1042C610A2D007B6CAE /* FolderListItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FolderListItemCell.xib; sourceTree = "<group>"; };
 		6A73A1072C6A3DF5007B6CAE /* SystemUIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemUIImage.swift; sourceTree = "<group>"; };
+		6A755F772CBE3286008B5F95 /* CamVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CamVC.xib; sourceTree = "<group>"; };
 		6A7D4F642C76237C00ED0C59 /* FolderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderService.swift; sourceTree = "<group>"; };
 		6A7D4F662C775DED00ED0C59 /* FolderListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListVC.swift; sourceTree = "<group>"; };
 		6A7D4F672C775DED00ED0C59 /* FolderListVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FolderListVC.xib; sourceTree = "<group>"; };
@@ -277,6 +279,7 @@
 			children = (
 				6AE8CFA22AF4D5A70063C8C6 /* Components */,
 				6A8B32142AE7A03000D24E49 /* CamVC.swift */,
+				6A755F772CBE3286008B5F95 /* CamVC.xib */,
 				6A133E502B0655320018A769 /* CamVM.swift */,
 			);
 			path = Camera;
@@ -447,6 +450,7 @@
 				6A0CAA9A2CA1B196006BC4D3 /* MoveToFolderListItemCell.xib in Resources */,
 				6A0CAA942CA1AF88006BC4D3 /* MoveToFolderVC.xib in Resources */,
 				6AA61AD62AFD2605002E3725 /* CaptureBtnView.xib in Resources */,
+				6A755F782CBE3286008B5F95 /* CamVC.xib in Resources */,
 				6A8B32012AE7983E00D24E49 /* Main.storyboard in Resources */,
 				6A7D4F692C775DED00ED0C59 /* FolderListVC.xib in Resources */,
 				6A2529D82B162BAA00721202 /* PhotoListItemCell.xib in Resources */,
@@ -721,7 +725,6 @@
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Photo Library Usage Permission";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
@@ -759,7 +762,6 @@
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Photo Library Usage Permission";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
