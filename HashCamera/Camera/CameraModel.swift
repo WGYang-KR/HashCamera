@@ -147,8 +147,8 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     ///기기에서 사용가능한 최상의 카메라 장치를 반환한다.
     private func bestDevice(position: AVCaptureDevice.Position) -> AVCaptureDevice? {
         let deviceTypes: [AVCaptureDevice.DeviceType] = [.builtInTrueDepthCamera,
-                                                         .builtInTripleCamera,
                                                          .builtInDualCamera,
+                                                         .builtInTripleCamera,
                                                          .builtInWideAngleCamera]
         let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: deviceTypes,
                                                                 mediaType: .video,
@@ -165,7 +165,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
    
         guard let device = bestDevice(position: self.position)
         else {
-            print("사용할 수 있는 카메라가 없음")
+            hcLog("사용할 수 있는 카메라가 없음")
             return
         }
         
