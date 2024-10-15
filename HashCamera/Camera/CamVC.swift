@@ -62,6 +62,11 @@ class CamVC: UIViewController {
         stopCamera()
     }
     
+    override func viewDidLayoutSubviews() {
+        
+        storageButton.layer.cornerRadius = storageButton.bounds.height / 2
+
+    }
     func bindAppLifeCycle() {
         
         //앱이 활성화 될때
@@ -108,12 +113,11 @@ class CamVC: UIViewController {
     }
     
     func initView() {
-
-
         //폴더선택 화면 표시
         storageButton.rx.tap.bind(onNext: { [weak self] in
                 guard let self else { return }
             //TODO: 폴더선택 VC 띄우기
+            present(UINavigationController(rootViewController: SelectSaveFolderVC()), presentationStyle: .pageSheet, transitionStyle: nil, animated: true)
         
         }).disposed(by: disposeBag)
         

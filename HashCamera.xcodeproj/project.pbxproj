@@ -209,12 +209,12 @@
 		6A3796592BB5A4FB00BAFC19 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				6A73A1012C5143B2007B6CAE /* Utils.swift */,
 				6AF642F72CA146B100F98F2E /* ShareHelper.swift */,
 				6A37964D2BB5A34700BAFC19 /* EmailHelper.swift */,
 				6A3796512BB5A42600BAFC19 /* CameraSetting.swift */,
 				6A3796572BB5A4CD00BAFC19 /* AppStatus.swift */,
 				6A133E4C2B0503690018A769 /* AppLifeCycle.swift */,
-				6A73A1012C5143B2007B6CAE /* Utils.swift */,
 				6A73A1072C6A3DF5007B6CAE /* SystemUIImage.swift */,
 				6AA61AC72AE81555002E3725 /* AuthorizationManager.swift */,
 				6AA61AD72AFE71E1002E3725 /* CaseIterable+Ext.swift */,
