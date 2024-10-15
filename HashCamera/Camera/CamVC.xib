@@ -17,7 +17,6 @@
                 <outlet property="preview34GuideView" destination="lju-sV-rxs" id="gaY-mD-GdE"/>
                 <outlet property="preview916GuideView" destination="ugr-zZ-jfa" id="jdk-zO-YQG"/>
                 <outlet property="previewView" destination="c6e-ur-MYJ" id="cgs-Am-Iy3"/>
-                <outlet property="storageBarView" destination="svh-Tr-pIA" id="KwM-lp-315"/>
                 <outlet property="storageButton" destination="B8L-qT-kWe" id="MNK-1O-ST1"/>
                 <outlet property="topMenuView" destination="VTJ-hg-TEg" id="4qo-Ih-2fH"/>
                 <outlet property="view" destination="iN0-l3-epB" id="v9G-S5-4YA"/>
@@ -152,13 +151,6 @@
                                 <constraint firstItem="2bV-zH-han" firstAttribute="leading" secondItem="ceo-hc-2GB" secondAttribute="leading" id="uvi-Dg-V6E"/>
                             </constraints>
                         </view>
-                        <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="svh-Tr-pIA" customClass="StorageBarCollectionView" customModule="HashCamera" customModuleProvider="target">
-                            <rect key="frame" x="0.0" y="444" width="393" height="86"/>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="86" id="GT6-l8-cUT"/>
-                            </constraints>
-                        </view>
                     </subviews>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <constraints>
@@ -166,14 +158,10 @@
                         <constraint firstAttribute="trailing" secondItem="lju-sV-rxs" secondAttribute="trailing" id="Ase-aE-yYw"/>
                         <constraint firstItem="lju-sV-rxs" firstAttribute="leading" secondItem="mkK-hE-Tq7" secondAttribute="leading" id="DId-Ua-Rnc"/>
                         <constraint firstAttribute="trailing" secondItem="ceo-hc-2GB" secondAttribute="trailing" id="Dfi-A8-r96"/>
-                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="svh-Tr-pIA" secondAttribute="trailing" id="FLe-hM-NhC"/>
                         <constraint firstAttribute="trailing" secondItem="VTJ-hg-TEg" secondAttribute="trailing" id="GUM-Xk-fZN"/>
                         <constraint firstItem="ugr-zZ-jfa" firstAttribute="leading" secondItem="mkK-hE-Tq7" secondAttribute="leading" id="MOf-W7-2C7"/>
-                        <constraint firstItem="svh-Tr-pIA" firstAttribute="centerX" secondItem="mkK-hE-Tq7" secondAttribute="centerX" id="TPj-xN-ia5"/>
-                        <constraint firstItem="svh-Tr-pIA" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="mkK-hE-Tq7" secondAttribute="leading" id="Tbf-zN-XBb"/>
                         <constraint firstItem="VTJ-hg-TEg" firstAttribute="top" secondItem="mkK-hE-Tq7" secondAttribute="top" id="Wf2-62-SdR"/>
                         <constraint firstItem="lju-sV-rxs" firstAttribute="top" secondItem="VTJ-hg-TEg" secondAttribute="bottom" id="XMg-IU-Qyr"/>
-                        <constraint firstItem="ceo-hc-2GB" firstAttribute="top" secondItem="svh-Tr-pIA" secondAttribute="bottom" constant="8" id="Ymr-VC-BIJ"/>
                         <constraint firstAttribute="bottom" secondItem="ugr-zZ-jfa" secondAttribute="bottom" id="ZcB-69-APo"/>
                         <constraint firstAttribute="trailing" secondItem="ugr-zZ-jfa" secondAttribute="trailing" id="bPj-qZ-Ftp"/>
                         <constraint firstItem="ceo-hc-2GB" firstAttribute="leading" secondItem="mkK-hE-Tq7" secondAttribute="leading" id="bl9-yW-V9N"/>

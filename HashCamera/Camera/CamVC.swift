@@ -25,16 +25,8 @@ class CamVC: UIViewController {
     @IBOutlet weak var storageButton: UIButton!
     @IBOutlet weak var captureButton: UIButton!
     @IBOutlet weak var browseButton: UIButton!
-   
-    @IBOutlet weak var storageBarView: StorageBarCollectionView!
     
-    
-    let camVM: CamVM = CamVM(cameraModel: CameraModel(position: .back,
-                                                      flashMode: .off,
-                                                      aspectRatio: .standard,
-                                                      fileType: .jpeg),
-                             storageModel: StorageModel(selectedStorgeType: .photoLibrary))
-    
+    let camVM: CamVM = CamVM()
     let isLoading = BehaviorRelay(value: true)
 
     
@@ -118,17 +110,16 @@ class CamVC: UIViewController {
     func initView() {
 
 
-        //저장소바 표시 버튼
+        //폴더선택 화면 표시
         storageButton.rx.tap.bind(onNext: { [weak self] in
                 guard let self else { return }
-                storageBarView.isHidden = storageBarView.isHidden == true ? false : true
+            //TODO: 폴더선택 VC 띄우기
+        
         }).disposed(by: disposeBag)
         
-        //저장소바
-        storageBarView.selectedStorage.bind { [weak self] storageType in
-            guard let self else { return }
-            camVM.storageModel.selectedStorgeType.accept(storageType)
-        }.disposed(by: disposeBag)
+        //TODO: 선택된 폴더 정보 vm 전달.
+        //camVM.storageModel.selectedStorgeType.accept(storageType)
+
         
         //설정 버튼
         topMenuView.moreMenuRx.bind { [weak self] in
@@ -178,16 +169,8 @@ class CamVC: UIViewController {
         //촬영버튼
         captureButton.rx.tap.bind { [weak self] _ in
             guard let self else { return }
-//            enableComponents(false) //버튼 비활성화
-//            previewView.borderEffect() //캡처효과
             camVM.capturePhoto() //캡처
         }.disposed(by: disposeBag)
-        
-//        //촬영 결과 수신
-//        camVM.cameraModel.capturedPhotoData.bind { [weak self] _ in
-//            guard let self else { return }
-//            enableComponents(true)
-//        }.disposed(by: disposeBag)
         
         //캡처시 테두리 효과 색 지정.
         previewView.layer.borderColor = UIColor(resource: .majorLight).cgColor

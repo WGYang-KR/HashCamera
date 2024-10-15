@@ -34,14 +34,12 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     ///에러 get
     let error = PublishRelay<HCError>()
     
-    
     //MARK: - 카메라 시작, 설정, 중지
 
     //카메라 모델 init
     init(position: AVCaptureDevice.Position,
          flashMode: AVCaptureDevice.FlashMode,
-         aspectRatio: AspectRatioType,
-         fileType: PhotoFileType) {
+         aspectRatio: AspectRatioType) {
        
         self.isCapturingPhoto = BehaviorRelay(value: false)
         self.position = position
