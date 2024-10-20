@@ -113,16 +113,21 @@ class CamVC: UIViewController {
     }
     
     func initView() {
+        
         //폴더선택 화면 표시
         storageButton.rx.tap.bind(onNext: { [weak self] in
-                guard let self else { return }
-            //TODO: 폴더선택 VC 띄우기
-            present(UINavigationController(rootViewController: SelectSaveFolderVC()), presentationStyle: .pageSheet, transitionStyle: nil, animated: true)
-        
+            guard let self else { return }
+            let vc = SelectSaveFolderVC()
+            vc.configure(delegate: camVM, initialSelectedFolder: camVM.selectedFolderRx.value)
+            present(UINavigationController(rootViewController: vc), presentationStyle: .pageSheet, transitionStyle: nil, animated: true)
+            
         }).disposed(by: disposeBag)
         
-        //TODO: 선택된 폴더 정보 vm 전달.
-        //camVM.storageModel.selectedStorgeType.accept(storageType)
+        //선택된 폴더 이름 표시
+        camVM.selectedFolderRx.bind { [weak self] in
+            guard let self else { return }
+            storageButton.setTitle(" " + $0.name, for: .normal)
+        }.disposed(by: disposeBag)
 
         
         //설정 버튼

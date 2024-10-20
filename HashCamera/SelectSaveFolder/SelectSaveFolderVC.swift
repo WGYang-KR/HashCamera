@@ -6,18 +6,22 @@
 //
 
 import UIKit
+protocol SelectSaveFolderVCDelegate: AnyObject {
+    func selectSaveFolderVC(_ vc: SelectSaveFolderVC, didSelectFolder folder: FolderModel)
+}
 
 class SelectSaveFolderVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var tableView: UITableView!
-    private var vm: MoveToFolderVM = MoveToFolderVM()
+    private var vm: SelectSaveFolderVM = SelectSaveFolderVM()
     private var tempSelectedIndexPath: IndexPath?
     
-    var initialSelectedFolder: URL?
+    weak var delegate: SelectSaveFolderVCDelegate?
+    var initialSelectedFolder: FolderModel?
     
-    func configure(initialSelectedFolder: URL?, targetFileList: [ImageFileModel]) {
+    func configure(delegate: SelectSaveFolderVCDelegate?, initialSelectedFolder: FolderModel?) {
+        self.delegate = delegate
         self.initialSelectedFolder = initialSelectedFolder
-        self.vm.targetFileList = targetFileList
     }
     
     override func viewDidLoad() {
@@ -129,8 +133,12 @@ class SelectSaveFolderVC: UIViewController, UITableViewDataSource, UITableViewDe
     
     //MARK: - UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        hcLog("셀 선택: \(indexPath)")
+        hcLog("셀 선택: \(indexPath), delegate: \(String(describing: delegate))")
         vm.selectedIndexPath = indexPath
+        if let selectedFolder = vm.selectedFolder {
+            delegate?.selectSaveFolderVC(self, didSelectFolder: selectedFolder)
+        }
+        moveBackVC(animated: true)
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -210,6 +218,10 @@ class SelectSaveFolderVC: UIViewController, UITableViewDataSource, UITableViewDe
                 hcLog("선택된 셀 복원: \(tempSelectedIndexPath)")
                 if tableView.indexPathForSelectedRow != tempSelectedIndexPath {
                     tableView.selectRow(at: tempSelectedIndexPath, animated: false, scrollPosition: .none)
+                    
+                    if let selectedFolder = vm.selectedFolder {
+                        delegate?.selectSaveFolderVC(self, didSelectFolder: selectedFolder)
+                    }
                 }
             }
         }

@@ -16,6 +16,11 @@ class Utils {
         array.insert(element, at: toIndex)
     }
     
+    ///앱 SandBox documnets 디렉토리 URL, nil일 때는 '/' path를 반환한다.
+    static var documentsFolderURL: URL {
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? URL(fileURLWithPath: "/")
+    }
+    
 }
 
 

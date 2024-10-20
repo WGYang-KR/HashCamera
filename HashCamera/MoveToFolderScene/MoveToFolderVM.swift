@@ -15,7 +15,7 @@ class MoveToFolderVM {
     var rootURL: URL? = URL(string: "./", relativeTo: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first)
     var thumbnailSize: CGSize = .zero
     
-    var folderList: [[FolderListItemModel]] = [[],[]]
+    var folderList: [[FolderModel]] = [[],[]]
     var folderListUpdated: ((FolderListUpdateData) -> Void)?
     var selectedFolderUpdated: ((URL?) -> Void)?
     
@@ -37,15 +37,15 @@ class MoveToFolderVM {
         }
     }
     ///선택된 폴더 정보
-    private(set) var selectedFolder: FolderListItemModel? {
+    private(set) var selectedFolder: FolderModel? {
         didSet {
             selectedFolderUpdated?(selectedFolder?.url)
         }
     }
 
-    lazy var virtualFolders: [FolderListItemModel] = {
+    lazy var virtualFolders: [FolderModel] = {
         guard let rootURL else { return [] }
-        return [.init(type: .unclassified, url: rootURL)]
+        return [.init(type: .defaultFolder, url: rootURL)]
     }()
                     
     struct FolderListUpdateData {
@@ -67,10 +67,10 @@ class MoveToFolderVM {
             switch updateData.changeType {
             case .initiate:
                 folderList[0] = virtualFolders
-                folderList[1] = updateData.newFileList.map({ FolderListItemModel(type: .folder, url: $0)})
+                folderList[1] = updateData.newFileList.map({ FolderModel(type: .folder, url: $0)})
             case .add(let newIndex):
                 guard newIndex <= folderList[1].count else { return }
-                let newItem = FolderListItemModel(type: .folder, url: updateData.newFileList[newIndex])
+                let newItem = FolderModel(type: .folder, url: updateData.newFileList[newIndex])
                 folderList[1].insert(newItem, at: newIndex)
                 
             case .delete(let deletedIndex):
@@ -81,7 +81,7 @@ class MoveToFolderVM {
                 guard oldIndex < folderList[1].count, newIndex <= folderList[1].count else { return }
                 //새 이름을 갱신해야하므로 swap 안하고 삭제,삽입.
                 folderList[1].remove(at: oldIndex)
-                let newItem = FolderListItemModel(type: .folder, url: updateData.newFileList[newIndex])
+                let newItem = FolderModel(type: .folder, url: updateData.newFileList[newIndex])
                 folderList[1].insert(newItem, at: newIndex)
             }
             

@@ -14,15 +14,12 @@ class SelectSaveFolderVM {
     var rootURL: URL? = URL(string: "./", relativeTo: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first)
     var thumbnailSize: CGSize = .zero
     
-    var folderList: [[FolderListItemModel]] = [[],[]]
+    var folderList: [[FolderModel]] = [[],[]]
     var folderListUpdated: ((FolderListUpdateData) -> Void)?
     var selectedFolderUpdated: ((URL?) -> Void)?
     
-    ///이동 진행할 파일목록
-    var targetFileList: [ImageFileModel] = []
-    
     ///초기 선택된 폴더
-    private var initialSelectedFolder: URL?
+    private var initialSelectedFolder: FolderModel?
     
     ///선택된 폴더 인덱스 정보
     var selectedIndexPath: IndexPath? {
@@ -36,15 +33,15 @@ class SelectSaveFolderVM {
         }
     }
     ///선택된 폴더 정보
-    private(set) var selectedFolder: FolderListItemModel? {
+    private(set) var selectedFolder: FolderModel? {
         didSet {
             selectedFolderUpdated?(selectedFolder?.url)
         }
     }
     
-    lazy var virtualFolders: [FolderListItemModel] = {
+    lazy var virtualFolders: [FolderModel] = {
         guard let rootURL else { return [] }
-        return [.init(type: .unclassified, url: rootURL)]
+        return [.init(type: .defaultFolder, url: rootURL)]
     }()
     
     struct FolderListUpdateData {
@@ -52,7 +49,7 @@ class SelectSaveFolderVM {
         let selectedIndexPath: IndexPath?
     }
     
-    func configure(initialSelectedFolder: URL?, folderListUpdated: ((FolderListUpdateData) -> Void)?) {
+    func configure(initialSelectedFolder: FolderModel?, folderListUpdated: ((FolderListUpdateData) -> Void)?) {
         self.folderListUpdated = folderListUpdated
         self.initialSelectedFolder = initialSelectedFolder
         
@@ -66,10 +63,10 @@ class SelectSaveFolderVM {
             switch updateData.changeType {
             case .initiate:
                 folderList[0] = virtualFolders
-                folderList[1] = updateData.newFileList.map({ FolderListItemModel(type: .folder, url: $0)})
+                folderList[1] = updateData.newFileList.map({ FolderModel(type: .folder, url: $0)})
             case .add(let newIndex):
                 guard newIndex <= folderList[1].count else { return }
-                let newItem = FolderListItemModel(type: .folder, url: updateData.newFileList[newIndex])
+                let newItem = FolderModel(type: .folder, url: updateData.newFileList[newIndex])
                 folderList[1].insert(newItem, at: newIndex)
                 
             case .delete(let deletedIndex):
@@ -80,7 +77,7 @@ class SelectSaveFolderVM {
                 guard oldIndex < folderList[1].count, newIndex <= folderList[1].count else { return }
                 //새 이름을 갱신해야하므로 swap 안하고 삭제,삽입.
                 folderList[1].remove(at: oldIndex)
-                let newItem = FolderListItemModel(type: .folder, url: updateData.newFileList[newIndex])
+                let newItem = FolderModel(type: .folder, url: updateData.newFileList[newIndex])
                 folderList[1].insert(newItem, at: newIndex)
             }
             
@@ -108,93 +105,8 @@ class SelectSaveFolderVM {
         return await folderService.deleteFolder(at: indexPath.row)
     }
     
-    
-    ///1. 중복 파일을 미리 체크하는 함수
-    func checkDuplicateFiles() throws  -> [String] {
-        guard let destination = selectedFolder?.url else { throw FileMoveError.unknown}
-        let files = targetFileList.map({ $0.url })
-        
-        var duplicateFiles = [String]()
-        
-        for file in files {
-            let destinationFile = destination.appendingPathComponent(file.lastPathComponent)
-            if fileManager.fileExists(atPath: destinationFile.path) {
-                duplicateFiles.append(file.lastPathComponent)
-            }
-        }
-        
-        return duplicateFiles
-    }
-    
-    ///2. 파일 이동을 진행하는 함수 (Result로 반환)
-    func moveFiles(overwrite: Bool) async throws -> [Result<URL, FileMoveError>] {
-        guard let destination = selectedFolder?.url else { throw FileMoveError.unknown }
-        let files = targetFileList.map({ $0.url })
-        
-        var results = [Result<URL, FileMoveError>]() // 이동 결과를 저장하는 리스트
-        
-        for file in files {
-            let destinationFile = destination.appendingPathComponent(file.lastPathComponent)
-            
-            // 파일이 이미 존재할 경우 처리
-            if fileManager.fileExists(atPath: destinationFile.path) {
-                if overwrite {
-                    // 덮어쓰기
-                    do {
-                        try fileManager.removeItem(at: destinationFile)
-                        try fileManager.moveItem(at: file, to: destinationFile)
-                        hcLog("Overwritten: \(destinationFile.lastPathComponent)")
-                        results.append(.success(destinationFile)) // 성공한 파일 추가
-                    } catch {
-                        hcLog("Error overwriting \(file.lastPathComponent): \(error)")
-                        results.append(.failure(.fileOverwriteFailed(file: file, error: error))) // 실패한 파일과 에러 추가
-                    }
-                } else {
-                    // 이름 변경
-                    var newDestinationFile = destinationFile
-                    var count = 1
-                    
-                    while fileManager.fileExists(atPath: newDestinationFile.path) {
-                        let newName = "\(destinationFile.deletingPathExtension().lastPathComponent) (\(count))"
-                        newDestinationFile = destination.appendingPathComponent(newName).appendingPathExtension(file.pathExtension)
-                        count += 1
-                    }
-                    
-                    do {
-                        try fileManager.moveItem(at: file, to: newDestinationFile)
-                        hcLog("Renamed and moved: \(newDestinationFile.lastPathComponent)")
-                        results.append(.success(newDestinationFile)) // 성공한 파일 추가
-                    } catch {
-                        hcLog("Error renaming \(file.lastPathComponent): \(error)")
-                        results.append(.failure(.fileRenameFailed(file: file, error: error))) // 실패한 파일과 에러 추가
-                    }
-                }
-            } else {
-                // 파일이 존재하지 않으면 그냥 이동
-                do {
-                    try fileManager.moveItem(at: file, to: destinationFile)
-                    hcLog("Moved: \(file.lastPathComponent)")
-                    results.append(.success(destinationFile)) // 성공한 파일 추가
-                } catch {
-                    hcLog("Error moving \(file.lastPathComponent): \(error)")
-                    results.append(.failure(.fileMoveFailed(file: file, error: error))) // 실패한 파일과 에러 추가
-                }
-            }
-        }
-        
-        return results // 파일 이동 결과 반환
-    }
-    /// 파일 이동의 결과를 나타낼 Result 타입 정의
-    enum FileMoveError: Error {
-        case unknown
-        case fileOverwriteFailed(file: URL, error: Error)
-        case fileRenameFailed(file: URL, error: Error)
-        case fileMoveFailed(file: URL, error: Error)
-    }
-    
-    
     //MARK: -
-    ///folderList는 갱신되었고, selectedIndexPAth, selectedFolder는 업데이트 안된 상태일 때 호출된다. 이전 폴더 선택정보를 유지한다.
+    ///folderList는 갱신되었고, selectedIndexPath, selectedFolder는 업데이트 안된 상태일 때 호출된다. 이전 폴더 선택정보를 유지한다.
     private func updateSelection(updateData: FolderMonitor.FolderUpdateData) {
         
         switch updateData.changeType {
@@ -202,7 +114,7 @@ class SelectSaveFolderVM {
             guard folderList[0].count > 0 else { return }
             
             if let initialSelectedFolder,
-               let index = folderList[1].firstIndex(where: { $0.url == initialSelectedFolder }) {
+               let index = folderList[1].firstIndex(where: { $0.url == initialSelectedFolder.url }) {
                 //초기 폴더 선택값 세팅
                 selectedIndexPath = .init(row: index, section: 1)
                 selectedFolder = folderList[1][index]

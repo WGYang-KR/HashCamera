@@ -10,14 +10,15 @@ import AVFoundation
 import RxSwift
 import RxRelay
 
-class CamVM {
+class CamVM: SelectSaveFolderVCDelegate {
+
     let cameraModel: CameraModel = CameraModel(position: .back,
                                                flashMode: .off,
                                                aspectRatio: .standard)
     let fileManager = FileManager.default
 
     ///선택된 저장 폴더
-    var seletedFolder: FolderListItemModel?
+    let selectedFolderRx = BehaviorRelay<FolderModel>(value: defaultFolder)
     ///사진 저장 포맷
     var photoFileFormat: PhotoFileFormat = .jpeg
     
@@ -26,24 +27,50 @@ class CamVM {
     var disposeBag = DisposeBag()
     
     init() {
-        initVM()
+        initCamera()
+        initSeledtedFolder()
     }
 
-    func initVM() {
+    //MARK: - 카메라, 촬영
+    func initCamera() {
         
         ///사진 캡처결과 받아서 저장소에 저장하기 연결
         cameraModel.capturedPhotoData.bind { [weak self] photoData in
-            let _ = self?.savePhoto(photoData: photoData)
+            let result = self?.savePhoto(photoData: photoData)
+            hcLog("사진저장결과 \(String(describing: result))")
             self?.isCapturingPhoto.accept(false) //촬영저장 끝
         }.disposed(by: disposeBag)
     }
     
-    //MARK: - 사진 촬영
     func capturePhoto() {
         isCapturingPhoto.accept(true) //촬영 저장 시작
         cameraModel.capturePhoto() //촬영 후 결과값은 capturedPhotoData로 수신
     }
     
+    //MARK: - 저장폴더
+    static var defaultFolder: FolderModel {
+        FolderModel(type: .defaultFolder, url: Utils.documentsFolderURL)
+    }
+    
+    func initSeledtedFolder() {
+        //TODO: 폴더 변경 모니터링 등록
+    
+        //저장된 저장폴더 지정
+        if let savedSelectedFolder = CameraSetting.selectedFolder {
+            //TODO: 현재도 존재하는 폴더인지 확인.
+            selectedFolderRx.accept(savedSelectedFolder)
+        } else {
+            CameraSetting.selectedFolder = Self.defaultFolder
+            selectedFolderRx.accept(Self.defaultFolder)
+        }
+
+    }
+    
+    //MARK: - SelectSaveFolderVCDelegate 저장 폴더 변경
+    func selectSaveFolderVC(_ vc: SelectSaveFolderVC, didSelectFolder folder: FolderModel) {
+        selectedFolderRx.accept(folder)
+        CameraSetting.selectedFolder = folder
+    }
     
     //MARK: - 사진 저장
     enum SavePhotoError: Error {
@@ -53,7 +80,7 @@ class CamVM {
     }
     
     private func savePhoto(photoData data: Data) -> Result<URL,SavePhotoError> {
-        guard let destination = seletedFolder?.url else { return .failure(.noSelectedFolder)}
+        let destination = selectedFolderRx.value.url
         
         let fileName = makePhotoFileName(fileTypeString: photoFileFormat.string)
         let newFileURL = destination.appendingPathComponent(fileName)

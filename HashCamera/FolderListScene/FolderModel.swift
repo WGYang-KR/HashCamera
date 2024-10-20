@@ -7,21 +7,22 @@
 
 import Foundation
 
-struct FolderListItemModel {
+struct FolderModel: Codable {
     
-    let type: FolderListItemType
+    let type: FolderType
     let url: URL
+    
     var name: String {
         switch type {
-        case .unclassified:
-            return "Unclassified"
+        case .defaultFolder:
+            return "Default Folder"
         case .folder:
             return url.lastPathComponent
         }
     }
     
-    enum FolderListItemType {
-        case unclassified
+    enum FolderType: Int, Codable {
+        case defaultFolder
         case folder
     }
 
