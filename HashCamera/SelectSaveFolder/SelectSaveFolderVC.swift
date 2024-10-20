@@ -63,6 +63,16 @@ class SelectSaveFolderVC: UIViewController, UITableViewDataSource, UITableViewDe
                 
                 if tableView.indexPathForSelectedRow != updateData.selectedIndexPath {
                     tempSelectedIndexPath = updateData.selectedIndexPath
+                    
+                    if !tableView.isEditing {
+                        if tableView.indexPathForSelectedRow != tempSelectedIndexPath {
+                            tableView.selectRow(at: tempSelectedIndexPath, animated: false, scrollPosition: .none)
+                            if let selectedFolder = vm.selectedFolder {
+                                delegate?.selectSaveFolderVC(self, didSelectFolder: selectedFolder)
+                            }
+                        }
+                    }
+                    
                 }
                 
             case .rename(let oldIndex, let newIndex):
@@ -73,6 +83,15 @@ class SelectSaveFolderVC: UIViewController, UITableViewDataSource, UITableViewDe
                 
                 if tableView.indexPathForSelectedRow != updateData.selectedIndexPath {
                     tempSelectedIndexPath = updateData.selectedIndexPath
+                    
+                    if !tableView.isEditing {
+                        if tableView.indexPathForSelectedRow != tempSelectedIndexPath {
+                            tableView.selectRow(at: tempSelectedIndexPath, animated: false, scrollPosition: .none)
+                            if let selectedFolder = vm.selectedFolder {
+                                delegate?.selectSaveFolderVC(self, didSelectFolder: selectedFolder)
+                            }
+                        }
+                    }
                 }
                 
             case .delete(let deletedIndex):
@@ -82,9 +101,19 @@ class SelectSaveFolderVC: UIViewController, UITableViewDataSource, UITableViewDe
                 
                 if tableView.indexPathForSelectedRow != updateData.selectedIndexPath {
                     tempSelectedIndexPath = updateData.selectedIndexPath
+                    
+                    if !tableView.isEditing {
+                        if tableView.indexPathForSelectedRow != tempSelectedIndexPath {
+                            tableView.selectRow(at: tempSelectedIndexPath, animated: false, scrollPosition: .none)
+                            if let selectedFolder = vm.selectedFolder {
+                                delegate?.selectSaveFolderVC(self, didSelectFolder: selectedFolder)
+                            }
+                        }
+                    }
                 }
                 
             }
+            
         })
         
     }
