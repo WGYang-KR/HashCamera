@@ -15,8 +15,12 @@ class CamVM: SelectSaveFolderVCDelegate {
     let cameraModel: CameraModel = CameraModel(position: .back,
                                                flashMode: .off,
                                                aspectRatio: .standard)
+
     let fileManager = FileManager.default
 
+    ///폴더 감시, 조회 서비스
+    let folderService: FolderService = FolderService()
+    var folderList: [FolderModel] = []
     ///선택된 저장 폴더
     let selectedFolderRx = BehaviorRelay<FolderModel>(value: defaultFolder)
     ///사진 저장 포맷
@@ -28,7 +32,7 @@ class CamVM: SelectSaveFolderVCDelegate {
     
     init() {
         initCamera()
-        initSeledtedFolder()
+        initFolderSelection()
     }
 
     //MARK: - 카메라, 촬영
@@ -52,18 +56,29 @@ class CamVM: SelectSaveFolderVCDelegate {
         FolderModel(type: .defaultFolder, url: Utils.documentsFolderURL)
     }
     
-    func initSeledtedFolder() {
-        //TODO: 폴더 변경 모니터링 등록
-    
-        //저장된 저장폴더 지정
-        if let savedSelectedFolder = CameraSetting.selectedFolder {
-            //TODO: 현재도 존재하는 폴더인지 확인.
-            selectedFolderRx.accept(savedSelectedFolder)
-        } else {
-            CameraSetting.selectedFolder = Self.defaultFolder
-            selectedFolderRx.accept(Self.defaultFolder)
-        }
+    func initFolderSelection() {
 
+        folderService.configure(rootURL: Self.defaultFolder.url) { [weak self] updateData in
+            //업데이트 이벤트 핸들러
+            guard let self else { return }
+            folderList = updateData.newFileList.map{FolderModel(type: .folder, url: $0)}
+            switch updateData.changeType {
+                case .initiate:
+                //저장된 저장 폴더 세팅
+                if let savedSelectedFolder = CameraSetting.selectedFolder {
+                    selectedFolderRx.accept(savedSelectedFolder)
+                } else {
+                    CameraSetting.selectedFolder = Self.defaultFolder
+                    selectedFolderRx.accept(Self.defaultFolder)
+                }
+            case .add, .rename, .delete:
+                //현재 선택 폴더가 존재안하면 Default폴더로 변경
+                if selectedFolderRx.value.type == .folder,
+                   !folderList.contains(where: { $0.url == self.selectedFolderRx.value.url}) {
+                       selectedFolderRx.accept(Self.defaultFolder)
+                }
+            }
+        }
     }
     
     //MARK: - SelectSaveFolderVCDelegate 저장 폴더 변경
