@@ -22,6 +22,7 @@
                 <outlet property="storageButton" destination="B8L-qT-kWe" id="MNK-1O-ST1"/>
                 <outlet property="topMenuView" destination="VTJ-hg-TEg" id="4qo-Ih-2fH"/>
                 <outlet property="view" destination="iN0-l3-epB" id="v9G-S5-4YA"/>
+                <outlet property="zoomFactorLabel" destination="Jk0-uQ-x1K" id="zp6-tD-0EV"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -43,10 +44,24 @@
                                 <constraint firstAttribute="width" secondItem="lju-sV-rxs" secondAttribute="height" multiplier="3:4" id="jMj-F3-GPE"/>
                             </constraints>
                         </view>
-                        <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c6e-ur-MYJ" customClass="CameraPreviewView" customModule="HashCamera" customModuleProvider="target">
+                        <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c6e-ur-MYJ" customClass="CameraPreviewView" customModule="HashCamera" customModuleProvider="target">
                             <rect key="frame" x="76" y="315" width="240" height="128"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="1.0x" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jk0-uQ-x1K">
+                                    <rect key="frame" x="99" y="53" width="42" height="21"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="60" id="ivs-Gu-8it"/>
+                                    </constraints>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstAttribute="trailing" secondItem="Jk0-uQ-x1K" secondAttribute="trailing" constant="16" id="d8g-Bg-saR"/>
+                                <constraint firstAttribute="bottom" secondItem="Jk0-uQ-x1K" secondAttribute="bottom" constant="16" id="l3y-4e-baX"/>
+                            </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VTJ-hg-TEg" userLabel="TopMenu" customClass="TopMenuBarView" customModule="HashCamera" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="375" height="38"/>

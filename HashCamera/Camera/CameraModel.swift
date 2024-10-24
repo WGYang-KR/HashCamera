@@ -24,7 +24,8 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
 
     ///카메라 전/후면 설정 set get
     private(set) var position: AVCaptureDevice.Position
-    private(set) var zoomFactor: CGFloat
+    let zoomScaleChangedRx = PublishRelay<CGFloat>()
+
     ///플래시 모두 설정 set get
     var flashMode: AVCaptureDevice.FlashMode
     ///화면비율 설정 set get
@@ -34,8 +35,8 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     ///에러 get
     let error = PublishRelay<HCError>()
     
+    
     //MARK: - 카메라 시작, 설정, 중지
-
     //카메라 모델 init
     init(position: AVCaptureDevice.Position,
          flashMode: AVCaptureDevice.FlashMode,
@@ -43,7 +44,6 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
        
         self.isCapturingPhoto = BehaviorRelay(value: false)
         self.position = position
-        self.zoomFactor = 1.0
         self.flashMode = flashMode
         self.aspectRatio = aspectRatio
         self.photoOutput = AVCapturePhotoOutput()
@@ -98,20 +98,31 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     }
     
     
+    ///디지털 줌 최대값
+    let zoomDigitalMax: CGFloat = 5.0
+    var minZoomFactor: CGFloat = 1.0
+    var maxZoomFactor: CGFloat = CGFLOAT_MAX
+    
     ///카메라 줌
-    func zoom(_ zoom: CGFloat) {
+    func zoom(scale: CGFloat) {
         
         guard let device = videoInput?.device else { return }
-        let factor = zoom < 1 ? 1 : zoom
-        
+       
+        var zoomFactor = device.videoZoomFactor
+        zoomFactor *= scale
+        zoomFactor = max(minZoomFactor, zoomFactor)
+        zoomFactor = min(zoomFactor, maxZoomFactor)
+    
+            
         do {
             try device.lockForConfiguration()
-            device.videoZoomFactor = factor
+            device.videoZoomFactor = zoomFactor
             device.unlockForConfiguration()
         }
         catch {
-            print(error.localizedDescription)
+            hcLog(error.localizedDescription)
         }
+        
     }
     
     ///카메라 초점
@@ -147,9 +158,12 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     ///기기에서 사용가능한 최상의 카메라 장치를 반환한다.
     private func bestDevice(position: AVCaptureDevice.Position) -> AVCaptureDevice? {
         let deviceTypes: [AVCaptureDevice.DeviceType] = [.builtInTrueDepthCamera,
-                                                         .builtInDualCamera,
                                                          .builtInTripleCamera,
-                                                         .builtInWideAngleCamera]
+                                                         .builtInDualWideCamera,
+                                                         .builtInDualCamera,
+                                                         .builtInWideAngleCamera,
+                                                         .builtInUltraWideCamera,
+                                                         .builtInTelephotoCamera]
         let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: deviceTypes,
                                                                 mediaType: .video,
                                                                 position: position)
@@ -160,6 +174,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         
     }
     
+    let videoZoomFactorKeyPath = "videoZoomFactor"
     ///position에 맞게 카메라 디바이스를 설정한다.
     private func setupSessionInput() {
    
@@ -170,6 +185,12 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         }
         
         for input in captureSession.inputs {
+            
+            // KVO 옵저버 제거
+            if let device = (input as? AVCaptureDeviceInput)?.device{
+                device.removeObserver(self, forKeyPath: videoZoomFactorKeyPath)
+            }
+        
             captureSession.removeInput(input)
         }
         do { // 카메라가 사용 가능하면 세션에 input과 output을 연결
@@ -179,6 +200,21 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
             }
             self.videoInput = videoDeviceInput
             
+ 
+            if let device = self.videoInput?.device {
+                // 줌 배율 변경 감지를 위한 KVO 설정
+                device.addObserver(self, forKeyPath: videoZoomFactorKeyPath, options: [.new, .old], context: nil)
+                device.videoZoomFactor = 1.0
+                if #available(iOS 18.0, *) {
+                    minZoomFactor = device.activeFormat.systemRecommendedVideoZoomRange?.lowerBound ?? 1.0
+                    maxZoomFactor = device.activeFormat.systemRecommendedVideoZoomRange?.upperBound ?? 30.0
+                } else {
+                    minZoomFactor = device.minAvailableVideoZoomFactor
+                    maxZoomFactor = CGFloat( Int(Float(device.maxAvailableVideoZoomFactor / 50)) * 10 )
+                }
+            }
+            
+    
         } catch {
             self.error.accept(.cameraNoDevice)
         }
@@ -204,6 +240,22 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
        
     }
     
+    // KVO를 통해 줌 배율 변화 모니터링
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == videoZoomFactorKeyPath, let change = change {
+            let oldZoomFactor = change[.oldKey] as? CGFloat ?? 0.0
+            let newZoomFactor = change[.newKey] as? CGFloat ?? 0.0
+            
+            var newZoomScale = newZoomFactor
+            if #available(iOS 18.0, *) {
+                newZoomScale = newZoomFactor * (videoInput?.device.displayVideoZoomFactorMultiplier ?? 1.0)
+            } else {
+                newZoomScale = newZoomFactor * 0.5
+            }
+            
+            zoomScaleChangedRx.accept(newZoomScale)
+        }
+    }
     
     //MARK: - 사진 촬영
     ///사진 촬영. 사진촬영이 완료되면 capturedPhotoData로 결과값을 방출한다.
@@ -269,7 +321,8 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         return resultPhotoData as Data
     }
     
-    
+    //MARK: -
+ 
 }
 
 extension UIImage {

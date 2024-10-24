@@ -25,7 +25,7 @@ class CamVC: UIViewController {
     @IBOutlet weak var storageButton: UIButton!
     @IBOutlet weak var captureButton: UIButton!
     @IBOutlet weak var browseButton: UIButton!
-    
+    @IBOutlet weak var zoomFactorLabel: UILabel!
     let camVM: CamVM = CamVM()
     let isLoading = BehaviorRelay(value: true)
 
@@ -197,7 +197,16 @@ class CamVC: UIViewController {
             owner.camVM.cameraModel.focus(point: points.converted)
         }.disposed(by: disposeBag)
         
+        //프리뷰 핀치(배율)
+        previewView.didPinchScaleRx.withUnretained(self).bind {owner, scale in
+            owner.camVM.cameraModel.zoom(scale: scale)
+        }.disposed(by: disposeBag)
         
+        //배율 변경 모니터링
+        camVM.cameraModel.zoomScaleChangedRx.withUnretained(self).bind { owner, zoomFactor in
+            owner.zoomFactorLabel.text = String(format: "%.2fx", zoomFactor)
+        }
+        .disposed(by: disposeBag)
         
     }
     

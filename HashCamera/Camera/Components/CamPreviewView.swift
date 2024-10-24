@@ -13,9 +13,7 @@ import RxRelay
 
 class CameraPreviewView: UIView {
 
-    
     var disposeBag = DisposeBag()
-    
     
     ///카메라 프리뷰의 한 지점을 나타내는 구조체
     struct CaptureDevicePreviewPoints{
@@ -26,6 +24,7 @@ class CameraPreviewView: UIView {
     
     ///카메라 프리뷰가 탭되는 위치 이벤트를 방출한다.
     let didTapPointRx = PublishRelay<CaptureDevicePreviewPoints>()
+    let didPinchScaleRx = PublishRelay<CGFloat>()
                                       
                                       
     let blurEffectView: UIView = {
@@ -89,6 +88,13 @@ class CameraPreviewView: UIView {
                 didTapPointRx.accept(.init(original: location,
                                            converted: previewLayer.captureDevicePointConverted(fromLayerPoint: location)))
                 
+            }.disposed(by: disposeBag)
+        
+        self.rx.pinchGesture().when(.changed)
+            .bind { [weak self] recognizer in
+                guard let self else { return }
+                didPinchScaleRx.accept(recognizer.scale)
+                recognizer.scale = 1
             }.disposed(by: disposeBag)
         
     }
