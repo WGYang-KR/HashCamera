@@ -193,7 +193,6 @@ class CamVC: UIViewController {
         
         //프리뷰 탭(포커싱)
         previewView.didTapPointRx.withUnretained(self).bind { owner, points in
-            owner.showFocusView(points.original)
             owner.camVM.cameraModel.focus(point: points.converted)
         }.disposed(by: disposeBag)
         
@@ -208,17 +207,11 @@ class CamVC: UIViewController {
         }
         .disposed(by: disposeBag)
         
-    }
-    
-    ///포커스 위치 나타내는 뷰
-    func newFocusView() -> UIView {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.frame = .init(origin: .zero, size: CGSize(width: 80, height: 80))
-        view.layer.borderWidth = 1
-        view.layer.borderUIColor = UIColor.color01
+        //초점 변경 모니터링
+        camVM.cameraModel.focusDevicePointChangedRx.withUnretained(self).bind { owner, focusDevicePoint in
+            owner.previewView.showFocusPoint(devicePoint: focusDevicePoint)
+        } .disposed(by: disposeBag)
         
-        return view
         
     }
     
@@ -270,25 +263,4 @@ class CamVC: UIViewController {
         present(vc , animated: true)
     }
 
-    ///해당위치에 포커스를 나타내는 뷰를 띄웠다가 사라지게 한다.
-    func showFocusView(_ point: CGPoint) {
-        
-        let focusView = newFocusView()
-        let convertedPoint = CGPoint(x: point.x - focusView.bounds.width / 2,
-                                     y: point.y - focusView.bounds.height / 2)
-        
-        self.previewView.addSubview(focusView)
-        focusView.frame = CGRect(origin: convertedPoint, size: focusView.frame.size)
-        self.previewView.bringSubviewToFront(focusView)
-    
-        Task { [weak self] in
-            guard let self else { return }
-            UIView.transition(with: self.previewView, duration: 0.5, options: [.transitionCrossDissolve]) {
-                focusView.removeFromSuperview()
-            }
-        }
-        
-    }
-    
-    
 }

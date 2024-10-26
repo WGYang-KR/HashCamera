@@ -53,25 +53,24 @@ class CameraPreviewView: UIView {
 
     init(session: AVCaptureSession?) {
         super.init(frame: .zero)
-        initPreviewLayer()
         initView()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        initPreviewLayer()
         initView()
     }
-    
-    func initPreviewLayer() {
+     
+    private func initView() {
+        
+        //init PreviewLayer
         previewLayer.videoGravity = .resizeAspectFill
         previewLayer.cornerRadius = 0
         previewLayer.backgroundColor = UIColor.clear.cgColor
         
         clipsToBounds = true
-    }
-     
-    func initView() {
+        
+        //init View
         addSubview(blurEffectView)
         blurEffectView.isHidden = true
         blurEffectView.snp.makeConstraints { make in
@@ -85,6 +84,8 @@ class CameraPreviewView: UIView {
                 guard let self else { return }
                 
                 let location = recognizer.location(in: self)
+        
+                showFocusView(location)
                 didTapPointRx.accept(.init(original: location,
                                            converted: previewLayer.captureDevicePointConverted(fromLayerPoint: location)))
                 
@@ -117,5 +118,41 @@ class CameraPreviewView: UIView {
             blurEffectView.isHidden = !applies
     }
     
+    func showFocusPoint(devicePoint: CGPoint) {
+        let foucsPoint = previewLayer.layerPointConverted(fromCaptureDevicePoint: devicePoint)
+        showFocusView(foucsPoint)
+    }
+    
+    
+    ///해당위치에 포커스를 나타내는 뷰를 띄웠다가 사라지게 한다.
+    private func showFocusView(_ point: CGPoint) {
+        
+        let focusView = newFocusView()
+        let convertedPoint = CGPoint(x: point.x - focusView.bounds.width / 2,
+                                     y: point.y - focusView.bounds.height / 2)
+        
+        self.addSubview(focusView)
+        focusView.frame = CGRect(origin: convertedPoint, size: focusView.frame.size)
+        self.bringSubviewToFront(focusView)
+    
+        Task { [weak self] in
+            guard let self else { return }
+            UIView.transition(with: self, duration: 0.5, options: [.transitionCrossDissolve]) {
+                focusView.removeFromSuperview()
+            }
+        }
+        
+        ///포커스 위치 나타내는 뷰
+        func newFocusView() -> UIView {
+            let view = UIView()
+            view.backgroundColor = .clear
+            view.frame = .init(origin: .zero, size: CGSize(width: 80, height: 80))
+            view.layer.borderWidth = 1
+            view.layer.borderUIColor = UIColor.majorDark
+            
+            return view
+        }
+        
+    }
     
 }

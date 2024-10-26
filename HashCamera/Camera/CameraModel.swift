@@ -25,7 +25,8 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     ///카메라 전/후면 설정 set get
     private(set) var position: AVCaptureDevice.Position
     let zoomScaleChangedRx = PublishRelay<CGFloat>()
-
+    let focusDevicePointChangedRx = PublishRelay<CGPoint>()
+    
     ///플래시 모두 설정 set get
     var flashMode: AVCaptureDevice.FlashMode
     ///화면비율 설정 set get
@@ -33,9 +34,9 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     ///촬영 완료된 사진 반환 get
     let capturedPhotoData = PublishRelay<Data>()
     ///에러 get
-    let error = PublishRelay<HCError>()
+    let errorOccuredRx = PublishRelay<HCError>()
     
-    
+
     //MARK: - 카메라 시작, 설정, 중지
     //카메라 모델 init
     init(position: AVCaptureDevice.Position,
@@ -82,6 +83,18 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     
     //MARK: - 카메라 설정 기능 처리 함수(private)
+  
+    
+    ///디지털 줌 최대값
+    let zoomDigitalMax: CGFloat = 5.0
+    var minZoomFactor: CGFloat = 1.0
+    var maxZoomFactor: CGFloat = CGFLOAT_MAX
+    
+    //KVO 키값
+    let videoZoomFactorKeyPath = "videoZoomFactor"
+    let lensPositionKeyPath = "lensPosition"
+    let isAdjustingFocusKeyPath = "adjustingFocus"
+    
     ///카메라 전환(전면/후면)
     func updatePosition(position: AVCaptureDevice.Position) {
         self.position = position
@@ -97,11 +110,6 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         captureSession.commitConfiguration()
     }
     
-    
-    ///디지털 줌 최대값
-    let zoomDigitalMax: CGFloat = 5.0
-    var minZoomFactor: CGFloat = 1.0
-    var maxZoomFactor: CGFloat = CGFLOAT_MAX
     
     ///카메라 줌
     func zoom(scale: CGFloat) {
@@ -132,18 +140,18 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         let focus_x = point.x
         let focus_y = point.y
 
-        hcLog("포커싱 \(focus_x), \(focus_y)")
+        hcLog("수동 포커싱: \(focus_x), \(focus_y)")
         
         if (captureDevice.isFocusModeSupported(.autoFocus) && captureDevice.isFocusPointOfInterestSupported) {
             do {
                 try captureDevice.lockForConfiguration()
                 captureDevice.focusPointOfInterest = CGPoint(x: focus_x, y: focus_y)
-                captureDevice.focusMode = .autoFocus
+                captureDevice.focusMode = .continuousAutoFocus
               
                 
                 if (captureDevice.isExposureModeSupported(.autoExpose) && captureDevice.isExposurePointOfInterestSupported) {
                     captureDevice.exposurePointOfInterest = CGPoint(x: focus_x, y: focus_y);
-                    captureDevice.exposureMode = .autoExpose;
+                    captureDevice.exposureMode = .continuousAutoExposure
                   
                 }
                 
@@ -173,8 +181,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         return devices.first
         
     }
-    
-    let videoZoomFactorKeyPath = "videoZoomFactor"
+
     ///position에 맞게 카메라 디바이스를 설정한다.
     private func setupSessionInput() {
    
@@ -189,10 +196,15 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
             // KVO 옵저버 제거
             if let device = (input as? AVCaptureDeviceInput)?.device{
                 device.removeObserver(self, forKeyPath: videoZoomFactorKeyPath)
+                //TODO: 초점 변경 위치 모니터링
+//                device.removeObserver(self, forKeyPath: lensPositionKeyPath)
+//                device.removeObserver(self, forKeyPath: isAdjustingFocusKeyPath)
+//                NotificationCenter.default.removeObserver(self, name: AVCaptureDevice.subjectAreaDidChangeNotification, object: device)
             }
         
             captureSession.removeInput(input)
         }
+        
         do { // 카메라가 사용 가능하면 세션에 input과 output을 연결
             let videoDeviceInput =  try AVCaptureDeviceInput(device: device)
             if captureSession.canAddInput(videoDeviceInput) {
@@ -202,9 +214,25 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
             
  
             if let device = self.videoInput?.device {
+                
                 // 줌 배율 변경 감지를 위한 KVO 설정
                 device.addObserver(self, forKeyPath: videoZoomFactorKeyPath, options: [.new, .old], context: nil)
-                device.videoZoomFactor = 1.0
+                
+                //TODO: 초점 변경 위치 모니터링
+//                device.addObserver(self, forKeyPath: lensPositionKeyPath, options: [.new], context: nil)
+//                device.addObserver(self, forKeyPath: isAdjustingFocusKeyPath, options: [.new], context: nil)
+//                do {
+//                    try device.lockForConfiguration()
+//                    device.isSubjectAreaChangeMonitoringEnabled = true
+//                    device.unlockForConfiguration()
+//                } catch {
+//                    self.errorOccuredRx.accept(.cameraUnknown)
+//                }
+//                NotificationCenter.default.addObserver(self, selector: #selector(handleSubjectAreaChange), name: AVCaptureDevice.subjectAreaDidChangeNotification, object: device)
+             
+                
+                
+                //TODO: 기기별 min,max 줌 값 설정
                 if #available(iOS 18.0, *) {
                     minZoomFactor = device.activeFormat.systemRecommendedVideoZoomRange?.lowerBound ?? 1.0
                     maxZoomFactor = device.activeFormat.systemRecommendedVideoZoomRange?.upperBound ?? 30.0
@@ -212,11 +240,21 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
                     minZoomFactor = device.minAvailableVideoZoomFactor
                     maxZoomFactor = CGFloat( Int(Float(device.maxAvailableVideoZoomFactor / 50)) * 10 )
                 }
+                
+                //TODO: 기기별 초기 zoom값
+                device.videoZoomFactor = 1.0
+                
+                do {
+                    try device.lockForConfiguration()
+                    device.focusPointOfInterest = .init(x: 0.5, y: 0.5)
+                } catch {
+                    //TODO: 에러처리
+                }
+                
             }
-            
-    
+        
         } catch {
-            self.error.accept(.cameraNoDevice)
+            self.errorOccuredRx.accept(.cameraNoDevice)
         }
         
     }
@@ -234,16 +272,34 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
             photoOutput.isHighResolutionCaptureEnabled = true
             photoOutput.maxPhotoQualityPrioritization = .quality
         } else {
-            self.error.accept(.cameraUnknown)
+            self.errorOccuredRx.accept(.cameraUnknown)
         }
         captureSession.commitConfiguration()
        
     }
     
+    //TODO: 초점 변경 위치 모니터링
+//    var lastLensPosition: CGFloat?
+//    @objc func handleSubjectAreaChange(notification: Notification) {
+//       
+//        hcLog("주제 영역 변화")
+////        focusChanged()
+//    }
+//    
+//    func focusChanged () {
+//        // 현재 초점 포인트과거 초점 포인트를 비교하여 변경되었으면 이벤트 발생시킨다.
+//        guard let newFocusDevicePoint = videoInput?.device.focusPointOfInterest else { return }
+//        guard let adjustingFocus = videoInput?.device.isAdjustingFocus else { return }
+//        focusDevicePointChangedRx.accept(newFocusDevicePoint)
+//        
+//        hcLog("자동 or 수동 포커싱: \(newFocusDevicePoint)")
+//    }
+//
+    
     // KVO를 통해 줌 배율 변화 모니터링
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == videoZoomFactorKeyPath, let change = change {
-            let oldZoomFactor = change[.oldKey] as? CGFloat ?? 0.0
+//            let oldZoomFactor = change[.oldKey] as? CGFloat ?? 0.0
             let newZoomFactor = change[.newKey] as? CGFloat ?? 0.0
             
             var newZoomScale = newZoomFactor
@@ -255,8 +311,30 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
             
             zoomScaleChangedRx.accept(newZoomScale)
         }
+        //TODO: 초점 변경 위치 모니터링
+//        else if keyPath == lensPositionKeyPath, let change {
+//            let newLensPosition = change[.newKey] as? CGFloat ?? 0.0
+//            
+//            if let lastLensPosition, abs(newLensPosition - lastLensPosition) < 0.1 {
+//                return
+//            }
+//            
+//            lastLensPosition = newLensPosition
+////            hcLog("렌즈위치변화: \(newLensPosition)")
+////            focusChanged()
+//        } else if keyPath == isAdjustingFocusKeyPath, let change {
+//            let newIsAdjustingFocus = change[.newKey] as? Bool ?? false
+//            hcLog("New isAdjustingFocus: \(newIsAdjustingFocus)")
+//            
+//            if newIsAdjustingFocus {
+//                focusChanged()
+//              
+//            }
+//        }
+//             
     }
     
+
     //MARK: - 사진 촬영
     ///사진 촬영. 사진촬영이 완료되면 capturedPhotoData로 결과값을 방출한다.
     func capturePhoto() {
