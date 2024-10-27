@@ -234,7 +234,10 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
             guard let cell = collectionView.cellForItem(at: indexPath) as? PhotoListItemCell else { return }
             let sourceView: UIImageView = cell.imageView
             let imageCarousel = ImageCarouselViewController(sourceView: sourceView, photoListVM: vm, initialIndex: indexPath.item)
-            present(imageCarousel, animated: true)
+            let naviVC = UINavigationController(rootViewController: imageCarousel)
+            naviVC.modalPresentationStyle = .custom
+            naviVC.modalPresentationCapturesStatusBarAppearance = true
+            present(naviVC, animated: true)
         }
     }
     

@@ -35,13 +35,9 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     
     private var onRightNavBarTapped:((Int) -> Void)?
     
-    private(set) lazy var navBar:UINavigationBar = {
-        let _navBar = UINavigationBar(frame: .zero)
-        _navBar.isTranslucent = true
-        _navBar.setBackgroundImage(UIImage(), for: .default)
-        _navBar.shadowImage = UIImage()
-        return _navBar
-    }()
+    var navBar: UINavigationBar {
+        self.navigationController!.navigationBar
+    }
     
     private(set) lazy var backgroundView:UIView? = {
         let _v = UIView()
@@ -83,12 +79,12 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     private func addNavBar() {
         // Add Navigation Bar
         let closeBarButton = naviBackBarButtonItem()
-        
-        navItem.leftBarButtonItem = closeBarButton
-//        navItem.leftBarButtonItem?.tintColor = theme.tintColor
-        navBar.alpha = 0.0
-        navBar.items = [navItem]
-        navBar.insert(to: view)
+        setNaviBar("", leftItems: [closeBarButton], rightItems: nil)
+//        navItem.leftBarButtonItem = closeBarButton
+//        navItem.leftBarButtonItem?.tintColor = .systemCyan
+//        navBar.alpha = 1.0
+//        navBar.items = [navItem]
+//        navBar.insert(to: view)
     }
     
     private func addBackgroundView() {
@@ -105,12 +101,14 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
         addNavBar()
         
         dataSource = self
-
+        delegate = self
+        
         //첫번째 사진을 세팅한다
         if let photoListVM, let item = photoListVM.fileList[safe: initialIndex] {
             let initialVC:ImageViewerController = .init(index: initialIndex,
                                                         imageItem: item,
                                                         imageLoader: SDWebImageLoader())
+            navBar.topItem?.title = item.fileName
             setViewControllers([initialVC], direction: .forward, animated: true)
         }
         
@@ -141,7 +139,8 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     }
 }
 
-extension ImageCarouselViewController:UIPageViewControllerDataSource {
+extension ImageCarouselViewController:UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+    
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         
         guard let vc = viewController as? ImageViewerController else { return nil }
@@ -169,4 +168,13 @@ extension ImageCarouselViewController:UIPageViewControllerDataSource {
             imageItem: item,
             imageLoader: vc.imageLoader)
     }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
+        
+        if transitionCompleted {
+            guard let currentVC = pageViewController.viewControllers?.first as? ImageViewerController else { return }
+            navBar.topItem?.title = currentVC.imageItem.fileName
+        }
+    }
+    
 }
