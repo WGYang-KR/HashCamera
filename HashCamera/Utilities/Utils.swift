@@ -103,6 +103,28 @@ extension UIViewController {
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
         
     }
+    
+    func setToolbar(items: [UIBarButtonItem]) {
+        
+        setToolbarItems(items, animated: false)
+        
+        // 네비게이션 바 색상 설정
+        let appearance =  UIToolbarAppearance()
+        
+        // 투명한 배경을 유지하고 색상을 설정
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .naviBarBackground.withAlphaComponent(0.5)  // 반투명 효과
+        appearance.backgroundEffect = UIBlurEffect(style: .light)  // Blur 효과 추가
+        
+        // 버튼 텍스트 색상 설정
+        navigationController?.toolbar.tintColor = .systemCyan
+        
+        // standardAppearance와 scrollEdgeAppearance 모두에 적용
+        navigationController?.toolbar.standardAppearance = appearance
+        navigationController?.toolbar.scrollEdgeAppearance = appearance
+    
+    }
+    
 }
 
 //MARK: - 화면 전환

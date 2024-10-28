@@ -16,11 +16,13 @@ UIGestureRecognizerDelegate {
     var index:Int = 0
     var imageItem:ImageFileModel!
 
-    var navBar:UINavigationBar? {
-        guard let _parent = parent as? ImageCarouselViewController
-            else { return nil}
-        return _parent.navBar
+    var navController: UINavigationController? {
+        return (parent as? ImageCarouselViewController)?.navigationController
+   
     }
+    
+    ///네비게이션바, 툴바 보이기/가리기 수행중에 layout() 함수가 실행 안되도록 하기 위한 플래그
+    var isChangingNaviHidden = false
     
     // MARK: Layout Constraints
     private var top:NSLayoutConstraint!
@@ -96,16 +98,19 @@ UIGestureRecognizerDelegate {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        self.navBar?.alpha = 1.0
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-//        self.navBar?.alpha = 0.0
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
+        if isChangingNaviHidden {
+            isChangingNaviHidden = false
+            return
+        }
+        
         layout()
     }
     
@@ -185,10 +190,10 @@ UIGestureRecognizerDelegate {
     @objc
     func didSingleTap(_ recognizer: UITapGestureRecognizer) {
         
-        let currentNavAlpha = self.navBar?.alpha ?? 0.0
-        UIView.animate(withDuration: 0.1) {
-            self.navBar?.alpha = currentNavAlpha > 0.5 ? 0.0 : 1.0
-        }
+        guard let navController else { return }
+        isChangingNaviHidden = true
+        navController.setToolbarHidden(!navController.isToolbarHidden, animated: true)
+        navController.setNavigationBarHidden(!navController.isNavigationBarHidden, animated: true)
     }
     
     @objc

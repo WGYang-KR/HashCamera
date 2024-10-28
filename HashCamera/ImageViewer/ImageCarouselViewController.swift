@@ -35,10 +35,6 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     
     private var onRightNavBarTapped:((Int) -> Void)?
     
-    var navBar: UINavigationBar {
-        self.navigationController!.navigationBar
-    }
-    
     private(set) lazy var backgroundView:UIView? = {
         let _v = UIView()
         _v.backgroundColor = theme.color
@@ -80,11 +76,33 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
         // Add Navigation Bar
         let closeBarButton = naviBackBarButtonItem()
         setNaviBar("", leftItems: [closeBarButton], rightItems: nil)
-//        navItem.leftBarButtonItem = closeBarButton
-//        navItem.leftBarButtonItem?.tintColor = .systemCyan
-//        navBar.alpha = 1.0
-//        navBar.items = [navItem]
-//        navBar.insert(to: view)
+    }
+    
+    private func addToolBar() {
+        // Tool Bar
+        let shareBtn = UIBarButtonItem(image: SystemUIImage.squareAndArrowUp,
+                                       style: .plain,
+                                       target: self,
+                                       action: #selector(shareBtnTapped))
+        let trashBtn = UIBarButtonItem(image: SystemUIImage.trash,
+                                       style: .plain,
+                                       target: self,
+                                       action: #selector(trashBtnTapped))
+        let folderBtn = UIBarButtonItem(title: "이동",
+                                    style: .done,
+                                    target: self,
+                                    action: #selector(moveBtnTapped))
+        
+        let dummyBtn = UIBarButtonItem(image: nil,
+                                       style: .plain,
+                                       target: nil,
+                                       action: nil)
+        
+        let spacing = 10.0
+        let items: [UIBarButtonItem] = [shareBtn , .fixedSpace(spacing), dummyBtn, .flexibleSpace(), trashBtn, .fixedSpace(spacing), folderBtn]
+
+        setToolbar(items: items)
+        navigationController?.setToolbarHidden(false, animated: true)
     }
     
     private func addBackgroundView() {
@@ -99,6 +117,7 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
         
         addBackgroundView()
         addNavBar()
+        addToolBar()
         
         dataSource = self
         delegate = self
@@ -108,7 +127,7 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
             let initialVC:ImageViewerController = .init(index: initialIndex,
                                                         imageItem: item,
                                                         imageLoader: SDWebImageLoader())
-            navBar.topItem?.title = item.fileName
+            navigationController?.navigationBar.topItem?.title = item.fileName
             setViewControllers([initialVC], direction: .forward, animated: true)
         }
         
@@ -130,6 +149,28 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
             else { return }
         onTap(_firstVC.index)
     }
+    
+    
+    @objc func shareBtnTapped(_ sender: Any) {
+//        
+//        ShareHelper.shared
+//            .share(files: vm.selectedFiles()
+//                .map({ FileShareItem(fileURL: $0.url,
+//                                     previewImage: $0.thumbnailImage,
+//                                     fileTitle: $0.fileName) }),
+//                   viewController: self)
+    }
+    
+    @objc func trashBtnTapped(_ sender: Any) {
+
+    }
+    
+    @objc func moveBtnTapped(_ sender: Any) {
+//        let nextVC = MoveToFolderVC()
+//        nextVC.configure(initialSelectedFolder: vm.rootURL, targetFileList: vm.selectedFiles())
+//        present(UINavigationController(rootViewController: nextVC), presentationStyle: .pageSheet, transitionStyle: nil, animated: true)
+    }
+    
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if theme == .dark {
@@ -173,7 +214,7 @@ extension ImageCarouselViewController:UIPageViewControllerDataSource, UIPageView
         
         if transitionCompleted {
             guard let currentVC = pageViewController.viewControllers?.first as? ImageViewerController else { return }
-            navBar.topItem?.title = currentVC.imageItem.fileName
+            navigationController?.navigationBar.topItem?.title = currentVC.imageItem.fileName
         }
     }
     
