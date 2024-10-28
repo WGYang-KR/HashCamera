@@ -64,10 +64,14 @@ class CamVM: SelectSaveFolderVCDelegate {
             folderList = updateData.newFileList.map{FolderModel(type: .folder, url: $0)}
             switch updateData.changeType {
                 case .initiate:
-                //저장된 저장 폴더 세팅
-                if let savedSelectedFolder = CameraSetting.selectedFolder {
-                    selectedFolderRx.accept(savedSelectedFolder)
+                //저장된 저장 폴더 세팅 (저장 폴더 URL이 sandbox URL 변경으로 변경되어 있을 수 있으니 주의)
+                if let savedSelectedFolder = CameraSetting.selectedFolder,
+                   savedSelectedFolder.type == .folder,
+                   let savedFolderURL = folderList.first(where: {$0.url.lastPathComponent == savedSelectedFolder.url.lastPathComponent})?.url {
+                        selectedFolderRx.accept(.init(type: .folder, url: savedFolderURL))
+                    
                 } else {
+                    //디폴츠 폴더.
                     CameraSetting.selectedFolder = Self.defaultFolder
                     selectedFolderRx.accept(Self.defaultFolder)
                 }
