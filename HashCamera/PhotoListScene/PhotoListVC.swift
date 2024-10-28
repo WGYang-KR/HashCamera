@@ -12,6 +12,7 @@ import SideMenu
 class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     var disposeBag = DisposeBag()
+    
     let vm = PhotoListVM()
     let folderListVC = FolderListVC()
     
@@ -121,6 +122,39 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     
     func initVM() {
         
+        ///파일 목록 갱신시 처리
+        vm.fileListUpdatedRx.bind { [weak self] updateData in
+            guard let self else { return }
+            
+            //모든 셀 선택해제
+            if let indexPaths = self.collectionView.indexPathsForSelectedItems {
+                let _ = indexPaths.map({self.collectionView.deselectItem(at: $0, animated: false)})
+            }
+            
+            //이벤트별 갱신
+            switch updateData.folderUpdateData.changeType {
+            case .initiate:
+                collectionView.reloadData()
+            case .add(let newIndex):
+                collectionView.performBatchUpdates {
+                    self.collectionView.insertItems(at: [.init(item: newIndex, section: 0)])
+                }
+                
+            case .delete(let deletedIndex):
+                collectionView.performBatchUpdates {
+                    self.collectionView.deleteItems(at: [.init(item: deletedIndex, section: 0)])
+                }
+                
+            case .rename(let oldIndex, let newIndex):
+                collectionView.performBatchUpdates {
+                    self.collectionView.moveItem(at: .init(item: oldIndex, section: 0),
+                                            to: .init(item: newIndex, section: 0))
+                }
+                
+            }
+        }
+        .disposed(by: disposeBag)
+        
         //선택 폴더 갱신시 처리
         folderListVC.vm.selectedFolderUpdated = { [weak self] folderListItemModel in
             guard let self, let url = folderListItemModel?.url else {return }
@@ -128,37 +162,9 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
             navigationItem.title = folderListItemModel?.name
             
             setSelectionMode(false)
-            //폴더 내 파일 변경 이벤트 처리
-            vm.configure(rootURL: url){ [weak self] updateData in
-                guard let self else { return }
-                
-                //모든 셀 선택해제
-                if let indexPaths = self.collectionView.indexPathsForSelectedItems {
-                    let _ = indexPaths.map({self.collectionView.deselectItem(at: $0, animated: false)})
-                }
-                
-                //이벤트별 갱신
-                switch updateData.folderUpdateData.changeType {
-                case .initiate:
-                    collectionView.reloadData()
-                case .add(let newIndex):
-                    collectionView.performBatchUpdates {
-                        self.collectionView.insertItems(at: [.init(item: newIndex, section: 0)])
-                    }
-                    
-                case .delete(let deletedIndex):
-                    collectionView.performBatchUpdates {
-                        self.collectionView.deleteItems(at: [.init(item: deletedIndex, section: 0)])
-                    }
-                    
-                case .rename(let oldIndex, let newIndex):
-                    collectionView.performBatchUpdates {
-                        self.collectionView.moveItem(at: .init(item: oldIndex, section: 0),
-                                                to: .init(item: newIndex, section: 0))
-                    }
-                    
-                }
-            }
+            
+            //vm root폴더 지정
+            vm.configure(rootURL: url)
         }
         
         let _ = folderListVC.view //폴더 목록 VM 활성화.

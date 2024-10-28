@@ -9,16 +9,17 @@ import UIKit
 import RxSwift
 import RxRelay
 import QuickLookThumbnailing
+
 class PhotoListVM {
     
     private var fileService = FileService()
     private let qlThumbnailGenerator =  QLThumbnailGenerator.shared
 
-    var rootURL: URL?
+    private(set) var rootURL: URL?
     var thumbnailSize: CGSize = .zero
     
-    var fileList: [ImageFileModel] = []
-    var fileListUpdated: ((FileListUpdateData) -> Void)?
+    private(set) var fileList: [ImageFileModel] = []
+    let fileListUpdatedRx = PublishRelay<FileListUpdateData>()
     
     var selectedIndexPaths: [IndexPath] = []
     
@@ -28,10 +29,9 @@ class PhotoListVM {
     }
     
     ///파일 목록 불러오기. 파일 변경 감시 시작. 호출할 때마다 reset 된다.
-    func configure(rootURL: URL, fileListUpdated: ((FileListUpdateData) -> Void)?) {
+    func configure(rootURL: URL) {
         self.rootURL = rootURL
         self.fileList = []
-        self.fileListUpdated = fileListUpdated
         self.selectedIndexPaths = []
        
         fileService.configure(rootURL: rootURL,
@@ -47,25 +47,22 @@ class PhotoListVM {
                 guard newIndex <= fileList.count else { return }
                 let newItem = ImageFileModel(url: updateData.newFileList[newIndex])
                 fileList.insert(newItem, at: newIndex)
-                selectedIndexPaths = []
             case .delete(let deletedIndex):
                 guard deletedIndex < fileList.count else { return }
                 fileList.remove(at: deletedIndex)
-                selectedIndexPaths = []
             case .rename(let oldIndex, let newIndex):
                 guard oldIndex < fileList.count, newIndex <= fileList.count else { return }
                 //새 이름을 갱신해야하므로 swap 안하고 삭제,삽입.
                 fileList.remove(at: oldIndex)
                 let newItem = ImageFileModel(url: updateData.newFileList[newIndex])
                 fileList.insert(newItem, at: newIndex)
-                selectedIndexPaths = []
             }
             
-            //선택된 폴더정보 유지되도록 작업
+            //선택된 파일 초기화
             selectedIndexPaths = []
             
             //VC에 업데이트 이벤트 전달
-            fileListUpdated?(.init(folderUpdateData: updateData, selectedIndexPaths: self.selectedIndexPaths))
+            fileListUpdatedRx.accept(.init(folderUpdateData: updateData, selectedIndexPaths: self.selectedIndexPaths))
             
         })
     }

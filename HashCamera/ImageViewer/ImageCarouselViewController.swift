@@ -1,10 +1,13 @@
 import UIKit
+import RxSwift
+import RxRelay
 
 class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionViewControllerConvertible {
     
-    unowned var initialSourceView: UIImageView?
+    var disBag = DisposeBag()
     weak var photoListVM: PhotoListVM?
     
+    unowned var initialSourceView: UIImageView?
     
     ///이 VC를 호출한 ImageView
     var sourceView: UIImageView? {
@@ -23,6 +26,15 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     
  
     var initialIndex = 0
+    ///현재 보여지고 있는 뷰어
+    var currentVC: ImageViewerController? {
+        return (viewControllers?.first) as? ImageViewerController
+    }
+    ///현재보여지고 있는 이미지 정보
+    var currentItem: ImageFileModel? {
+        guard let currentVC else { return nil }
+        return photoListVM?.fileList[safe: currentVC.index]
+    }
     
     var theme:ImageViewerTheme = .light {
         didSet {
@@ -112,16 +124,7 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
         view.sendSubviewToBack(backgroundView)
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        addBackgroundView()
-        addNavBar()
-        addToolBar()
-        
-        dataSource = self
-        delegate = self
-        
+    private func setInitialPage(_ index: Int) {
         //첫번째 사진을 세팅한다
         if let photoListVM, let item = photoListVM.fileList[safe: initialIndex] {
             let initialVC:ImageViewerController = .init(index: initialIndex,
@@ -133,8 +136,73 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
         
     }
 
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        dataSource = self
+        delegate = self
+        
+        addBackgroundView()
+        addNavBar()
+        addToolBar()
+        setInitialPage(initialIndex)
+      
+        photoListVM?.fileListUpdatedRx.bind(onNext: { [weak self] updateData in
+            guard let self else { return }
+            guard updateData.folderUpdateData.newFileList.count > 0 else { dismiss(nil); return }
+            
+            switch updateData.folderUpdateData.changeType {
+            case .initiate:
+                //initialIndex로 초기화
+                setInitialPage(initialIndex)
+            case .add(let newIndex):
+                //newIndex부터 끝까지 존재하는 vc들 index + 1
+                children.forEach({ vc in
+                    if let imageViewerVC = vc as? ImageViewerController, imageViewerVC.index >= newIndex {
+                        imageViewerVC.index += 1
+                    }
+                })
+                
+            case .delete(let deletedIndex):
+                //현재 사진 삭제되었으면 앞의 사진으로 initialIndex 세팅
+                guard let currentVC = viewControllers?.first as? ImageViewerController else { dismiss(nil); return }
+                
+                var shouldReinit = false
+                if deletedIndex == currentVC.index {
+                    shouldReinit = true
+                    initialIndex = currentVC.index - 1 >= 0 ? currentVC.index - 1 : 0
+                }
+                
+                //deletedIndex부터 끝까지 존재하는 vc들 index - 1
+                children.forEach({ vc in
+                    if let imageViewerVC = vc as? ImageViewerController, imageViewerVC.index >= deletedIndex {
+                        imageViewerVC.index -= 1
+                    }
+                })
+                
+                //initialIndex로 재세팅
+                if shouldReinit {
+                    setInitialPage(initialIndex)
+                }
+            case .rename(let oldIndex, _):
+                //현재 사진이면 이름 레이블 갱신
+                guard let currentVC = viewControllers?.first as? ImageViewerController else { dismiss(nil); return}
+                if oldIndex == currentVC.index {
+                    if let photoListVM, let item = photoListVM.fileList[safe: currentVC.index] {
+                        navigationController?.navigationBar.topItem?.title = item.fileName
+                    }
+                    
+                }
+            }
+            
+        })
+        .disposed(by: disBag)
+        
+    }
+
     @objc
-    private func dismiss(_ sender:UIBarButtonItem) {
+    private func dismiss(_ sender: UIBarButtonItem?) {
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -152,23 +220,27 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     
     
     @objc func shareBtnTapped(_ sender: Any) {
-//        
-//        ShareHelper.shared
-//            .share(files: vm.selectedFiles()
-//                .map({ FileShareItem(fileURL: $0.url,
-//                                     previewImage: $0.thumbnailImage,
-//                                     fileTitle: $0.fileName) }),
-//                   viewController: self)
+        guard let photoListVM, let currentItem else { return }
+        ShareHelper.shared
+            .share(files: [currentItem]
+                .map({ FileShareItem(fileURL: $0.url,
+                                     previewImage: $0.thumbnailImage,
+                                     fileTitle: $0.fileName) }),
+                   viewController: self)
     }
     
     @objc func trashBtnTapped(_ sender: Any) {
-
+        guard let currentVC = viewControllers?.first as? ImageViewerController else { dismiss(nil); return}
+        Task {
+            await photoListVM?.deleteFiles(at: [IndexPath(row: currentVC.index, section: 0)])
+        }
     }
     
     @objc func moveBtnTapped(_ sender: Any) {
-//        let nextVC = MoveToFolderVC()
-//        nextVC.configure(initialSelectedFolder: vm.rootURL, targetFileList: vm.selectedFiles())
-//        present(UINavigationController(rootViewController: nextVC), presentationStyle: .pageSheet, transitionStyle: nil, animated: true)
+        guard let photoListVM, let currentItem else { return }
+        let nextVC = MoveToFolderVC()
+        nextVC.configure(initialSelectedFolder: photoListVM.rootURL, targetFileList: [currentItem])
+        present(UINavigationController(rootViewController: nextVC), presentationStyle: .pageSheet, transitionStyle: nil, animated: true)
     }
     
     
