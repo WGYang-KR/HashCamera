@@ -140,15 +140,20 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         //쓸어서 삭제 기능
         let deleteAction = UIContextualAction(style: .destructive, title: nil){ [weak self] action, view, completion in
             guard let self else { return }
-            
-            Task {
-                let result = await self.vm.deleteFolder(at: indexPath)
-                switch result {
-                case .success:
-                    completion(true)
-                case .failure:
-                    completion(false)
+            AlertHelper.alertConfirm(baseVC: self, title: "폴더를 삭제하시겠습니까?", message: "") {
+                Task {
+                    let result = await self.vm.deleteFolder(at: indexPath)
+                    switch result {
+                    case .success:
+                        AlertHelper.notesInform(message: "폴더 삭제 완료됨", color: .systemCyan)
+                        completion(true)
+                    case .failure(let error):
+                        AlertHelper.notesInform(message: "폴더 삭제 실패", color: .systemRed)
+                        completion(false)
+                    }
                 }
+            } cancelCompletion: {
+                completion(false)
             }
         }
         deleteAction.image = SystemUIImage.trash

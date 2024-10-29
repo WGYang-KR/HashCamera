@@ -302,8 +302,21 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     }
     
     @objc func trashBtnTapped(_ sender: Any) {
-        toolBarLabel.text = "삭제버튼 클릭 레이블 내용이 굉장히 길 때를 테스트해 보겠습니다. Ipsem lorem"
-        toolBarLabel.sizeToFit()
+
+        let itemIndexPaths = vm.selectedIndexPaths
+        guard itemIndexPaths.count > 0 else { return }
+        
+        AlertHelper.alertConfirm(baseVC: self, title: "\(itemIndexPaths.count)개의 사진을 삭제하시겠습니까?", message: "") {
+            Task {
+                let result = await self.vm.deleteFiles(at: itemIndexPaths)
+                switch result {
+                case .success:
+                    AlertHelper.notesInform(message: "사진 삭제 완료됨", color: .systemCyan)
+                case .failure(let error):
+                    AlertHelper.notesInform(message: "사진 삭제 실패", color: .systemRed)
+                }
+            }
+        }
     }
     
     @objc func moveBtnTapped(_ sender: Any) {

@@ -231,8 +231,17 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     
     @objc func trashBtnTapped(_ sender: Any) {
         guard let currentVC = viewControllers?.first as? ImageViewerController else { dismiss(nil); return}
-        Task {
-            await photoListVM?.deleteFiles(at: [IndexPath(row: currentVC.index, section: 0)])
+        guard let photoListVM else { return }
+        AlertHelper.alertConfirm(baseVC: self, title: "사진을 삭제하시겠습니까?", message: "") {
+            Task {
+                let result = await photoListVM.deleteFiles(at: [IndexPath(row: currentVC.index, section: 0)])
+                switch result {
+                case .success:
+                    AlertHelper.notesInform(message: "사진 삭제 완료됨", color: .systemCyan)
+                case .failure(let error):
+                    AlertHelper.notesInform(message: "사진 삭제 실패", color: .systemRed)
+                }
+            }
         }
     }
     

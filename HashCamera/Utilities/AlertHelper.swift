@@ -51,7 +51,7 @@ class AlertHelper {
     }
     
     
-    static func notesInform(message text: String) {
+    static func notesInform(message text: String, color: UIColor = .systemCyan) {
         var attributes: EKAttributes
 
         attributes = .topNote
@@ -63,7 +63,7 @@ class AlertHelper {
         attributes.displayMode = .inferred
         attributes.hapticFeedbackType = .success
         attributes.popBehavior = .animated(animation: .translation)
-        attributes.entryBackground = .color(color: EKColor(UIColor.systemCyan))
+        attributes.entryBackground = .color(color: EKColor(color))
         attributes.shadow = .active(
             with: .init(
                 color: EKColor(UIColor(red: 48, green: 47, blue: 48)),
