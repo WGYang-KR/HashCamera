@@ -12,6 +12,7 @@ target 'HashCamera' do
   pod 'SnapKit', '5.6.0'
   pod 'SideMenu'
   pod 'SDWebImage', '~> 5.0'
+  pod 'SwiftEntryKit', '2.0.0'
   
   post_install do |installer|
     installer.generated_projects.each do |project|

@@ -13,6 +13,7 @@ PODS:
   - SDWebImage/Core (5.19.4)
   - SideMenu (6.5.0)
   - SnapKit (5.6.0)
+  - SwiftEntryKit (2.0.0)
 
 DEPENDENCIES:
   - RxCocoa (~> 6.5.0)
@@ -21,6 +22,7 @@ DEPENDENCIES:
   - SDWebImage (~> 5.0)
   - SideMenu
   - SnapKit (= 5.6.0)
+  - SwiftEntryKit (= 2.0.0)
 
 SPEC REPOS:
   trunk:
@@ -31,6 +33,7 @@ SPEC REPOS:
     - SDWebImage
     - SideMenu
     - SnapKit
+    - SwiftEntryKit
 
 SPEC CHECKSUMS:
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
@@ -40,7 +43,8 @@ SPEC CHECKSUMS:
   SDWebImage: 066c47b573f408f18caa467d71deace7c0f8280d
   SideMenu: f583187d21c5b1dd04c72002be544b555a2627a2
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
+  SwiftEntryKit: 61b5fa36f34a97dd8013e48a7345bc4c4720be9a
 
-PODFILE CHECKSUM: 069395b390fdf97b14e9cd6e1ce8038c7ffd7397
+PODFILE CHECKSUM: 8a6e473b2a711a20a65a572e802d58e024bb7070
 
 COCOAPODS: 1.15.2
