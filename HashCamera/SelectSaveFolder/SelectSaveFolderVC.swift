@@ -31,7 +31,6 @@ class SelectSaveFolderVC: UIViewController, UITableViewDataSource, UITableViewDe
         tableView.dataSource = self
         
         tableView.register(UINib(nibName: "\(MoveToFolderListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(MoveToFolderListItemCell.self)")
-        tableView.backgroundColor = .sidebarBackground
         
         //네비게이션바
         let leftItems = [UIBarButtonItem(title: "취소",
