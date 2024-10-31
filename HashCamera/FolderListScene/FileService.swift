@@ -32,7 +32,7 @@ class FileService {
         self.fileListUpdated = fileListUpdated
     
         folderMonitor = FolderMonitor(folderURL: rootURL,
-                                      contentType: [.jpeg, .png, .heic,],
+                                      contentType: [.jpeg, .png, .heic, .heif],
                                       eventMask: [.all],
                                       folderListUpdated: { [weak self] updateData in
             guard let self else { return }
