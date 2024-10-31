@@ -187,7 +187,9 @@ class CamVC: UIViewController {
         //뷰어 버튼
         browseButton.rx.tap.bind { [weak self] _ in
             guard let self else { return }
-            presentFull(UINavigationController(rootViewController: PhotoListVC()), animated: true)
+            let nextVC = PhotoListVC()
+            nextVC.configure(initialSelectedFolder: camVM.selectedFolderRx.value)
+            presentFull(UINavigationController(rootViewController: nextVC), animated: true)
         }.disposed(by: disposeBag)
         
         

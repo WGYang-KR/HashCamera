@@ -38,6 +38,13 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         }
     }
     
+    var initialSelectedFolder: FolderModel?
+    
+    
+    func configure(initialSelectedFolder: FolderModel?) {
+        self.initialSelectedFolder = initialSelectedFolder
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         initUI()
@@ -166,6 +173,8 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
             //vm root폴더 지정
             vm.configure(rootFolder: folderListItemModel)
         }
+        
+        folderListVC.configure(initialSelectedFolder: initialSelectedFolder)
         
         let _ = folderListVC.view //폴더 목록 VM 활성화.
 

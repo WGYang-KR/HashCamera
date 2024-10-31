@@ -16,6 +16,10 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     var tempSelectedIndexPath: IndexPath?
     var initialSelectedFolder: FolderModel?
     
+    func configure(initialSelectedFolder: FolderModel?) {
+        self.initialSelectedFolder = initialSelectedFolder
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
