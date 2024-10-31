@@ -10,29 +10,33 @@ import RxSwift
 import RxRelay
 
 class FolderService {
+    static let shared = FolderService()
     
     let fileManager = FileManager.default
-    
+
     ///대상 폴더
-    var rootURL: URL?
+    private(set) var rootURL: URL?
     ///폴더 내 폴더 변경 감시자
-    var folderMonitor: FolderMonitor?
+    private var folderMonitor: FolderMonitor?
     ///폴더 내 폴더 목록
     var folderList: [URL] = []
     ///폴더 내 폴더 변경 이벤트 핸들러
-    var folderListUpdated: ((FolderMonitor.FolderUpdateData) -> Void)?
+    let folderListUpdatedRx = PublishRelay<FolderMonitor.FolderUpdateData>()
     
-    init() { }
+    var isMonitoring: Bool {
+        folderMonitor?.isMonitoring ?? false
+    }
+    
+    private init() {}
     
     deinit {
         folderMonitor?.stopMonitoring()
     }
     
-    ///폴더 목록 불러오기. 폴더 변경 감시 시작.
-    func configure(rootURL: URL, folderListUpdated: ((FolderMonitor.FolderUpdateData) -> Void)? ) {
+    ///Root 폴더 지정. 폴더 목록 불러오고. 변경 감시 시작하기.
+    func configure(rootURL: URL) {
         
         self.rootURL = rootURL
-        self.folderListUpdated = folderListUpdated
         
         folderMonitor?.stopMonitoring()
         folderMonitor = FolderMonitor(folderURL: rootURL,
@@ -41,7 +45,8 @@ class FolderService {
                                       folderListUpdated: { [weak self] updateData in
             guard let self else { return }
             folderList = updateData.newFileList
-            folderListUpdated?(updateData) })
+            folderListUpdatedRx.accept(updateData)
+        })
         folderMonitor?.startMonitoring()
     }
     

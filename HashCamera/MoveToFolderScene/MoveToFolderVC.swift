@@ -13,9 +13,9 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
     private var vm: MoveToFolderVM = MoveToFolderVM()
     private var tempSelectedIndexPath: IndexPath?
     
-    var initialSelectedFolder: URL?
+    var initialSelectedFolder: FolderModel?
     
-    func configure(initialSelectedFolder: URL?, targetFileList: [ImageFileModel]) {
+    func configure(initialSelectedFolder: FolderModel?, targetFileList: [ImageFileModel]) {
         self.initialSelectedFolder = initialSelectedFolder
         self.vm.targetFileList = targetFileList
     }

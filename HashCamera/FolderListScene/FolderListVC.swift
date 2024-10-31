@@ -14,6 +14,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     var vm: FolderListVM = FolderListVM()
     
     var tempSelectedIndexPath: IndexPath?
+    var initialSelectedFolder: FolderModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +33,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
 
         setNaviBar("폴더 목록", leftItems: [], rightItems: rightItems)
         
-        vm.configure(folderListUpdated: { [weak self] updateData in
+        vm.configure(initialSelectedFolder: initialSelectedFolder, folderListUpdated: { [weak self] updateData in
             guard let self else { return }
             switch updateData.folderUpdateData.changeType {
             case .initiate:

@@ -157,14 +157,14 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         
         //선택 폴더 갱신시 처리
         folderListVC.vm.selectedFolderUpdated = { [weak self] folderListItemModel in
-            guard let self, let url = folderListItemModel?.url else {return }
+            guard let self, let folderListItemModel else {return }
             //네비바 타이틀
-            navigationItem.title = folderListItemModel?.name
+            navigationItem.title = folderListItemModel.name
             
             setSelectionMode(false)
             
             //vm root폴더 지정
-            vm.configure(rootURL: url)
+            vm.configure(rootFolder: folderListItemModel)
         }
         
         let _ = folderListVC.view //폴더 목록 VM 활성화.
@@ -321,7 +321,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     
     @objc func moveBtnTapped(_ sender: Any) {
         let nextVC = MoveToFolderVC()
-        nextVC.configure(initialSelectedFolder: vm.rootURL, targetFileList: vm.selectedFiles())
+        nextVC.configure(initialSelectedFolder: vm.rootFolder, targetFileList: vm.selectedFiles())
         present(UINavigationController(rootViewController: nextVC), presentationStyle: .pageSheet, transitionStyle: nil, animated: true)
     }
     

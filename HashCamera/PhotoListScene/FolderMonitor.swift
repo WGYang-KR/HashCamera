@@ -28,6 +28,11 @@ class FolderMonitor {
     var folderList: [URL] = []
     var folderListUpdated: ((FolderUpdateData)-> Void)?
     
+    var isMonitoring: Bool {
+        if let source { return !source.isCancelled }
+        else { return false }
+    }
+    
     struct FolderUpdateData {
         let newFileList: [URL]
         let changeType: FileSystemChangeType

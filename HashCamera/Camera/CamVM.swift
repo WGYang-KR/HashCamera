@@ -12,6 +12,8 @@ import RxRelay
 
 class CamVM: SelectSaveFolderVCDelegate {
 
+    var disBag = DisposeBag()
+    
     let cameraModel: CameraModel = CameraModel(position: .back,
                                                flashMode: .off,
                                                aspectRatio: .standard)
@@ -19,7 +21,6 @@ class CamVM: SelectSaveFolderVCDelegate {
     let fileManager = FileManager.default
 
     ///폴더 감시, 조회 서비스
-    let folderService: FolderService = FolderService()
     var folderList: [FolderModel] = []
     ///선택된 저장 폴더
     let selectedFolderRx = BehaviorRelay<FolderModel>(value: defaultFolder)
@@ -58,31 +59,34 @@ class CamVM: SelectSaveFolderVCDelegate {
     
     func initFolderSelection() {
 
-        folderService.configure(rootURL: Self.defaultFolder.url) { [weak self] updateData in
-            //업데이트 이벤트 핸들러
-            guard let self else { return }
-            folderList = updateData.newFileList.map{FolderModel(type: .folder, url: $0)}
-            switch updateData.changeType {
-                case .initiate:
-                //저장된 저장 폴더 세팅 (저장 폴더 URL이 sandbox URL 변경으로 변경되어 있을 수 있으니 주의)
-                if let savedSelectedFolder = CameraSetting.selectedFolder,
-                   savedSelectedFolder.type == .folder,
-                   let savedFolderURL = folderList.first(where: {$0.url.lastPathComponent == savedSelectedFolder.url.lastPathComponent})?.url {
-                        selectedFolderRx.accept(.init(type: .folder, url: savedFolderURL))
-                    
-                } else {
-                    //디폴츠 폴더.
-                    CameraSetting.selectedFolder = Self.defaultFolder
-                    selectedFolderRx.accept(Self.defaultFolder)
-                }
-            case .add, .rename, .delete:
-                //현재 선택 폴더가 존재안하면 Default폴더로 변경
-                if selectedFolderRx.value.type == .folder,
-                   !folderList.contains(where: { $0.url == self.selectedFolderRx.value.url}) {
-                       selectedFolderRx.accept(Self.defaultFolder)
+        FolderService.shared.folderListUpdatedRx
+            .bind { [weak self] updateData in
+                //업데이트 이벤트 핸들러
+                guard let self else { return }
+                folderList = updateData.newFileList.map{FolderModel(type: .folder, url: $0)}
+                switch updateData.changeType {
+                    case .initiate:
+                    //저장된 저장 폴더 세팅 (저장 폴더 URL이 sandbox URL 변경으로 변경되어 있을 수 있으니 주의)
+                    if let savedSelectedFolder = CameraSetting.selectedFolder,
+                       savedSelectedFolder.type == .folder,
+                       let savedFolderURL = folderList.first(where: {$0.url.lastPathComponent == savedSelectedFolder.url.lastPathComponent})?.url {
+                            selectedFolderRx.accept(.init(type: .folder, url: savedFolderURL))
+                        
+                    } else {
+                        //디폴츠 폴더.
+                        CameraSetting.selectedFolder = Self.defaultFolder
+                        selectedFolderRx.accept(Self.defaultFolder)
+                    }
+                case .add, .rename, .delete:
+                    //현재 선택 폴더가 존재안하면 Default폴더로 변경
+                    if selectedFolderRx.value.type == .folder,
+                       !folderList.contains(where: { $0.url == self.selectedFolderRx.value.url}) {
+                           selectedFolderRx.accept(Self.defaultFolder)
+                    }
                 }
             }
-        }
+            .disposed(by: disposeBag)
+        FolderService.shared.configure(rootURL: Self.defaultFolder.url)
     }
     
     //MARK: - SelectSaveFolderVCDelegate 저장 폴더 변경

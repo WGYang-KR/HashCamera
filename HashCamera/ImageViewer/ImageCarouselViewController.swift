@@ -248,7 +248,7 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     @objc func moveBtnTapped(_ sender: Any) {
         guard let photoListVM, let currentItem else { return }
         let nextVC = MoveToFolderVC()
-        nextVC.configure(initialSelectedFolder: photoListVM.rootURL, targetFileList: [currentItem])
+        nextVC.configure(initialSelectedFolder: photoListVM.rootFolder, targetFileList: [currentItem])
         present(UINavigationController(rootViewController: nextVC), presentationStyle: .pageSheet, transitionStyle: nil, animated: true)
     }
     
