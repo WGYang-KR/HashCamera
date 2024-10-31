@@ -376,12 +376,20 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         guard let originalPhotoData = data.fileDataRepresentation() else { fatalError()}
         guard let croppedImage =  UIImage(data: originalPhotoData)?.crop(aspectRatio: aspectRatio) else { fatalError()}
         
-        guard let croppedImageData = croppedImage.jpegData(compressionQuality: 1.0) else { fatalError()}
-        
+        var croppedImageData: Data?
+        switch CameraSetting.photoFileFormat {
+        case .heif:
+            croppedImageData = croppedImage.heic(compressionQuality: 1.0)
+        case .jpeg:
+            croppedImageData = croppedImage.jpegData(compressionQuality: 1.0)
+        }
+        guard let croppedImageData else { fatalError()}
         let resultPhotoData: NSMutableData = NSMutableData(data: croppedImageData)
         guard let originalImageSource = CGImageSourceCreateWithData(originalPhotoData as CFData, nil) else { fatalError()}
         guard let croppedImageSource = CGImageSourceCreateWithData(croppedImageData as CFData, nil) else { fatalError()}
-        guard let uti: CFString = CGImageSourceGetType(originalImageSource) else { fatalError()}
+        
+        guard let uti: CFString = CGImageSourceGetType(croppedImageSource) else { fatalError()}
+        
         guard let destination: CGImageDestination = CGImageDestinationCreateWithData(resultPhotoData as CFMutableData, uti, 1, nil) else { fatalError()}
         guard let cfImageProperties = CGImageSourceCopyPropertiesAtIndex(originalImageSource, 0, nil) else { fatalError() }
         let imageProperties = cfImageProperties as NSDictionary
@@ -431,5 +439,36 @@ extension UIImage {
         
         return croppedImage
     }
+    
+    var cgImageOrientation: CGImagePropertyOrientation { .init(imageOrientation) }
+
+    
+    func heic(compressionQuality: CGFloat = 1) -> Data? {
+        guard
+            let mutableData = CFDataCreateMutable(nil, 0),
+            let destination = CGImageDestinationCreateWithData(mutableData, UTType.heic.identifier as CFString, 1, nil),
+            let cgImage = cgImage
+        else { return nil }
+        CGImageDestinationAddImage(destination, cgImage, [kCGImageDestinationLossyCompressionQuality: compressionQuality, kCGImagePropertyOrientation: cgImageOrientation.rawValue] as CFDictionary)
+        guard CGImageDestinationFinalize(destination) else { return nil }
+        return mutableData as Data
+    }
+    
 }
 
+extension CGImagePropertyOrientation {
+    init(_ uiOrientation: UIImage.Orientation) {
+        switch uiOrientation {
+            case .up: self = .up
+            case .upMirrored: self = .upMirrored
+            case .down: self = .down
+            case .downMirrored: self = .downMirrored
+            case .left: self = .left
+            case .leftMirrored: self = .leftMirrored
+            case .right: self = .right
+            case .rightMirrored: self = .rightMirrored
+        @unknown default:
+            fatalError()
+        }
+    }
+}

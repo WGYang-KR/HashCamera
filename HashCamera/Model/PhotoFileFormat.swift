@@ -16,9 +16,9 @@ import AVFoundation
     var string: String {
         switch self {
         case .heif:
-            return "HEIF"
+            return "heif"
         case .jpeg:
-            return "JPEG"
+            return "jpeg"
         }
     }
     

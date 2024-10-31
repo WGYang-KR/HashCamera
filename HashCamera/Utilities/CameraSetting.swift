@@ -36,7 +36,7 @@ class CameraSetting {
     static var photoFileFormat: PhotoFileFormat {
         get {
             let rawValue =  UserDefaults.standard.integer(forKey: Keys.cmeraSettingPhotoFileFormat.rawValue)
-            return PhotoFileFormat(rawValue: rawValue) ?? .heif
+            return PhotoFileFormat(rawValue: rawValue) ?? .jpeg
         }
         set{ UserDefaults.standard.set(newValue.rawValue, forKey: Keys.cmeraSettingPhotoFileFormat.rawValue)}
     }

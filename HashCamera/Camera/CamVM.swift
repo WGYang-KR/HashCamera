@@ -25,7 +25,9 @@ class CamVM: SelectSaveFolderVCDelegate {
     ///선택된 저장 폴더
     let selectedFolderRx = BehaviorRelay<FolderModel>(value: defaultFolder)
     ///사진 저장 포맷
-    var photoFileFormat: PhotoFileFormat = .jpeg
+    var photoFileFormat: PhotoFileFormat {
+        return CameraSetting.photoFileFormat
+    }
     
     ///촬영시 true -> 저장 완료 후 false
     let isCapturingPhoto = BehaviorRelay(value: false)
