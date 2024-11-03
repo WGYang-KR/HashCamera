@@ -64,21 +64,17 @@ class SelectableFolderListVM {
                 switch updateData.changeType {
                 case .initiate:
                     initFolderList(updateData.newFileList.map({ FolderModel(type: .folder, url: $0)}))
-                case .add(let newIndex):
-                    guard newIndex <= folderList[1].count else { return }
-                    let newItem = FolderModel(type: .folder, url: updateData.newFileList[newIndex])
-                    folderList[1].insert(newItem, at: newIndex)
+                case .changed(let deletedIndice, let addedIndice):
+                    //삭제된 폴더 뒤에서 부터 제거
+                    deletedIndice.reversed().forEach { deletedIndex in
+                        self.folderList[1].remove(at: deletedIndex)
+                    }
                     
-                case .delete(let deletedIndex):
-                    guard deletedIndex < folderList[1].count else { return }
-                    folderList[1].remove(at: deletedIndex)
-                    
-                case .rename(let oldIndex, let newIndex):
-                    guard oldIndex < folderList[1].count, newIndex <= folderList[1].count else { return }
-                    //새 이름을 갱신해야하므로 swap 안하고 삭제,삽입.
-                    folderList[1].remove(at: oldIndex)
-                    let newItem = FolderModel(type: .folder, url: updateData.newFileList[newIndex])
-                    folderList[1].insert(newItem, at: newIndex)
+                    //추가된 폴더 뒤에서 부터 추가
+                    addedIndice.reversed().forEach { addedIndex in
+                        let newItem = FolderModel(type: .folder, url: updateData.newFileList[addedIndex])
+                        self.folderList[1].insert(newItem, at: addedIndex)
+                    }
                 }
                 
                 //선택된 폴더정보 유지되도록 작업
@@ -148,33 +144,38 @@ class SelectableFolderListVM {
                 selectedIndexPath = .init(row: 0, section: 0)
                 selectedFolder = folderList[0][0]
             }
-        case .add(_):
-            //virtual 폴더 선택이었으면 아무 동작 X
-            guard let selectedIndexPath, selectedIndexPath.section == 1 else { return }
-            //폴더 선택되어 있었으면 선택되었던 폴더 찾아서 selctedIndexPath 갱신
-            guard let selectedFolder, selectedFolder.type == .folder else { return }
-            guard let newSelectedIndex = folderList[1].firstIndex(where: { $0.url == selectedFolder.url }) else { return }
-            self.selectedIndexPath = .init(row: newSelectedIndex, section: 1)
-
-        case .delete(_):
-            //virtual 폴더 선택이었으면 아무 동작 X
-            //폴더 선택되어 있었으면 선택되었던 폴더 찾아서 selctedIndexPath 갱신
-            guard let selectedFolder, selectedFolder.type == .folder else { return }
+        case .changed(let deletedIndice, let addedIndice):
             
-            //선택되었던 폴더를 폴더목록에서 찾는다.
-            if let index = folderList[1].firstIndex(where: { $0.url == selectedFolder.url }) {
-                self.selectedIndexPath = .init(row: index, section: 1)
-                self.selectedFolder = folderList[1][index]
-            } else {
-                //존재 안하면 allPhotos로 지정
-                self.selectedIndexPath = .init(row: 0, section: 0)
-                self.selectedFolder = folderList[0][0]
+            if addedIndice.count == 1, (deletedIndice.count == 0 || deletedIndice.count == 1), let newFolderIndex = addedIndice[safe: 0] {
+                //추가된 폴더가 딱 1개이면서, 삭제 폴더가 0개(폴더 추가) 또는 1개(이름변경)이면 선택폴더로 지정.
+                let newSelectedFolder = folderList[1][newFolderIndex]
+                if let index = folderList[1].firstIndex(where: { $0.url == newSelectedFolder.url }) {
+                    //추가된 폴더 인덱스 찾아서 선택
+                    self.selectedIndexPath = .init(row: index, section: 1)
+                    self.selectedFolder = folderList[1][index]
+                    
+                } else {
+                    //못 찾으면 기본 폴더로 설정
+                    self.selectedIndexPath = .init(row: 0, section: 0)
+                    self.selectedFolder = folderList[0][0]
+                }
+                
+            } else if let selectedFolder, selectedFolder.type == .defaultFolder {
+                //기본 폴더 선택이었으면 아무 동작 X
+                return
+            } else if let selectedFolder, selectedFolder.type == .folder {
+                
+                //선택되었던 폴더를 폴더목록에서 찾는다.
+                if let index = folderList[1].firstIndex(where: { $0.url == selectedFolder.url }) {
+                    self.selectedIndexPath = .init(row: index, section: 1)
+                    self.selectedFolder = folderList[1][index]
+                } else {
+                    //못 찾으면 기본 폴더로 설정
+                    self.selectedIndexPath = .init(row: 0, section: 0)
+                    self.selectedFolder = folderList[0][0]
+                }
+                
             }
-
-        case .rename(let oldIndex, let newIndex):
-            self.selectedIndexPath = .init(row: newIndex, section: 1)
-            let newItemURL = updateData.newFileList[newIndex]
-            self.selectedFolder = .init(type: .folder, url: newItemURL)
         }
         
     }

@@ -79,7 +79,7 @@ class CamVM: SelectSaveFolderVCDelegate {
                         CameraSetting.selectedFolder = Self.defaultFolder
                         selectedFolderRx.accept(Self.defaultFolder)
                     }
-                case .add, .rename, .delete:
+                case .changed:
                     //현재 선택 폴더가 존재안하면 Default폴더로 변경
                     if selectedFolderRx.value.type == .folder,
                        !folderList.contains(where: { $0.url == self.selectedFolderRx.value.url}) {

@@ -142,22 +142,18 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
             switch updateData.folderUpdateData.changeType {
             case .initiate:
                 collectionView.reloadData()
-            case .add(let newIndex):
-                collectionView.performBatchUpdates {
-                    self.collectionView.insertItems(at: [.init(item: newIndex, section: 0)])
-                }
                 
-            case .delete(let deletedIndex):
+            case .changed(let deletedIndice, let addedIndice):
                 collectionView.performBatchUpdates {
-                    self.collectionView.deleteItems(at: [.init(item: deletedIndex, section: 0)])
+                    deletedIndice.reversed().forEach { deletedIndex in
+                        self.collectionView.deleteItems(at: [.init(item: deletedIndex, section: 0)])
+                    }
+                    addedIndice.reversed().forEach { addedIndex in
+                        self.collectionView.performBatchUpdates {
+                            self.collectionView.insertItems(at: [.init(item: addedIndex, section: 0)])
+                        }
+                    }
                 }
-                
-            case .rename(let oldIndex, let newIndex):
-                collectionView.performBatchUpdates {
-                    self.collectionView.moveItem(at: .init(item: oldIndex, section: 0),
-                                            to: .init(item: newIndex, section: 0))
-                }
-                
             }
         }
         .disposed(by: disposeBag)

@@ -43,19 +43,18 @@ class PhotoListVM {
             switch updateData.changeType {
             case .initiate:
                 fileList = updateData.newFileList.map({ImageFileModel(url: $0)})
-            case .add(let newIndex):
-                guard newIndex <= fileList.count else { return }
-                let newItem = ImageFileModel(url: updateData.newFileList[newIndex])
-                fileList.insert(newItem, at: newIndex)
-            case .delete(let deletedIndex):
-                guard deletedIndex < fileList.count else { return }
-                fileList.remove(at: deletedIndex)
-            case .rename(let oldIndex, let newIndex):
-                guard oldIndex < fileList.count, newIndex <= fileList.count else { return }
-                //새 이름을 갱신해야하므로 swap 안하고 삭제,삽입.
-                fileList.remove(at: oldIndex)
-                let newItem = ImageFileModel(url: updateData.newFileList[newIndex])
-                fileList.insert(newItem, at: newIndex)
+                
+            case .changed(let deletedIndice, let addedIndice):
+                //삭제된 폴더 뒤에서 부터 제거
+                deletedIndice.reversed().forEach { deletedIndex in
+                    self.fileList.remove(at: deletedIndex)
+                }
+                
+                //추가된 폴더 뒤에서 부터 추가
+                addedIndice.reversed().forEach { addedIndex in
+                    let newItem = ImageFileModel(url: updateData.newFileList[addedIndex])
+                    self.fileList.insert(newItem, at: addedIndex)
+                }
             }
             
             //선택된 파일 초기화

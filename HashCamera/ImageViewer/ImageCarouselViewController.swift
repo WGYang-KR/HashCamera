@@ -131,7 +131,7 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
                                                         imageItem: item,
                                                         imageLoader: SDWebImageLoader())
             navigationController?.navigationBar.topItem?.title = item.fileName
-            setViewControllers([initialVC], direction: .forward, animated: true)
+            setViewControllers([initialVC], direction: .reverse, animated: true)
         }
         
     }
@@ -156,43 +156,48 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
             case .initiate:
                 //initialIndex로 초기화
                 setInitialPage(initialIndex)
-            case .add(let newIndex):
-                //newIndex부터 끝까지 존재하는 vc들 index + 1
-                children.forEach({ vc in
-                    if let imageViewerVC = vc as? ImageViewerController, imageViewerVC.index >= newIndex {
-                        imageViewerVC.index += 1
-                    }
-                })
                 
-            case .delete(let deletedIndex):
-                //현재 사진 삭제되었으면 앞의 사진으로 initialIndex 세팅
-                guard let currentVC = viewControllers?.first as? ImageViewerController else { dismiss(nil); return }
+            case .changed(let deletedIndice, let addedIndice):
+                
+                //현재 vc없으면 dismiss
+                guard let currentVC = viewControllers?.first as? ImageViewerController else { dismiss(nil); return}
                 
                 var shouldReinit = false
-                if deletedIndex == currentVC.index {
+                
+                
+                if deletedIndice.contains(currentVC.index) &&
+                    addedIndice.contains(currentVC.index) { //Rename
+                    //현재 vc 인덱스가 deletedIndice, addedIndice에 모두에 해당하면 현재 initial Index로 갱신 예약을 한다.
+                    shouldReinit = true
+                    
+                } else if deletedIndice.contains(currentVC.index) { // Deleted
+                    //현재 vc 인덱스가 deletedIndice에만 해당하면 앞의 사진으로 initialIndex로 갱신 예약한다.
                     shouldReinit = true
                     initialIndex = currentVC.index - 1 >= 0 ? currentVC.index - 1 : 0
                 }
                 
-                //deletedIndex부터 끝까지 존재하는 vc들 index - 1
-                children.forEach({ vc in
-                    if let imageViewerVC = vc as? ImageViewerController, imageViewerVC.index >= deletedIndex {
-                        imageViewerVC.index -= 1
-                    }
-                })
                 
-                //initialIndex로 재세팅
+             
+                deletedIndice.reversed().forEach{ deletedIndex in
+                    //현재 vc들 뒤에서 부터 deletedIndex가 존재하면 index가 크거나 같은 vc들 index -1 한다.
+                    self.children.forEach({ vc in
+                        if let imageViewerVC = vc as? ImageViewerController, imageViewerVC.index >= deletedIndex {
+                            imageViewerVC.index -= 1
+                        }
+                    })
+                }
+                addedIndice.reversed().forEach { addedIndex in
+                    //현재 vc들 뒤에서 부터 addedIndex가 존재하면 index가 크거나 작은 vc들 index + 1 한다.
+                    self.children.forEach({ vc in
+                        if let imageViewerVC = vc as? ImageViewerController, imageViewerVC.index >= addedIndex {
+                            imageViewerVC.index += 1
+                        }
+                    })
+                }
+                
+                //필요 시에 initialIndex로 재세팅
                 if shouldReinit {
                     setInitialPage(initialIndex)
-                }
-            case .rename(let oldIndex, _):
-                //현재 사진이면 이름 레이블 갱신
-                guard let currentVC = viewControllers?.first as? ImageViewerController else { dismiss(nil); return}
-                if oldIndex == currentVC.index {
-                    if let photoListVM, let item = photoListVM.fileList[safe: currentVC.index] {
-                        navigationController?.navigationBar.topItem?.title = item.fileName
-                    }
-                    
                 }
             }
             

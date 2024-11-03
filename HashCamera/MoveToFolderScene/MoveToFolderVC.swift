@@ -55,34 +55,20 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
                         tableView.selectRow(at: updateData.selectedIndexPath, animated: true, scrollPosition: .top)
                     }
                 }
-            case .add(let newIndex):
+                
+            case .changed(let deletedIndice, let addedIndice):
                 tableView.beginUpdates()
-                tableView.insertRows(at: [.init(row: newIndex, section: 1)], with: .automatic)
+                deletedIndice.reversed().forEach { oldIndex in
+                    self.tableView.deleteRows(at: [.init(row: oldIndex, section: 1)], with: .automatic)
+                }
+                addedIndice.reversed().forEach { newIndex in
+                    self.tableView.insertRows(at: [.init(row: newIndex, section: 1)], with: .automatic)
+                }
                 tableView.endUpdates()
                 
                 if tableView.indexPathForSelectedRow != updateData.selectedIndexPath {
                     tempSelectedIndexPath = updateData.selectedIndexPath
                 }
-                
-            case .rename(let oldIndex, let newIndex):
-                tableView.beginUpdates()
-                tableView.deleteRows(at: [.init(row: oldIndex, section: 1)], with: .automatic)
-                tableView.insertRows(at: [.init(row: newIndex, section: 1)], with: .automatic)
-                tableView.endUpdates()
-                
-                if tableView.indexPathForSelectedRow != updateData.selectedIndexPath {
-                    tempSelectedIndexPath = updateData.selectedIndexPath
-                }
-                
-            case .delete(let deletedIndex):
-                tableView.beginUpdates()
-                tableView.deleteRows(at: [.init(row: deletedIndex, section: 1)], with: .automatic)
-                tableView.endUpdates()
-                
-                if tableView.indexPathForSelectedRow != updateData.selectedIndexPath {
-                    tempSelectedIndexPath = updateData.selectedIndexPath
-                }
-                
             }
         })
         

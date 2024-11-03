@@ -10,9 +10,8 @@ import UniformTypeIdentifiers
 
 enum FileSystemChangeType {
     case initiate
-    case add(newIndex: Int)
-    case rename(oldIndex: Int, newIndex: Int)
-    case delete(deletedIndex: Int)
+    ///deletedIndice는 oldList에서의 Index이고, addedIndice는 newFileList에서의 Index이다)
+    case changed(deletedIndice: [Int], addedIndice: [Int])
 }
 
 class FolderMonitor {
@@ -170,30 +169,40 @@ class FolderMonitor {
         
         // 추가된 파일
         let addedFiles = currentKeys.subtracting(previousKeys).map{ folderURL.appendingPathComponent($0)}
-        for file in addedFiles {
-            hcLog("새 파일 추가됨: \(file.lastPathComponent)")
-        }
-        
-        // 추가된 파일 Index
-        //TODO: URL 형식이 달라 index 못 찾는중
-        var addedFileIndex: Int?
-        if let fileURL = addedFiles.first, let fileIndex = newFileList.firstIndex(where: {$0.lastPathComponent == fileURL.lastPathComponent }) {
-            addedFileIndex = fileIndex
-            hcLog("새 파일 Index: \(fileIndex)")
+        var addedFileIndice = [Int]()
+        addedFiles.forEach { fileURL in
+            hcLog("새 파일 추가됨: \(fileURL.lastPathComponent)")
+            
+            //새 파일 목록에서 추가된 파일의 인덱스를 찾기
+            if let fileIndex = newFileList.firstIndex(where: {$0.lastPathComponent == fileURL.lastPathComponent }) {
+                addedFileIndice.append(fileIndex)
+                hcLog("새 파일 Index: \(fileIndex)")
+            } else {
+                hcLog("새 파일 Index 못찾음.")
+            }
         }
         
         // 삭제된 파일
         let deletedFiles = previousKeys.subtracting(currentKeys).map{ folderURL.appendingPathComponent($0)}
-        for file in deletedFiles {
-            print("파일 삭제됨: \(file.lastPathComponent)")
+        var deletedFileIndice = [Int]()
+        deletedFiles.forEach { fileURL in
+            hcLog("파일 삭제됨: \(fileURL.lastPathComponent)")
+            
+            //예전 파일 목록에서 삭제된 파일의 인덱스 찾기
+            if let fileIndex = currentFileList.firstIndex(where: {$0.lastPathComponent == fileURL.lastPathComponent }) {
+                deletedFileIndice.append(fileIndex)
+                hcLog("삭제 파일 Index: \(fileIndex)")
+            } else {
+                hcLog("삭제 파일 Index 못찾음.")
+            }
         }
         
-        // 삭제된 파일 Index
-        //TODO: URL 형식이 달라 index 못 찾는중
-        var deletedFileIndex: Int?
-        if let fileURL = deletedFiles.first, let fileIndex = currentFileList.firstIndex(where: {$0.lastPathComponent == fileURL.lastPathComponent }) {
-            deletedFileIndex = fileIndex
-            hcLog("삭제 파일 Index: \(fileIndex)")
+        //인덱스 찾기 오류 핸들
+        guard addedFiles.count == addedFileIndice.count,
+              deletedFiles.count == deletedFileIndice.count else {
+            hcLog("오류: 파일 인덱스 찾기 실패. 목록 초기화")
+            initFileListDictionary()
+            return
         }
         
         // 새로운 상태로 갱신
@@ -202,18 +211,8 @@ class FolderMonitor {
         
         DispatchQueue.main.async { [weak self] in
             guard let self else  { return }
-            if addedFiles.count > 0, deletedFiles.count > 0 { //이름 변경
-                guard let addedFileIndex, let deletedFileIndex else { return }
-                folderListUpdated?(FolderUpdateData(newFileList: newFileList, changeType: .rename(oldIndex: deletedFileIndex, newIndex: addedFileIndex)))
-            } else if addedFiles.count > 0 { //추가
-                guard let addedFileIndex else { return }
-                folderListUpdated?(FolderUpdateData(newFileList: newFileList, changeType: .add(newIndex: addedFileIndex)))
-            } else if deletedFiles.count > 0 { //삭제
-                guard let deletedFileIndex else { return }
-                folderListUpdated?(FolderUpdateData(newFileList: newFileList, changeType: .delete(deletedIndex: deletedFileIndex)))
-            } else {
-                //무시
-            }
+            guard deletedFileIndice.count > 0 || addedFileIndice.count > 0 else { return }
+            folderListUpdated?(FolderUpdateData(newFileList: newFileList, changeType: .changed(deletedIndice: deletedFileIndice.sorted(), addedIndice: addedFileIndice.sorted())))
         }
         
         hcLog("감시 1개 이벤트 완료")
