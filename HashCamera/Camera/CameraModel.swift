@@ -42,7 +42,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     ///화면비율 설정 set get
     var aspectRatio: AspectRatioType
     ///촬영 완료된 사진 반환 get
-    let capturedPhotoData = PublishRelay<Data>()
+    let capturedPhotoData = PublishRelay<Result<Data,Error>>()
     ///에러 get
     let errorOccuredRx = PublishRelay<HCError>()
     
@@ -336,21 +336,32 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         
-        let photoData = cropAVPhotoData(photo, aspectRatio: self.aspectRatio.cgFloat)
-        self.capturedPhotoData.accept(photoData)
+        let photoDataResult = cropAVPhotoData(photo, aspectRatio: self.aspectRatio.cgFloat)
+        switch photoDataResult {
+        case .success(let photoData):
+            self.capturedPhotoData.accept(.success(photoData))
+        case .failure(let error):
+            self.capturedPhotoData.accept(.failure(error))
+        }
         isCapturingPhoto.accept(false)
-        hcLog("end")
-        
+        hcLog("카메라 촬영 프로세스 완료")
         
     }
     
-    //MARK: 사진 비율 처리
+    
+    //MARK: 사진 처리
+    
+    
     //기존 Exif 유지하면서, 비율처리된 이미지로 교체
-    private func cropAVPhotoData(_ data: AVCapturePhoto, aspectRatio: CGFloat) -> Data {
-        hcLog("start")
-        guard let originalPhotoData = data.fileDataRepresentation() else { fatalError()}
-        guard let croppedImage =  UIImage(data: originalPhotoData)?.crop(aspectRatio: aspectRatio) else { fatalError()}
+    private func cropAVPhotoData(_ avCapturePhoto: AVCapturePhoto, aspectRatio: CGFloat) -> Result<Data, CropAVPhotoDataError> {
+        hcLog("변환 시작")
+        //avCapturePhoto의 이미지 Data를 추출
+        guard let originalPhotoData = avCapturePhoto.fileDataRepresentation() else { return .failure(.avCapturePhotoToData)}
         
+        //UIImage로 변환하여 자르기
+        guard let croppedImage =  UIImage(data: originalPhotoData)?.crop(aspectRatio: aspectRatio) else { return  .failure(.dataToUIImage)}
+    
+        //파일 포맷에 맞춰 Data로 변환
         var croppedImageData: Data?
         switch CameraSetting.photoFileFormat {
         case .heif:
@@ -358,28 +369,50 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         case .jpeg:
             croppedImageData = croppedImage.jpegData(compressionQuality: 1.0)
         }
-        guard let croppedImageData else { fatalError()}
+        guard let croppedImageData else { return .failure(.uiImageToData) }
+        
+        //저장할 이미지 데이터
         let resultPhotoData: NSMutableData = NSMutableData(data: croppedImageData)
-        guard let originalImageSource = CGImageSourceCreateWithData(originalPhotoData as CFData, nil) else { fatalError()}
-        guard let croppedImageSource = CGImageSourceCreateWithData(croppedImageData as CFData, nil) else { fatalError()}
+        //저장할 이미지를 버퍼한다
+        guard let originalImageSource = CGImageSourceCreateWithData(originalPhotoData as CFData, nil) else { return .failure(.createOriginImageSource)}
+        //원본 이미지를 버퍼한다
+        guard let croppedImageSource = CGImageSourceCreateWithData(croppedImageData as CFData, nil) else { return .failure(.createCroppedImageSource)}
         
-        guard let uti: CFString = CGImageSourceGetType(croppedImageSource) else { fatalError()}
+        //저장할 이미지의 파일형식을 가져온다
+        guard let uti: CFString = CGImageSourceGetType(croppedImageSource) else { return .failure(.getSourceType)}
         
-        guard let destination: CGImageDestination = CGImageDestinationCreateWithData(resultPhotoData as CFMutableData, uti, 1, nil) else { fatalError()}
-        guard let cfImageProperties = CGImageSourceCopyPropertiesAtIndex(originalImageSource, 0, nil) else { fatalError() }
-        let imageProperties = cfImageProperties as NSDictionary
-        let mutable: NSMutableDictionary = imageProperties.mutableCopy() as! NSMutableDictionary
+        //이미지 저장 세션을 연다.
+        guard let destination: CGImageDestination = CGImageDestinationCreateWithData(resultPhotoData as CFMutableData, uti, 1, nil) else { return .failure(.createImageDest)}
         
-        //MARK: crop된 이미지의 픽셀, DPI 등 정보 갱신 필요..
-        let EXIFDictionary: NSMutableDictionary = (mutable[kCGImagePropertyExifDictionary as String] as? NSMutableDictionary)!
-//        dump(EXIFDictionary)
-        EXIFDictionary[kCGImagePropertyExifUserComment as String] = "type:photo"
-        mutable[kCGImagePropertyExifDictionary as String] = EXIFDictionary
+        //원본 이미지 exif 속성을 가져온다
+        guard let originCFProperties = CGImageSourceCopyPropertiesAtIndex(originalImageSource, 0, nil) else { return .failure(.cfProperties) }
+        guard let originMutableProperties: NSMutableDictionary = (originCFProperties as NSDictionary).mutableCopy() as? NSMutableDictionary else { return .failure(.cfPropertiesDictionary) }
+        guard let nsEXIFDictionary: NSMutableDictionary = (originMutableProperties[kCGImagePropertyExifDictionary as String] as? NSMutableDictionary) else { return .failure(.nsEXIFDictionary)}
         
-        CGImageDestinationAddImageFromSource(destination, croppedImageSource, 0, mutable as CFDictionary)
+        //crop된 이미지의 픽셀 정보 exif 갱신
+        nsEXIFDictionary[kCGImagePropertyExifUserComment as String] = "type:photo"
+        nsEXIFDictionary[kCGImagePropertyExifPixelXDimension as String] =  croppedImage.cgImage?.width
+        nsEXIFDictionary[kCGImagePropertyExifPixelYDimension as String] = croppedImage.cgImage?.height
+        //변경된 exif 속성을 복사한다
+        originMutableProperties[kCGImagePropertyExifDictionary as String] = nsEXIFDictionary
+        
+        CGImageDestinationAddImageFromSource(destination, croppedImageSource, 0, originMutableProperties as CFDictionary)
         CGImageDestinationFinalize(destination)
-        hcLog("end")
-        return resultPhotoData as Data
+        hcLog("변환 종료")
+        return .success(resultPhotoData as Data)
+    }
+    enum CropAVPhotoDataError: Error {
+        case avCapturePhotoToData
+        case dataToUIImage
+        case uiImageToData
+        case createOriginImageSource
+        case createCroppedImageSource
+        case getSourceType
+        case createImageDest
+        case cfProperties
+        case cfPropertiesDictionary
+        case nsEXIFDictionary
+        
     }
     
     //MARK: -
@@ -443,7 +476,7 @@ extension CGImagePropertyOrientation {
             case .right: self = .right
             case .rightMirrored: self = .rightMirrored
         @unknown default:
-            fatalError()
+            self = .up
         }
     }
 }

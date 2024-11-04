@@ -228,8 +228,14 @@ class CamVC: UIViewController {
         //초점 변경 모니터링
         camVM.cameraModel.focusDevicePointChangedRx.withUnretained(self).bind { owner, focusDevicePoint in
             owner.previewView.showFocusPoint(devicePoint: focusDevicePoint)
-        } .disposed(by: disposeBag)
+        }
+        .disposed(by: disposeBag)
         
+        camVM.errorOccuredRx.bind { [weak self] error in
+            guard let self else { return }
+            AlertHelper.alertInform(baseVC: self, title: "\(error)\n\(error.localizedDescription)", message: "앱을 재실행해주세요", confirmCompletion: {})
+        }
+        .disposed(by: disposeBag)
     
     }
     

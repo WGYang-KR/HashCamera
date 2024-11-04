@@ -31,6 +31,7 @@ class CamVM: SelectSaveFolderVCDelegate {
     
     ///촬영시 true -> 저장 완료 후 false
     let isCapturingPhoto = BehaviorRelay(value: false)
+    let errorOccuredRx = PublishRelay<Error>()
     var disposeBag = DisposeBag()
     
     init() {
@@ -42,10 +43,23 @@ class CamVM: SelectSaveFolderVCDelegate {
     func initCamera() {
         
         ///사진 캡처결과 받아서 저장소에 저장하기 연결
-        cameraModel.capturedPhotoData.bind { [weak self] photoData in
-            let result = self?.savePhoto(photoData: photoData)
-            hcLog("사진저장결과 \(String(describing: result))")
-            self?.isCapturingPhoto.accept(false) //촬영저장 끝
+        cameraModel.capturedPhotoData.bind { [weak self] photoDataResult in
+            guard let self else { return }
+            switch photoDataResult {
+            case .success(let photoData):
+                let result = savePhoto(photoData: photoData)
+                switch result {
+                case .success(let url):
+                    hcLog("사진저장결과 \(url.lastPathComponent)")
+                case .failure(let error):
+                    errorOccuredRx.accept(error)
+                }
+            case .failure(let error):
+                errorOccuredRx.accept(error)
+            }
+            
+            isCapturingPhoto.accept(false) //촬영저장 끝
+            
         }.disposed(by: disposeBag)
     }
     
