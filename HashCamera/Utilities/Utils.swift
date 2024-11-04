@@ -276,3 +276,13 @@ extension Array {
         return indices.contains(index) ? self[index] : nil
     }
 }
+
+
+//MARK: - 뷰 레이아웃
+extension UIView {
+    func roundCorners(corners: UIRectCorner, radius: CGFloat) {
+        clipsToBounds = true
+        layer.cornerRadius = radius
+        layer.maskedCorners = CACornerMask(rawValue: corners.rawValue)
+    }
+}

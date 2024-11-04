@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -22,7 +22,7 @@
                 <outlet property="storageButton" destination="B8L-qT-kWe" id="MNK-1O-ST1"/>
                 <outlet property="topMenuView" destination="VTJ-hg-TEg" id="4qo-Ih-2fH"/>
                 <outlet property="view" destination="iN0-l3-epB" id="v9G-S5-4YA"/>
-                <outlet property="zoomFactorLabel" destination="Jk0-uQ-x1K" id="zp6-tD-0EV"/>
+                <outlet property="zoomFactorBtn" destination="3Pd-YR-xfB" id="dpK-kJ-Too"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -44,24 +44,10 @@
                                 <constraint firstAttribute="width" secondItem="lju-sV-rxs" secondAttribute="height" multiplier="3:4" id="jMj-F3-GPE"/>
                             </constraints>
                         </view>
-                        <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c6e-ur-MYJ" customClass="CameraPreviewView" customModule="HashCamera" customModuleProvider="target">
+                        <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="c6e-ur-MYJ" customClass="CameraPreviewView" customModule="HashCamera" customModuleProvider="target">
                             <rect key="frame" x="76" y="315" width="240" height="128"/>
-                            <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="1.0x" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jk0-uQ-x1K">
-                                    <rect key="frame" x="99" y="53" width="42" height="21"/>
-                                    <constraints>
-                                        <constraint firstAttribute="width" constant="60" id="ivs-Gu-8it"/>
-                                    </constraints>
-                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                    <nil key="textColor"/>
-                                    <nil key="highlightedColor"/>
-                                </label>
-                            </subviews>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                            <constraints>
-                                <constraint firstAttribute="trailing" secondItem="Jk0-uQ-x1K" secondAttribute="trailing" constant="16" id="d8g-Bg-saR"/>
-                                <constraint firstAttribute="bottom" secondItem="Jk0-uQ-x1K" secondAttribute="bottom" constant="16" id="l3y-4e-baX"/>
-                            </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VTJ-hg-TEg" userLabel="TopMenu" customClass="TopMenuBarView" customModule="HashCamera" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="375" height="38"/>
@@ -147,11 +133,26 @@
                                                         <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="27"/>
                                                     </state>
                                                 </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Pd-YR-xfB">
+                                                    <rect key="frame" x="305" y="23" width="42" height="42"/>
+                                                    <color key="backgroundColor" name="majorLightColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="42" id="eFv-fg-hNz"/>
+                                                        <constraint firstAttribute="width" secondItem="3Pd-YR-xfB" secondAttribute="height" id="lnC-C6-yeQ"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                    <state key="normal" title="0.0x">
+                                                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    </state>
+                                                </button>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
+                                                <constraint firstItem="3Pd-YR-xfB" firstAttribute="centerY" secondItem="YRb-si-be8" secondAttribute="centerY" id="1Of-Of-QoE"/>
                                                 <constraint firstItem="b6s-rZ-Qb4" firstAttribute="top" relation="greaterThanOrEqual" secondItem="7aI-vq-Pix" secondAttribute="top" constant="8" id="3Ps-GJ-xhy"/>
                                                 <constraint firstItem="2Kf-dI-S0j" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="b6s-rZ-Qb4" secondAttribute="trailing" constant="8" id="890-zw-bDh"/>
+                                                <constraint firstAttribute="trailing" secondItem="3Pd-YR-xfB" secondAttribute="trailing" constant="28" id="F3h-ak-F4b"/>
                                                 <constraint firstAttribute="bottom" secondItem="2Kf-dI-S0j" secondAttribute="bottom" id="HJz-iP-jY5"/>
                                                 <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="b6s-rZ-Qb4" secondAttribute="bottom" constant="8" id="abS-u1-sb3"/>
                                                 <constraint firstItem="2Kf-dI-S0j" firstAttribute="top" secondItem="7aI-vq-Pix" secondAttribute="top" id="cds-8O-UnM"/>
@@ -207,7 +208,7 @@
                 <constraint firstItem="mkK-hE-Tq7" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="o2v-8p-LiQ"/>
                 <constraint firstItem="mkK-hE-Tq7" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="rQB-h7-jan"/>
             </constraints>
-            <point key="canvasLocation" x="53" y="51"/>
+            <point key="canvasLocation" x="52" y="50.985221674876847"/>
         </view>
     </objects>
     <resources>
@@ -224,7 +225,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="tertiaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29803921568627451" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29803921570000003" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

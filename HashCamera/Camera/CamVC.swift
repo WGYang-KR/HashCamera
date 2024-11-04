@@ -25,7 +25,9 @@ class CamVC: UIViewController {
     @IBOutlet weak var storageButton: UIButton!
     @IBOutlet weak var captureButton: UIButton!
     @IBOutlet weak var browseButton: UIButton!
-    @IBOutlet weak var zoomFactorLabel: UILabel!
+    
+    @IBOutlet weak var zoomFactorBtn: UIButton!
+    
     let camVM: CamVM = CamVM()
     let isLoading = BehaviorRelay(value: true)
 
@@ -65,6 +67,7 @@ class CamVC: UIViewController {
     override func viewDidLayoutSubviews() {
         
         storageButton.layer.cornerRadius = storageButton.bounds.height / 2
+        zoomFactorBtn.layer.cornerRadius = zoomFactorBtn.bounds.height / 2
 
     }
     func bindAppLifeCycle() {
@@ -124,9 +127,13 @@ class CamVC: UIViewController {
         }).disposed(by: disposeBag)
         
         //선택된 폴더 이름 표시
-        camVM.selectedFolderRx.bind { [weak self] in
+        camVM.selectedFolderRx.bind { [weak self] folder in
             guard let self else { return }
-            storageButton.setTitle(" " + $0.name, for: .normal)
+            UIView.performWithoutAnimation {
+                self.storageButton.setTitle(" " + folder.name, for: .normal)
+                self.storageButton.layoutIfNeeded()
+            }
+          
         }.disposed(by: disposeBag)
 
         
@@ -205,8 +212,17 @@ class CamVC: UIViewController {
         
         //배율 변경 모니터링
         camVM.cameraModel.zoomScaleChangedRx.withUnretained(self).bind { owner, zoomFactor in
-            owner.zoomFactorLabel.text = String(format: "%.2fx", zoomFactor)
+            UIView.performWithoutAnimation {
+                owner.zoomFactorBtn.setTitle(String(format: "%.1fx", zoomFactor), for: .normal)
+                owner.zoomFactorBtn.layoutIfNeeded()
+            }
         }
+        .disposed(by: disposeBag)
+        
+        //배율 버튼
+        zoomFactorBtn.rx.tap.bind(onNext: { [weak self] _ in
+            self?.camVM.cameraModel.zoom(displayFactor: 1.0)
+        })
         .disposed(by: disposeBag)
         
         //초점 변경 모니터링
@@ -214,7 +230,7 @@ class CamVC: UIViewController {
             owner.previewView.showFocusPoint(devicePoint: focusDevicePoint)
         } .disposed(by: disposeBag)
         
-        
+    
     }
     
     //MARK: - Action Control

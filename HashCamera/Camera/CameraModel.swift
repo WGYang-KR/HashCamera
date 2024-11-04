@@ -24,7 +24,17 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
 
     ///카메라 전/후면 설정 set get
     private(set) var position: AVCaptureDevice.Position
+    
+    
+    ///카메라 줌 배율 변경Rx
     let zoomScaleChangedRx = PublishRelay<CGFloat>()
+    ///카메라의 1x 줌에 해당하는 Factor
+    var defaultZoomDeviceFactor: CGFloat = 1.0
+    ///최대 줌 제한
+    var maxZoomDeviceFactor: CGFloat = 4.0
+    ///화면에 표시되는 카메라 줌 단위로 변환할 때 곱하는 숫자
+    var displayZoomFactorMultiplier: CGFloat = 1.0
+    
     let focusDevicePointChangedRx = PublishRelay<CGPoint>()
     
     ///플래시 모두 설정 set get
@@ -110,8 +120,33 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         captureSession.commitConfiguration()
     }
     
+    //MARK: 카메라 줌
+    ///카메라 줌 기본값, 최소값, 최대값 지정
+    func setupZoom() {
+        
+        guard let device = videoInput?.device else { return }
+        
+        //virtualDeviceSwitchOverVideoZoomFactors의 첫번째 값을 1배율로 가정. 없으면 1.0은 1.0
+        if let firstSwitchFactor = device.virtualDeviceSwitchOverVideoZoomFactors.first {
+            defaultZoomDeviceFactor = CGFloat(firstSwitchFactor.floatValue)
+            //이게 만약 2라면 모든 배율 표시는 zoomFactor에 1/2를 하는 식으로 표시
+            displayZoomFactorMultiplier = 1 / defaultZoomDeviceFactor
+        } else {
+            defaultZoomDeviceFactor = 1.0
+        }
+        
+        //virtualDeviceSwitchOverVideoZoomFactors의 마지막 배율에서 3배 까지를 max로 지정
+        if let lastSwitchFactor = device.virtualDeviceSwitchOverVideoZoomFactors.last {
+            maxZoomFactor = CGFloat(lastSwitchFactor.floatValue * 3.0)
+        } else {
+            maxZoomFactor = defaultZoomDeviceFactor * 3.0
+        }
+
+        //Zoom 기본값으로 설정
+        device.videoZoomFactor = defaultZoomDeviceFactor
+    }
     
-    ///카메라 줌
+    ///카메라 줌 키우기, 줄이기
     func zoom(scale: CGFloat) {
         
         guard let device = videoInput?.device else { return }
@@ -131,6 +166,19 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
             hcLog(error.localizedDescription)
         }
         
+    }
+    
+    ///특정 줌으로 설정
+    func zoom(displayFactor: CGFloat) {
+        guard let device = videoInput?.device else { return }
+        do {
+            try device.lockForConfiguration()
+            device.videoZoomFactor = displayFactor / displayZoomFactorMultiplier
+            device.unlockForConfiguration()
+        }
+        catch {
+            hcLog(error.localizedDescription)
+        }
     }
     
     ///카메라 초점
@@ -217,32 +265,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
                 
                 // 줌 배율 변경 감지를 위한 KVO 설정
                 device.addObserver(self, forKeyPath: videoZoomFactorKeyPath, options: [.new, .old], context: nil)
-                
-                //TODO: 초점 변경 위치 모니터링
-//                device.addObserver(self, forKeyPath: lensPositionKeyPath, options: [.new], context: nil)
-//                device.addObserver(self, forKeyPath: isAdjustingFocusKeyPath, options: [.new], context: nil)
-//                do {
-//                    try device.lockForConfiguration()
-//                    device.isSubjectAreaChangeMonitoringEnabled = true
-//                    device.unlockForConfiguration()
-//                } catch {
-//                    self.errorOccuredRx.accept(.cameraUnknown)
-//                }
-//                NotificationCenter.default.addObserver(self, selector: #selector(handleSubjectAreaChange), name: AVCaptureDevice.subjectAreaDidChangeNotification, object: device)
-             
-                
-                
-                //TODO: 기기별 min,max 줌 값 설정
-                if #available(iOS 18.0, *) {
-                    minZoomFactor = device.activeFormat.systemRecommendedVideoZoomRange?.lowerBound ?? 1.0
-                    maxZoomFactor = device.activeFormat.systemRecommendedVideoZoomRange?.upperBound ?? 30.0
-                } else {
-                    minZoomFactor = device.minAvailableVideoZoomFactor
-                    maxZoomFactor = CGFloat( Int(Float(device.maxAvailableVideoZoomFactor / 50)) * 10 )
-                }
-                
-                //TODO: 기기별 초기 zoom값
-                device.videoZoomFactor = 1.0
+                setupZoom()
                 
                 do {
                     try device.lockForConfiguration()
@@ -278,60 +301,12 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
        
     }
     
-    //TODO: 초점 변경 위치 모니터링
-//    var lastLensPosition: CGFloat?
-//    @objc func handleSubjectAreaChange(notification: Notification) {
-//       
-//        hcLog("주제 영역 변화")
-////        focusChanged()
-//    }
-//    
-//    func focusChanged () {
-//        // 현재 초점 포인트과거 초점 포인트를 비교하여 변경되었으면 이벤트 발생시킨다.
-//        guard let newFocusDevicePoint = videoInput?.device.focusPointOfInterest else { return }
-//        guard let adjustingFocus = videoInput?.device.isAdjustingFocus else { return }
-//        focusDevicePointChangedRx.accept(newFocusDevicePoint)
-//        
-//        hcLog("자동 or 수동 포커싱: \(newFocusDevicePoint)")
-//    }
-//
-    
     // KVO를 통해 줌 배율 변화 모니터링
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == videoZoomFactorKeyPath, let change = change {
-//            let oldZoomFactor = change[.oldKey] as? CGFloat ?? 0.0
             let newZoomFactor = change[.newKey] as? CGFloat ?? 0.0
-            
-            var newZoomScale = newZoomFactor
-            if #available(iOS 18.0, *) {
-                newZoomScale = newZoomFactor * (videoInput?.device.displayVideoZoomFactorMultiplier ?? 1.0)
-            } else {
-                newZoomScale = newZoomFactor * 0.5
-            }
-            
-            zoomScaleChangedRx.accept(newZoomScale)
+            zoomScaleChangedRx.accept( newZoomFactor * displayZoomFactorMultiplier)
         }
-        //TODO: 초점 변경 위치 모니터링
-//        else if keyPath == lensPositionKeyPath, let change {
-//            let newLensPosition = change[.newKey] as? CGFloat ?? 0.0
-//            
-//            if let lastLensPosition, abs(newLensPosition - lastLensPosition) < 0.1 {
-//                return
-//            }
-//            
-//            lastLensPosition = newLensPosition
-////            hcLog("렌즈위치변화: \(newLensPosition)")
-////            focusChanged()
-//        } else if keyPath == isAdjustingFocusKeyPath, let change {
-//            let newIsAdjustingFocus = change[.newKey] as? Bool ?? false
-//            hcLog("New isAdjustingFocus: \(newIsAdjustingFocus)")
-//            
-//            if newIsAdjustingFocus {
-//                focusChanged()
-//              
-//            }
-//        }
-//             
     }
     
 
