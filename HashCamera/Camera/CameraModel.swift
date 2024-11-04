@@ -313,7 +313,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     //MARK: - 사진 촬영
     ///사진 촬영. 사진촬영이 완료되면 capturedPhotoData로 결과값을 방출한다.
     func capturePhoto() {
-        hcLog("start")
+        hcLog("카메라 촬영 시작")
         // 사진 옵션 세팅
         isCapturingPhoto.accept(true)
         let photoSettings = AVCapturePhotoSettings()

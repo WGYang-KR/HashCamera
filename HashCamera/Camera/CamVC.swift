@@ -42,7 +42,7 @@ class CamVC: UIViewController {
         camVM.isCapturingPhoto.observe(on: MainScheduler.instance).bind { [weak self] isCapturing in
             self?.enableComponents( !isCapturing )
             if isCapturing {
-                self?.previewView.borderEffect()
+                self?.previewView.opaqueEffect()
             }
         }.disposed(by: disposeBag)
      
@@ -244,6 +244,7 @@ class CamVC: UIViewController {
         storageButton.isEnabled = isEnabled
         captureButton.isEnabled = isEnabled
         browseButton.isEnabled = isEnabled
+        zoomFactorBtn.isEnabled = isEnabled
     }
     
     func setPreviewAspectRatio(aspectRatio: AspectRatioType, completion: ( () -> Void )?)  {

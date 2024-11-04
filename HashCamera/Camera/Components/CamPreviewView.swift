@@ -15,6 +15,8 @@ class CameraPreviewView: UIView {
 
     var disposeBag = DisposeBag()
     
+    var overlayView: UIView!
+    
     ///카메라 프리뷰의 한 지점을 나타내는 구조체
     struct CaptureDevicePreviewPoints{
         let original: CGPoint
@@ -77,6 +79,14 @@ class CameraPreviewView: UIView {
             make.edges.equalToSuperview()
         }
         
+        overlayView = UIView(frame: .zero)
+        overlayView.backgroundColor = UIColor.white
+        overlayView.alpha = 0.0
+        addSubview(overlayView)
+        overlayView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
         //탭 이벤트 연결
         self.rx.tapGesture().when(.recognized)
             .bind { [weak self] recognizer in
@@ -100,17 +110,14 @@ class CameraPreviewView: UIView {
         
     }
     
-    func borderEffect() {
-        UIView.animate(withDuration: 0.1) {
-            self.layer.borderWidth = 2
-            
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
-            UIView.animate(withDuration: 0.1) {
-                self.layer.borderWidth = 0
-            }
-        })
+    func opaqueEffect() {
+          UIView.animate(withDuration: 0.1, animations: {
+              self.overlayView.alpha = 0.6
+          }) { _ in
+              UIView.animate(withDuration: 0.1, animations: {
+                  self.overlayView.alpha = 0.0
+              })
+          }
     }
     
 
