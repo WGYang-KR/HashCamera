@@ -14,6 +14,7 @@ class CameraSetting {
         case cameraSettingLocationInfo
         case cameraSettingPosition
         case cmeraSettingPhotoFileFormat
+        case cameraSettingSelectedFolder
     }
     
     ///위치 저장 여부
@@ -23,7 +24,7 @@ class CameraSetting {
     }
     
     ///카메라 전/후면 최근 상태
-    static var lastPosition: AVCaptureDevice.Position { 
+    static var lastPosition: AVCaptureDevice.Position {
         get {
             let intValue = UserDefaults.standard.integer(forKey: Keys.cameraSettingPosition.rawValue)
             return AVCaptureDevice.Position(rawValue: intValue) ?? .back //기본값
@@ -35,8 +36,25 @@ class CameraSetting {
     static var photoFileFormat: PhotoFileFormat {
         get {
             let rawValue =  UserDefaults.standard.integer(forKey: Keys.cmeraSettingPhotoFileFormat.rawValue)
-            return PhotoFileFormat(rawValue: rawValue) ?? .heif
+            return PhotoFileFormat(rawValue: rawValue) ?? .jpeg
         }
         set{ UserDefaults.standard.set(newValue.rawValue, forKey: Keys.cmeraSettingPhotoFileFormat.rawValue)}
     }
+    
+    ///사진 저장 폴더
+    static var selectedFolder: FolderModel? {
+        get {
+            if let savedData = UserDefaults.standard.data(forKey: Keys.cameraSettingSelectedFolder.rawValue) {
+                return try? JSONDecoder().decode(FolderModel.self, from: savedData)
+            } else {
+                return nil
+            }
+        }
+        set {
+            if let encoded = try? JSONEncoder().encode(newValue) {
+                UserDefaults.standard.set(encoded, forKey: Keys.cameraSettingSelectedFolder.rawValue)
+            }
+        }
+    }
+
 }

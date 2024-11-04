@@ -37,13 +37,13 @@ struct SettingsView: View {
             }
             
             List {
-                Section {
-                    Toggle("Location Info", isOn: $locationInfo)
-                        .onChange(of: locationInfo) { newValue in
-                            CameraSetting.locationInfo = newValue
-                        }
-                    
-                }
+//                Section {
+//                    Toggle("Location Info", isOn: $locationInfo)
+//                        .onChange(of: locationInfo) { newValue in
+//                            CameraSetting.locationInfo = newValue
+//                        }
+//                    
+//                }
                 
                 Picker("Photo Format", selection: $photoFormat) {
                     ForEach(PhotoFileFormat.allCases) {

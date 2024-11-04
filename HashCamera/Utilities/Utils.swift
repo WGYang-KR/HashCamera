@@ -16,11 +16,16 @@ class Utils {
         array.insert(element, at: toIndex)
     }
     
+    ///앱 SandBox documnets 디렉토리 URL, nil일 때는 '/' path를 반환한다.
+    static var documentsFolderURL: URL {
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first ?? URL(fileURLWithPath: "/")
+    }
+    
 }
 
 
 //MARK: - 로그
-public func hcLog(_ message: String?, file: String = #file, functionName: String = #function , line: UInt = #line) {
+func hcLog(_ message: String?, file: String = #file, functionName: String = #function , line: UInt = #line) {
     
 #if RELEASE
     return
@@ -29,6 +34,20 @@ public func hcLog(_ message: String?, file: String = #file, functionName: String
     let className = (file as NSString).lastPathComponent
     os_log("%@",type:.default ,"\(Timestamp.timestamp())<\(className)> \(functionName) [#\(line)] \(message ?? "")")
 }
+
+func hcLog(_ message: String?, file: String = #file, functionName: String = #function , line: UInt = #line, error: Error?) {
+    
+#if RELEASE
+    return
+#endif
+    if let error {
+        let className = (file as NSString).lastPathComponent
+        os_log("%@",type:.default ,"\(Timestamp.timestamp())<\(className)> \(functionName) [#\(line)] \(message ?? "") | \(error) | \(error.localizedDescription)")
+    } else {
+        hcLog(message,file: file, functionName: functionName, line: line)
+    }
+}
+
 
 class Timestamp {
     static let dateFormatter: DateFormatter = {
@@ -63,29 +82,49 @@ extension UIViewController {
         self.navigationItem.title = title
         self.navigationItem.leftBarButtonItems = leftItems
         self.navigationItem.rightBarButtonItems = rightItems
-
+    
         
         // 네비게이션 바 색상 설정
-        let defaultColor = UIColor.colorTeal02
-        self.navigationController?.navigationBar.titleTextAttributes = [
-            .foregroundColor: defaultColor // 타이틀 텍스트 색상 변경
-        ]
+        let appearance = UINavigationBarAppearance()
         
-        if let leftBarButtonItems = self.navigationItem.leftBarButtonItems {
-            for item in leftBarButtonItems {
-                item.tintColor = defaultColor
-                item.setTitleTextAttributes([.foregroundColor: defaultColor], for: .normal)
-            }
-        }
+        // 투명한 배경을 유지하고 색상을 설정
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .naviBarBackground.withAlphaComponent(0.5)  // 반투명 효과
+        appearance.backgroundEffect = UIBlurEffect(style: .light)  // Blur 효과 추가
         
-        if let rightBarButtonItems = self.navigationItem.rightBarButtonItems {
-            for item in rightBarButtonItems {
-                item.tintColor = defaultColor
-                item.setTitleTextAttributes([.foregroundColor: defaultColor], for: .normal)
-            }
-        }
+        // 제목 텍스트 색상 설정
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.label]
+
+        // 버튼 텍스트 색상 설정
+        navigationController?.navigationBar.tintColor = .systemCyan
+        
+        // standardAppearance와 scrollEdgeAppearance 모두에 적용
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
         
     }
+    
+    func setToolbar(items: [UIBarButtonItem]) {
+        
+        setToolbarItems(items, animated: false)
+        
+        // 네비게이션 바 색상 설정
+        let appearance =  UIToolbarAppearance()
+        
+        // 투명한 배경을 유지하고 색상을 설정
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .naviBarBackground.withAlphaComponent(0.5)  // 반투명 효과
+        appearance.backgroundEffect = UIBlurEffect(style: .light)  // Blur 효과 추가
+        
+        // 버튼 텍스트 색상 설정
+        navigationController?.toolbar.tintColor = .systemCyan
+        
+        // standardAppearance와 scrollEdgeAppearance 모두에 적용
+        navigationController?.toolbar.standardAppearance = appearance
+        navigationController?.toolbar.scrollEdgeAppearance = appearance
+    
+    }
+    
 }
 
 //MARK: - 화면 전환
@@ -101,10 +140,18 @@ extension UIViewController {
         self.present(vcToPresent, animated: animated, completion: completion)
     }
     
-    func present(_ vcToPresent: UIViewController, modalStyle: UIModalPresentationStyle, animated: Bool, completion: (() -> Void)? = nil) {
-        vcToPresent.modalPresentationStyle = modalStyle
+    func present(_ vcToPresent: UIViewController, presentationStyle: UIModalPresentationStyle?, transitionStyle: UIModalTransitionStyle?, animated: Bool, completion: (() -> Void)? = nil) {
+        if let presentationStyle {
+            vcToPresent.modalPresentationStyle = presentationStyle
+        }
+   
+        if let transitionStyle {
+            vcToPresent.modalTransitionStyle = transitionStyle
+        }
+       
         self.present(vcToPresent, animated: animated, completion: completion)
     }
+    
     
     ///popVC / dismiss 를 자동으로 결정하여 수행.
     func moveBackVC(animated: Bool, completion: (()-> Void)? = nil) {
@@ -186,7 +233,8 @@ extension UINavigationController { //navigation controller completion 추가
     
 }
 
-// UIColor+Utils
+
+//MARK: - UIColor+Utils
 extension UIColor {
     static func by(r: Int, g: Int, b: Int, a: CGFloat = 1) -> UIColor {
         let d = CGFloat(255)
@@ -207,5 +255,34 @@ extension UIColor {
             green: (rgb >> 8) & 0xFF,
             blue: rgb & 0xFF
         )
+    }
+}
+
+//MARK: - TableView
+extension UITableView {
+    func reloadData(completion: @escaping () -> Void) {
+        UIView.animate(withDuration: 0, animations: {
+            self.reloadData()
+        }) { _ in
+            completion()
+        }
+    }
+}
+
+
+//MARK: - 배열 OutOfBound 체크
+extension Array {
+    subscript(safe index: Int) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
+}
+
+
+//MARK: - 뷰 레이아웃
+extension UIView {
+    func roundCorners(corners: UIRectCorner, radius: CGFloat) {
+        clipsToBounds = true
+        layer.cornerRadius = radius
+        layer.maskedCorners = CACornerMask(rawValue: corners.rawValue)
     }
 }

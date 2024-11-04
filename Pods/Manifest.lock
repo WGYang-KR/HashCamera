@@ -1,9 +1,4 @@
 PODS:
-  - Realm (10.52.2):
-    - Realm/Headers (= 10.52.2)
-  - Realm/Headers (10.52.2)
-  - RealmSwift (10.52.2):
-    - Realm (= 10.52.2)
   - RxCocoa (6.5.0):
     - RxRelay (= 6.5.0)
     - RxSwift (= 6.5.0)
@@ -13,38 +8,43 @@ PODS:
   - RxRelay (6.5.0):
     - RxSwift (= 6.5.0)
   - RxSwift (6.5.0)
+  - SDWebImage (5.19.4):
+    - SDWebImage/Core (= 5.19.4)
+  - SDWebImage/Core (5.19.4)
   - SideMenu (6.5.0)
   - SnapKit (5.6.0)
+  - SwiftEntryKit (2.0.0)
 
 DEPENDENCIES:
-  - RealmSwift (~> 10)
   - RxCocoa (~> 6.5.0)
   - RxGesture
   - RxSwift (~> 6.5.0)
+  - SDWebImage (~> 5.0)
   - SideMenu
   - SnapKit (= 5.6.0)
+  - SwiftEntryKit (= 2.0.0)
 
 SPEC REPOS:
   trunk:
-    - Realm
-    - RealmSwift
     - RxCocoa
     - RxGesture
     - RxRelay
     - RxSwift
+    - SDWebImage
     - SideMenu
     - SnapKit
+    - SwiftEntryKit
 
 SPEC CHECKSUMS:
-  Realm: e44eb7d20fe469fe1179894fd356727b8fbe61c2
-  RealmSwift: 7aacbd3101158f7d54c930bcfcfaafadbd376ffc
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
   RxGesture: f3efb47ed2d26a8082f7b660d4a59970e275a7f8
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
+  SDWebImage: 066c47b573f408f18caa467d71deace7c0f8280d
   SideMenu: f583187d21c5b1dd04c72002be544b555a2627a2
   SnapKit: e01d52ebb8ddbc333eefe2132acf85c8227d9c25
+  SwiftEntryKit: 61b5fa36f34a97dd8013e48a7345bc4c4720be9a
 
-PODFILE CHECKSUM: 2bb49882057f22e2d441349e334a14344e672b2a
+PODFILE CHECKSUM: 8a6e473b2a711a20a65a572e802d58e024bb7070
 
 COCOAPODS: 1.15.2

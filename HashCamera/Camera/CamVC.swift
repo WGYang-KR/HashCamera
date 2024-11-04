@@ -25,16 +25,10 @@ class CamVC: UIViewController {
     @IBOutlet weak var storageButton: UIButton!
     @IBOutlet weak var captureButton: UIButton!
     @IBOutlet weak var browseButton: UIButton!
-   
-    @IBOutlet weak var storageBarView: StorageBarCollectionView!
     
+    @IBOutlet weak var zoomFactorBtn: UIButton!
     
-    let camVM: CamVM = CamVM(cameraModel: CameraModel(position: .back,
-                                                      flashMode: .off,
-                                                      aspectRatio: .standard,
-                                                      fileType: .jpeg),
-                             storageModel: StorageModel(selectedStorgeType: .photoLibrary))
-    
+    let camVM: CamVM = CamVM()
     let isLoading = BehaviorRelay(value: true)
 
     
@@ -70,6 +64,12 @@ class CamVC: UIViewController {
         stopCamera()
     }
     
+    override func viewDidLayoutSubviews() {
+        
+        storageButton.layer.cornerRadius = storageButton.bounds.height / 2
+        zoomFactorBtn.layer.cornerRadius = zoomFactorBtn.bounds.height / 2
+
+    }
     func bindAppLifeCycle() {
         
         //앱이 활성화 될때
@@ -116,19 +116,26 @@ class CamVC: UIViewController {
     }
     
     func initView() {
-
-
-        //저장소바 표시 버튼
+        
+        //폴더선택 화면 표시
         storageButton.rx.tap.bind(onNext: { [weak self] in
-                guard let self else { return }
-                storageBarView.isHidden = storageBarView.isHidden == true ? false : true
+            guard let self else { return }
+            let vc = SelectSaveFolderVC()
+            vc.configure(delegate: camVM, initialSelectedFolder: camVM.selectedFolderRx.value)
+            present(UINavigationController(rootViewController: vc), presentationStyle: .pageSheet, transitionStyle: nil, animated: true)
+            
         }).disposed(by: disposeBag)
         
-        //저장소바
-        storageBarView.selectedStorage.bind { [weak self] storageType in
+        //선택된 폴더 이름 표시
+        camVM.selectedFolderRx.bind { [weak self] folder in
             guard let self else { return }
-            camVM.storageModel.selectedStorgeType.accept(storageType)
+            UIView.performWithoutAnimation {
+                self.storageButton.setTitle(" " + folder.name, for: .normal)
+                self.storageButton.layoutIfNeeded()
+            }
+          
         }.disposed(by: disposeBag)
+
         
         //설정 버튼
         topMenuView.moreMenuRx.bind { [weak self] in
@@ -178,16 +185,8 @@ class CamVC: UIViewController {
         //촬영버튼
         captureButton.rx.tap.bind { [weak self] _ in
             guard let self else { return }
-//            enableComponents(false) //버튼 비활성화
-//            previewView.borderEffect() //캡처효과
             camVM.capturePhoto() //캡처
         }.disposed(by: disposeBag)
-        
-//        //촬영 결과 수신
-//        camVM.cameraModel.capturedPhotoData.bind { [weak self] _ in
-//            guard let self else { return }
-//            enableComponents(true)
-//        }.disposed(by: disposeBag)
         
         //캡처시 테두리 효과 색 지정.
         previewView.layer.borderColor = UIColor(resource: .majorLight).cgColor
@@ -195,34 +194,43 @@ class CamVC: UIViewController {
         //뷰어 버튼
         browseButton.rx.tap.bind { [weak self] _ in
             guard let self else { return }
-            let vc = BrowserVC()
-//            let vc = BrowserLocalVC()
-            let naviVC = UINavigationController(rootViewController: vc)
-            naviVC.modalPresentationStyle = .fullScreen
-            self.present(naviVC, animated: true)
+            let nextVC = PhotoListVC()
+            nextVC.configure(initialSelectedFolder: camVM.selectedFolderRx.value)
+            presentFull(UINavigationController(rootViewController: nextVC), animated: true)
         }.disposed(by: disposeBag)
         
         
         //프리뷰 탭(포커싱)
         previewView.didTapPointRx.withUnretained(self).bind { owner, points in
-            owner.showFocusView(points.original)
             owner.camVM.cameraModel.focus(point: points.converted)
         }.disposed(by: disposeBag)
         
+        //프리뷰 핀치(배율)
+        previewView.didPinchScaleRx.withUnretained(self).bind {owner, scale in
+            owner.camVM.cameraModel.zoom(scale: scale)
+        }.disposed(by: disposeBag)
         
+        //배율 변경 모니터링
+        camVM.cameraModel.zoomScaleChangedRx.withUnretained(self).bind { owner, zoomFactor in
+            UIView.performWithoutAnimation {
+                owner.zoomFactorBtn.setTitle(String(format: "%.1fx", zoomFactor), for: .normal)
+                owner.zoomFactorBtn.layoutIfNeeded()
+            }
+        }
+        .disposed(by: disposeBag)
         
-    }
+        //배율 버튼
+        zoomFactorBtn.rx.tap.bind(onNext: { [weak self] _ in
+            self?.camVM.cameraModel.zoom(displayFactor: 1.0)
+        })
+        .disposed(by: disposeBag)
+        
+        //초점 변경 모니터링
+        camVM.cameraModel.focusDevicePointChangedRx.withUnretained(self).bind { owner, focusDevicePoint in
+            owner.previewView.showFocusPoint(devicePoint: focusDevicePoint)
+        } .disposed(by: disposeBag)
+        
     
-    ///포커스 위치 나타내는 뷰
-    func newFocusView() -> UIView {
-        let view = UIView()
-        view.backgroundColor = .clear
-        view.frame = .init(origin: .zero, size: CGSize(width: 80, height: 80))
-        view.layer.borderWidth = 1
-        view.layer.borderUIColor = UIColor.color01
-        
-        return view
-        
     }
     
     //MARK: - Action Control
@@ -273,25 +281,4 @@ class CamVC: UIViewController {
         present(vc , animated: true)
     }
 
-    ///해당위치에 포커스를 나타내는 뷰를 띄웠다가 사라지게 한다.
-    func showFocusView(_ point: CGPoint) {
-        
-        let focusView = newFocusView()
-        let convertedPoint = CGPoint(x: point.x - focusView.bounds.width / 2,
-                                     y: point.y - focusView.bounds.height / 2)
-        
-        self.previewView.addSubview(focusView)
-        focusView.frame = CGRect(origin: convertedPoint, size: focusView.frame.size)
-        self.previewView.bringSubviewToFront(focusView)
-    
-        Task { [weak self] in
-            guard let self else { return }
-            UIView.transition(with: self.previewView, duration: 0.5, options: [.transitionCrossDissolve]) {
-                focusView.removeFromSuperview()
-            }
-        }
-        
-    }
-    
-    
 }
