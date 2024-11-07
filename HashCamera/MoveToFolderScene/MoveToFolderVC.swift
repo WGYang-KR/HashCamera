@@ -250,7 +250,9 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
             
             // 수정 팝업 띄우기
             let originURL = self.vm.folderList[indexPath.section][indexPath.row].url
-            FolderCRUDAlert().beginRenameAlert(baseVC: self, originURL: originURL)
+            FolderCRUDAlert().beginRenameAlert(baseVC: self, originURL: originURL) { success in
+                completion(success)
+            }
         }
         
         renameAction.image = SystemUIImage.pencil
@@ -270,7 +272,7 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
             hcLog("tableView.numberOfRows:\(tableView.numberOfRows), tempSelectedIndexPath: \(tempSelectedIndexPath)")
             if tableView.numberOfRows(inSection:  tempSelectedIndexPath.section) > tempSelectedIndexPath.row {
                 hcLog("선택된 셀 복원: \(tempSelectedIndexPath)")
-                if tableView.indexPathForSelectedRow != tempSelectedIndexPath {
+                if !(tableView.indexPathForSelectedRow == tempSelectedIndexPath) {
                     tableView.selectRow(at: tempSelectedIndexPath, animated: false, scrollPosition: .none)
                 }
             }

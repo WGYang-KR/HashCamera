@@ -61,7 +61,7 @@ class FolderCRUDAlert {
         baseVC.present(alert, animated: true, completion: nil)
     }
     
-    func beginRenameAlert(baseVC: UIViewController, originURL: URL) {
+    func beginRenameAlert(baseVC: UIViewController, originURL: URL, completion: ((Bool) -> Void)? ) {
         let alert = UIAlertController(title: "폴더 이름 변경", message: nil, preferredStyle: .alert)
         alert.addTextField { textField in
             textField.placeholder = "변경할 폴더 이름을 입력하세요"
@@ -76,16 +76,21 @@ class FolderCRUDAlert {
                     switch result {
                     case .success(_):
                         AlertHelper.notesInform(message: "폴더명 변경 성공")
+                        completion?(true)
                     case .failure(let error):
                         AlertHelper.notesInform(message: "폴더명 변경 실패", color: .systemRed) //TODO:색상
+                        completion?(false)
                     }
+                  
                 }
               
             }
         }
         confirmAction.isEnabled = false  // 초기에는 비활성화
         
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel) { _ in
+            completion?(false)
+        })
         alert.addAction(confirmAction)
         
         // 텍스트 필드 변경 감지
