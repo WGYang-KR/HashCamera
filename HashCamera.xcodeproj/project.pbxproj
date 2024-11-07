@@ -69,6 +69,7 @@
 		6AA63E592CD3BB3200AC0E97 /* SelectableFolderListVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA63E582CD3BB2A00AC0E97 /* SelectableFolderListVM.swift */; };
 		6AA63E5F2CD7CF9400AC0E97 /* NibUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA63E5E2CD7CF8600AC0E97 /* NibUIView.swift */; };
 		6AA63E612CD8F0B000AC0E97 /* UIView+GestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA63E602CD8F0A300AC0E97 /* UIView+GestureRecognizer.swift */; };
+		6AA63E632CDCF26100AC0E97 /* FolderCRUDAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA63E622CDCF24000AC0E97 /* FolderCRUDAlert.swift */; };
 		6AADDC102C95E2C80093EECC /* ImageFileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AADDC0F2C95E2C80093EECC /* ImageFileModel.swift */; };
 		6AE8CF9B2AF48C790063C8C6 /* AspectRatioType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE8CF9A2AF48C790063C8C6 /* AspectRatioType.swift */; };
 		6AE8CF9F2AF4BF0D0063C8C6 /* HCError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE8CF9E2AF4BF0D0063C8C6 /* HCError.swift */; };
@@ -145,6 +146,7 @@
 		6AA63E582CD3BB2A00AC0E97 /* SelectableFolderListVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableFolderListVM.swift; sourceTree = "<group>"; };
 		6AA63E5E2CD7CF8600AC0E97 /* NibUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NibUIView.swift; sourceTree = "<group>"; };
 		6AA63E602CD8F0A300AC0E97 /* UIView+GestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+GestureRecognizer.swift"; sourceTree = "<group>"; };
+		6AA63E622CDCF24000AC0E97 /* FolderCRUDAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderCRUDAlert.swift; sourceTree = "<group>"; };
 		6AADDC0F2C95E2C80093EECC /* ImageFileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFileModel.swift; sourceTree = "<group>"; };
 		6AE8CF9A2AF48C790063C8C6 /* AspectRatioType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectRatioType.swift; sourceTree = "<group>"; };
 		6AE8CF9E2AF4BF0D0063C8C6 /* HCError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HCError.swift; sourceTree = "<group>"; };
@@ -194,7 +196,6 @@
 				6A0486422C49519000C3989F /* PhotoListVC.xib */,
 				6A0486492C49617500C3989F /* PhotoListVM.swift */,
 				6AADDC0F2C95E2C80093EECC /* ImageFileModel.swift */,
-				6A2C369C2BA8711600AAF24B /* FolderMonitor.swift */,
 			);
 			path = PhotoListScene;
 			sourceTree = "<group>";
@@ -202,15 +203,11 @@
 		6A04864B2C4E8E6C00C3989F /* FolderListScene */ = {
 			isa = PBXGroup;
 			children = (
-				6A3527352C7EB68C00FA6A91 /* FileService.swift */,
-				6A7D4F642C76237C00ED0C59 /* FolderService.swift */,
 				6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */,
 				6A73A1042C610A2D007B6CAE /* FolderListItemCell.xib */,
 				6A6C4C562C8A049B007F794F /* FolderListVM.swift */,
-				6AA63E582CD3BB2A00AC0E97 /* SelectableFolderListVM.swift */,
 				6A7D4F662C775DED00ED0C59 /* FolderListVC.swift */,
 				6A7D4F672C775DED00ED0C59 /* FolderListVC.xib */,
-				6A7D4F6D2C7B4C9A00ED0C59 /* FolderModel.swift */,
 			);
 			path = FolderListScene;
 			sourceTree = "<group>";
@@ -261,6 +258,7 @@
 				6A3796592BB5A4FB00BAFC19 /* Utilities */,
 				6A8B320D2AE79ED300D24E49 /* Camera */,
 				6AA6096C2CBEAE180011BB59 /* SelectSaveFolder */,
+				6AA63E642CDD07E400AC0E97 /* FileFunction */,
 				6A04864B2C4E8E6C00C3989F /* FolderListScene */,
 				6A04863C2C494FAB00C3989F /* PhotoListScene */,
 				6A0188662C988CA1006F0A85 /* ImageViewer */,
@@ -310,6 +308,19 @@
 				6AA609692CBEAE060011BB59 /* SelectSaveFolderItemCell.xib */,
 			);
 			path = SelectSaveFolder;
+			sourceTree = "<group>";
+		};
+		6AA63E642CDD07E400AC0E97 /* FileFunction */ = {
+			isa = PBXGroup;
+			children = (
+				6A2C369C2BA8711600AAF24B /* FolderMonitor.swift */,
+				6A7D4F642C76237C00ED0C59 /* FolderService.swift */,
+				6A3527352C7EB68C00FA6A91 /* FileService.swift */,
+				6AA63E622CDCF24000AC0E97 /* FolderCRUDAlert.swift */,
+				6AA63E582CD3BB2A00AC0E97 /* SelectableFolderListVM.swift */,
+				6A7D4F6D2C7B4C9A00ED0C59 /* FolderModel.swift */,
+			);
+			path = FileFunction;
 			sourceTree = "<group>";
 		};
 		6ACAB0842C9C78350009553E /* MoveToFolderScene */ = {
@@ -498,6 +509,7 @@
 				6AA63E592CD3BB3200AC0E97 /* SelectableFolderListVM.swift in Sources */,
 				6AF642F82CA146B300F98F2E /* ShareHelper.swift in Sources */,
 				6A01887A2C988CF2006F0A85 /* ImageViewerTheme.swift in Sources */,
+				6AA63E632CDCF26100AC0E97 /* FolderCRUDAlert.swift in Sources */,
 				6A7D4F652C76237C00ED0C59 /* FolderService.swift in Sources */,
 				6A0188752C988CF2006F0A85 /* UINavigationBar_Extensions.swift in Sources */,
 				6A3796542BB5A44000BAFC19 /* PhotoFileFormat.swift in Sources */,

@@ -98,22 +98,8 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     @objc func addBtnTapped() {
-        // 수정 팝업 띄우기
-        let alert = UIAlertController(title: "폴더 추가", message: "추가하실 폴더 이름을 입력해 주세요.", preferredStyle: .alert)
-        alert.addTextField()
-        let saveAction = UIAlertAction(title: "확인", style: .default) { [weak self] _ in
-            guard let self else { return }
-            if let textField = alert.textFields?.first, let newText = textField.text, !newText.isEmpty {
-                Task {
-                    let result = await self.vm.createFolder(folderName: newText)
-                }
-            }
-        }
-        alert.addAction(saveAction)
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        alert.addAction(cancelAction)
-        
-        present(alert, animated: true, completion: nil)
+        // 생성 팝업 띄우기
+        FolderCRUDAlert().beginCreateAlert(baseVC: self)
     }
     
     //MARK: - 중복파일 처리 팝업
@@ -263,29 +249,8 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
             guard let self else { return }
             
             // 수정 팝업 띄우기
-            let alert = UIAlertController(title: "이름변경", message: "변경할 이름 입력하세요.", preferredStyle: .alert)
-            alert.addTextField { textField in
-                textField.text = self.vm.folderList[indexPath.section][indexPath.row].name
-            }
-            let saveAction = UIAlertAction(title: "확인", style: .default) { _ in
-                if let textField = alert.textFields?.first, let newText = textField.text,
-                   !newText.isEmpty {
-                    Task {
-                        let result = await self.vm.renameFolder(at: indexPath, newName: newText)
-                        switch result {
-                        case .success:
-                            completion(true)
-                        case .failure:
-                            completion(false)
-                        }
-                    }
-                }
-            }
-            alert.addAction(saveAction)
-            let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-            alert.addAction(cancelAction)
-            
-            present(alert, animated: true, completion: nil)
+            let originURL = self.vm.folderList[indexPath.section][indexPath.row].url
+            FolderCRUDAlert().beginRenameAlert(baseVC: self, originURL: originURL)
         }
         
         renameAction.image = SystemUIImage.pencil

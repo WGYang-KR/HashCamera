@@ -95,6 +95,21 @@ class FolderService {
         case isNotRealFolder
     }
     
+    func renameFolder(originURL: URL, newName: String) async -> Result<URL,RenameError> {
+   
+        let newURL = originURL.deletingLastPathComponent().appendingPathComponent(newName)
+        guard fileManager.fileExists(atPath: newURL.path) == false else { return .failure(.duplicatedName) }
+        do {
+            try fileManager.moveItem(at: originURL, to: newURL)
+        }
+        catch {
+            return .failure(.system(error))
+        }
+        
+        return .success(newURL)
+    }
+    
+    
     func deleteFolder(at index: Int) async -> Result<Void,DeleteError> {
         guard index < folderList.count else { return .failure(.outOfBound)}
         let url = folderList[index]
