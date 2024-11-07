@@ -133,6 +133,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
             displayZoomFactorMultiplier = 1 / defaultZoomDeviceFactor
         } else {
             defaultZoomDeviceFactor = 1.0
+            displayZoomFactorMultiplier = 1.0
         }
         
         //virtualDeviceSwitchOverVideoZoomFactors의 마지막 배율에서 3배 까지를 max로 지정
@@ -268,8 +269,12 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
                 setupZoom()
                 
                 do {
-                    try device.lockForConfiguration()
-                    device.focusPointOfInterest = .init(x: 0.5, y: 0.5)
+                 
+                    if (device.isFocusPointOfInterestSupported) {
+                        try device.lockForConfiguration()
+                        device.focusPointOfInterest = .init(x: 0.5, y: 0.5)
+                        device.unlockForConfiguration()
+                    }
                 } catch {
                     //TODO: 에러처리
                 }
