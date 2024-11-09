@@ -13,16 +13,14 @@ enum AspectRatioType {
     case standard
     case wide
     
-    ///높이에 이 값을 곱하면 가로 값이 나온다.
-    ///가로에 이 값을 나누면 세로 값이 나온다
     var cgFloat: CGFloat {
         switch self {
         case .square:
             return 1
         case .standard:
-            return 0.75
+            return 4/3
         case .wide:
-            return 0.5625
+            return 16/9
         }
     }
     

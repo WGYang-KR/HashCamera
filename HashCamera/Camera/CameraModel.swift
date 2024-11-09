@@ -323,8 +323,34 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         isCapturingPhoto.accept(true)
         let photoSettings = AVCapturePhotoSettings()
         photoSettings.flashMode = self.flashMode
+        
+        hcLog("UIDevice.current.orientation: \(UIDevice.current.orientation)")
+        // 디바이스의 현재 orientation을 가져와 설정
+        //TODO: 17.0 부분 변환 안맞음
+//        if #available(iOS 17.0, *) {
+//            if let connection = photoOutput.connection(with: .video) {
+//                switch UIDevice.current.orientation {
+//                case .portrait:
+//                    connection.videoRotationAngle = 0
+//                case .landscapeLeft:
+//                    connection.videoRotationAngle = 90
+//                case .landscapeRight:
+//                    connection.videoRotationAngle = 270
+//                case .portraitUpsideDown:
+//                    connection.videoRotationAngle = 180
+//                default:
+//                    connection.videoRotationAngle = 0
+//                }
+//            }
+//        } else {
+            if let connection = photoOutput.connection(with: .video) {
+                let deviceOrientation = UIDevice.current.orientation
+                connection.videoOrientation = AVCaptureVideoOrientation(deviceOrientation: deviceOrientation) ?? .portrait
+            }
+//        }
+        
         self.photoOutput.capturePhoto(with: photoSettings, delegate: self)
-      
+        
     }
     
     func photoOutput(_ output: AVCapturePhotoOutput, willBeginCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings) {
@@ -356,16 +382,32 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     
     //MARK: 사진 처리
     
-    
     //기존 Exif 유지하면서, 비율처리된 이미지로 교체
     private func cropAVPhotoData(_ avCapturePhoto: AVCapturePhoto, aspectRatio: CGFloat) -> Result<Data, CropAVPhotoDataError> {
         hcLog("변환 시작")
+        
+        //AVCapturePhoto에서 방향 정보 추출.
+        var imageOrientation: UIImage.Orientation = .up
+        if let orientationValue = avCapturePhoto.metadata[ kCGImagePropertyOrientation as String ] as? Int32,
+           let cgImageOrientation = CGImagePropertyOrientation(rawValue: UInt32(orientationValue))
+        {
+            imageOrientation = UIImage.Orientation(cgImageOrientation) ?? .up
+            hcLog("cgImageOrientation:\(cgImageOrientation) imageOrientation: \(imageOrientation)")
+        } else {
+            hcLog("Fail cgImageOrientation")
+        }
+ 
         //avCapturePhoto의 이미지 Data를 추출
         guard let originalPhotoData = avCapturePhoto.fileDataRepresentation() else { return .failure(.avCapturePhotoToData)}
         
         //UIImage로 변환하여 자르기
-        guard let croppedImage =  UIImage(data: originalPhotoData)?.crop(aspectRatio: aspectRatio) else { return  .failure(.dataToUIImage)}
-    
+        guard let originUIIamge = UIImage(data: originalPhotoData) else { return .failure(.dataToUIImage) }
+        guard let originCGImage = originUIIamge.cgImage else { return .failure(.uiImageToCGImage)}
+        guard let croppedCGImgage = try? originCGImage.crop(aspectRatio: aspectRatio) else { return .failure(.cropCGImage)}
+        
+        //위에서 저장한 방향 정보와 함께 uiImage로 변환
+        let croppedImage = UIImage(cgImage: croppedCGImgage, scale: originUIIamge.scale, orientation: imageOrientation)
+
         //파일 포맷에 맞춰 Data로 변환
         var croppedImageData: Data?
         switch CameraSetting.photoFileFormat {
@@ -396,8 +438,8 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         
         //crop된 이미지의 픽셀 정보 exif 갱신
         nsEXIFDictionary[kCGImagePropertyExifUserComment as String] = "type:photo"
-        nsEXIFDictionary[kCGImagePropertyExifPixelXDimension as String] =  croppedImage.cgImage?.width
-        nsEXIFDictionary[kCGImagePropertyExifPixelYDimension as String] = croppedImage.cgImage?.height
+        nsEXIFDictionary[kCGImagePropertyExifPixelXDimension as String] =  croppedImage.size.width
+        nsEXIFDictionary[kCGImagePropertyExifPixelYDimension as String] = croppedImage.size.height
         //변경된 exif 속성을 복사한다
         originMutableProperties[kCGImagePropertyExifDictionary as String] = nsEXIFDictionary
         
@@ -409,6 +451,9 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     enum CropAVPhotoDataError: Error {
         case avCapturePhotoToData
         case dataToUIImage
+        case uiImageToCGImage
+        case cropCGImage
+        case cgImageToUIImage
         case uiImageToData
         case createOriginImageSource
         case createCroppedImageSource
@@ -424,38 +469,46 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
  
 }
 
-extension UIImage {
-    
+extension CGImage {
     /// 이미지 자르기
     /// - Parameter aspectRatio: 가로를 세로로 나눈 값
     /// - Returns: 중앙 기준으로 비율에 맞추어 이미지를 자르고, 남는 이미지는 버린다.
-    func crop(aspectRatio: CGFloat) -> UIImage {
-        let image = self
-        let originalAspectRatio = image.size.width / image.size.height
+    func crop(aspectRatio: CGFloat) throws -> CGImage {
+        //cgImage는 가로로 길게 입력되는 점 유의
+        let cgImage = self
+
+        let originWidth: CGFloat = CGFloat(cgImage.width)
+        let originHeight: CGFloat = CGFloat(cgImage.height)
+        let originalAspectRatio = originWidth / originHeight
         
-        var newImagesize = image.size
-        
-        if originalAspectRatio > aspectRatio {
-            newImagesize.width = image.size.height * aspectRatio
-        } else if originalAspectRatio < aspectRatio {
-            newImagesize.height = image.size.width / aspectRatio
+        var newImagesize =  CGSize.zero
+        if aspectRatio > originalAspectRatio {
+            newImagesize.width = originWidth
+            newImagesize.height = originWidth / aspectRatio
+        } else if aspectRatio < originalAspectRatio {
+            newImagesize.width = originHeight * aspectRatio
+            newImagesize.height = originHeight
+
         } else {
-            return image
+            return self
         }
         
-        //cgImage는 가로로 길게 입력되므로 height width 바꾸어생각해야함.
-        let center = CGPoint(x: image.size.height/2, y: image.size.width/2)
-        let origin = CGPoint(x: center.x - newImagesize.height/2, y: center.y - newImagesize.width/2)
+      
+        let center = CGPoint(x: originWidth/2, y: originHeight/2)
+        let origin = CGPoint(x: center.x - newImagesize.width/2, y: center.y - newImagesize.height/2)
         
-        let cgCroppedImage = image.cgImage!.cropping(to: CGRect(origin: origin, size: CGSize(width: newImagesize.height, height: newImagesize.width)))!
-        let croppedImage = UIImage(cgImage: cgCroppedImage, scale: image.scale, orientation: image.imageOrientation)
-        
-        return croppedImage
+        let cgCroppedImage = cgImage.cropping(to: CGRect(origin: origin, size: CGSize(width: newImagesize.width, height: newImagesize.height)))
+        guard let cgCroppedImage else { throw CGImageCropError.conversion }
+        return cgCroppedImage
     }
+    enum CGImageCropError: Error {
+        case conversion
+    }
+}
+extension UIImage {
     
-    var cgImageOrientation: CGImagePropertyOrientation { .init(imageOrientation) }
+    var cgImageOrientation: CGImagePropertyOrientation { .init(self.imageOrientation) }
 
-    
     func heic(compressionQuality: CGFloat = 1) -> Data? {
         guard
             let mutableData = CFDataCreateMutable(nil, 0),
@@ -467,6 +520,23 @@ extension UIImage {
         return mutableData as Data
     }
     
+}
+
+extension AVCaptureVideoOrientation {
+    init?(deviceOrientation: UIDeviceOrientation) {
+        switch deviceOrientation {
+        case .portrait:
+            self = .portrait
+        case .portraitUpsideDown:
+            self = .portraitUpsideDown
+        case .landscapeLeft:
+            self = .landscapeRight
+        case .landscapeRight:
+            self = .landscapeLeft
+        default:
+            return nil
+        }
+    }
 }
 
 extension CGImagePropertyOrientation {
@@ -482,6 +552,23 @@ extension CGImagePropertyOrientation {
             case .rightMirrored: self = .rightMirrored
         @unknown default:
             self = .up
+        }
+    }
+}
+
+extension UIImage.Orientation {
+    init?(_ cgOrientation: CGImagePropertyOrientation) {
+        switch cgOrientation {
+            case .up: self = .up
+            case .upMirrored: self = .upMirrored
+            case .down: self = .down
+            case .downMirrored: self = .downMirrored
+            case .left: self = .left
+            case .leftMirrored: self = .leftMirrored
+            case .right: self = .right
+            case .rightMirrored: self = .rightMirrored
+        @unknown default:
+            return nil
         }
     }
 }
