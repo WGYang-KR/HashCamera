@@ -77,7 +77,7 @@ class FileShareItem: NSObject, UIActivityItemSource {
     
     // 공유할 예비 파일 반환
     func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
-        return data ?? fileURL
+        return UIImage() //data ?? fileURL
     }
     
     // 공유할 실제 URL을 반환
@@ -102,15 +102,20 @@ class FileShareItem: NSObject, UIActivityItemSource {
     func activityViewControllerLinkMetadata(_ activityViewController: UIActivityViewController) -> LPLinkMetadata? {
         let metadata = LPLinkMetadata()
         metadata.title = fileTitle
-        metadata.url = fileURL
         metadata.originalURL = fileURL
+        metadata.url = metadata.originalURL
         if let provider = NSItemProvider(contentsOf: fileURL) {
             provider.suggestedName = fileTitle
             metadata.imageProvider = provider
         }
+        if let previewImage {
+            metadata.iconProvider = NSItemProvider(object: previewImage)
+        }
+        
         
         return metadata
     }
+
 }
 
 
