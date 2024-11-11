@@ -59,7 +59,7 @@ class AlertHelper {
             width: .fill,
             height:.constant(value: 48)
         )
-        attributes.displayDuration = 0.5
+        attributes.displayDuration = 0.8
         attributes.displayMode = .inferred
         attributes.hapticFeedbackType = .success
         attributes.popBehavior = .animated(animation: .translation)

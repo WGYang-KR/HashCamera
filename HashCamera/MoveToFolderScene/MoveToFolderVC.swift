@@ -13,8 +13,11 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
     private var vm: MoveToFolderVM = MoveToFolderVM()
     private var tempSelectedIndexPath: IndexPath?
     
+    var moveBarButton: UIBarButtonItem!
+    
     var initialSelectedFolder: FolderModel?
     
+
     func configure(initialSelectedFolder: FolderModel?, targetFileList: [ImageFileModel]) {
         self.initialSelectedFolder = initialSelectedFolder
         self.vm.targetFileList = targetFileList
@@ -28,15 +31,17 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
         
         tableView.register(UINib(nibName: "\(MoveToFolderListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(MoveToFolderListItemCell.self)")
         
+        moveBarButton = UIBarButtonItem(title: "이동",
+                                        style: .plain,
+                                        target: self,
+                                        action: #selector(moveBtnTapped))
+        moveBarButton.isEnabled = false
         //네비게이션바
         let leftItems = [UIBarButtonItem(title: "취소",
                                          style: .plain,
                                          target: self,
                                          action: #selector(cancelBtnTapped))]
-        let rightItems = [UIBarButtonItem(title: "이동",
-                                          style: .plain,
-                                          target: self,
-                                          action: #selector(moveBtnTapped)),
+        let rightItems: [UIBarButtonItem] = [moveBarButton,
                           UIBarButtonItem(image: SystemUIImage.folderBadgePlus,
                                           style: .plain,
                                           target: self,
@@ -134,16 +139,16 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     func moveFilesOperation(overrite: Bool) {
-        Task {
-            let results = try? await self.vm.moveFiles(overwrite: true)
-            await MainActor.run {
-                if let results {
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                let results = try await self.vm.moveFiles(overwrite: true)
+                await MainActor.run {
                     self.handleFileMoveResults(results)
-                } else {
-                    //TODO: 선택된 폴더 오류 팝업
-                    
                 }
-                
+            } catch(let error) {
+                AlertHelper.alertInform(baseVC: self, title: "이동 실패", message: "다시 시도해 주세요", confirmCompletion: {})
+                hcLog("\(error)")
             }
         }
     }
@@ -179,8 +184,9 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         
         if !errorMessage.isEmpty {
-            //TODO: 알림 팝업 띄우기
+            AlertHelper.alertInform(baseVC: self, title: "이동 실패", message: "다시 시도해 주세요.", confirmCompletion: {})
         } else {
+            AlertHelper.notesInform(message: "\(results.count)개 사진 이동됨")
             //성공
             moveBackVC(animated: true)
         }
@@ -208,6 +214,14 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         hcLog("셀 선택: \(indexPath)")
         vm.selectedIndexPath = indexPath
+        
+        if let selectedFolder = vm.selectedFolder, let initialSelectedFolder, selectedFolder.url != initialSelectedFolder.url {
+            //현재폴더와 선택폴더가 같을 때는 이동 비활성화
+            moveBarButton.isEnabled = true
+        } else {
+            moveBarButton.isEnabled = false
+        }
+  
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
