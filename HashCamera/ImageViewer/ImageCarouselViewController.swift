@@ -44,9 +44,7 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     }
     
     var imageContentMode: UIView.ContentMode = .scaleAspectFill
-    
-    private var onRightNavBarTapped:((Int) -> Void)?
-    
+
     private(set) lazy var backgroundView:UIView? = {
         let _v = UIView()
         _v.backgroundColor = theme.color
@@ -84,122 +82,6 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
         fatalError("init(coder:) has not been implemented")
     }
     
-    var closeBarBtn: UIBarButtonItem!
-    var editBarBtn: UIBarButtonItem!
-    var cancelBarBtn: UIBarButtonItem!
-    var confirmBarBtn: UIBarButtonItem!
-    private func addNavBar() {
-        editBarBtn = UIBarButtonItem(title: "편집",
-                                  style: .plain,
-                                  target: self,
-                                  action: #selector(editBarBtnTapped))
-        cancelBarBtn = UIBarButtonItem(title: "취소",
-                                    style: .plain,
-                                    target: self,
-                                    action: #selector(cancelBarBtnTapped))
-        cancelBarBtn.tintColor = .orange
-        confirmBarBtn = UIBarButtonItem(title: "확인",
-                                     style: .plain,
-                                     target: self,
-                                     action: #selector(confirmBarBtnTapped))
-        closeBarBtn = naviBackBarButtonItem()
-        
-        // 네비게이션 바 색상 설정
-        let appearance = UINavigationBarAppearance()
-        
-        // 투명한 배경을 유지하고 색상을 설정
-        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = .naviBarBackground.withAlphaComponent(0.5)  // 반투명 효과
-        appearance.backgroundEffect = UIBlurEffect(style: .light)  // Blur 효과 추가
-        
-        // 제목 텍스트 색상 설정
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.label]
-
-        // 버튼 텍스트 색상 설정
-        navigationController?.navigationBar.tintColor = .systemCyan
-        
-        // standardAppearance와 scrollEdgeAppearance 모두에 적용
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        
-        //아이콘 세팅
-        self.navigationItem.leftBarButtonItems = [closeBarBtn]
-        self.navigationItem.rightBarButtonItems = [editBarBtn]
-    
-    }
-    
-    var normalToolBar: [UIBarButtonItem]!
-    var editToolBar: [UIBarButtonItem]!
-    private func addToolBar() {
-        // Tool Bar
-        let shareBtn = UIBarButtonItem(image: SystemUIImage.squareAndArrowUp,
-                                       style: .plain,
-                                       target: self,
-                                       action: #selector(shareBtnTapped))
-        let trashBtn = UIBarButtonItem(image: SystemUIImage.trash,
-                                       style: .plain,
-                                       target: self,
-                                       action: #selector(trashBtnTapped))
-        let folderBtn = UIBarButtonItem(title: "이동",
-                                    style: .done,
-                                    target: self,
-                                    action: #selector(moveBtnTapped))
-        
-        let dummyBtn = UIBarButtonItem(image: nil,
-                                       style: .plain,
-                                       target: nil,
-                                       action: nil)
-        
-        let rotateBtn = UIBarButtonItem(image: SystemUIImage.rotateLeft,
-                                        style: .plain,
-                                        target: self,
-                                        action: #selector(rotateBtnTapped))
-        let spacing = 10.0
-        
-        normalToolBar = [shareBtn , .fixedSpace(spacing), dummyBtn, .flexibleSpace(), trashBtn, .fixedSpace(spacing), folderBtn]
-
-        editToolBar = [.flexibleSpace(), rotateBtn, .flexibleSpace()]
-        
-        setToolbar(items: normalToolBar)
-        navigationController?.setToolbarHidden(false, animated: true)
-    }
-    
-    func setEditMode(_ isEditing: Bool) {
-        //아이콘 세팅
-        self.navigationItem.leftBarButtonItems = [closeBarBtn]
-        self.navigationItem.rightBarButtonItems = [editBarBtn]
-        if isEditing {
-            navigationItem.setLeftBarButtonItems([cancelBarBtn], animated: true)
-            navigationItem.setRightBarButtonItems([confirmBarBtn], animated: true)
-            setToolbarItems(editToolBar, animated: true)
-        } else {
-            navigationItem.setLeftBarButtonItems([closeBarBtn], animated: true)
-            navigationItem.setRightBarButtonItems([editBarBtn], animated: true)
-            setToolbarItems(normalToolBar, animated: true)
-        }
-        currentVC?.zoomOut()
-    }
-    
-    private func addBackgroundView() {
-        guard let backgroundView = backgroundView else { return }
-        view.addSubview(backgroundView)
-        backgroundView.bindFrameToSuperview()
-        view.sendSubviewToBack(backgroundView)
-    }
-    
-    private func setInitialPage(_ index: Int) {
-        //첫번째 사진을 세팅한다
-        if let photoListVM, let item = photoListVM.fileList[safe: initialIndex] {
-            let initialVC:ImageViewerController = .init(index: initialIndex,
-                                                        imageItem: item,
-                                                        imageLoader: SDWebImageLoader())
-            navigationController?.navigationBar.topItem?.title = item.fileName
-            setViewControllers([initialVC], direction: .reverse, animated: true)
-        }
-        
-    }
-
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -207,8 +89,8 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
         delegate = self
         
         addBackgroundView()
-        addNavBar()
-        addToolBar()
+        initNavBar()
+        initToolBar()
         setInitialPage(initialIndex)
       
         photoListVM?.fileListUpdatedRx.bind(onNext: { [weak self] updateData in
@@ -278,12 +160,135 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
         initialSourceView?.alpha = 1.0
     }
     
-    @objc
-    func diTapRightNavBarItem(_ sender:UIBarButtonItem) {
-        guard let onTap = onRightNavBarTapped,
-            let _firstVC = viewControllers?.first as? ImageViewerController
-            else { return }
-        onTap(_firstVC.index)
+    private func addBackgroundView() {
+        guard let backgroundView = backgroundView else { return }
+        view.addSubview(backgroundView)
+        backgroundView.bindFrameToSuperview()
+        view.sendSubviewToBack(backgroundView)
+    }
+    
+    private func setInitialPage(_ index: Int) {
+        //첫번째 사진을 세팅한다
+        if let photoListVM, let item = photoListVM.fileList[safe: initialIndex] {
+            let initialVC:ImageViewerController = .init(index: initialIndex,
+                                                        imageItem: item,
+                                                        imageLoader: SDWebImageLoader())
+            navigationController?.navigationBar.topItem?.title = item.fileName
+            setViewControllers([initialVC], direction: .reverse, animated: true)
+        }
+        
+    }
+
+    //MARK: - 네비바, 툴바, StatusBar
+    //네비바 버튼
+    var closeBarBtn: UIBarButtonItem!
+    var editBarBtn: UIBarButtonItem!
+    var cancelBarBtn: UIBarButtonItem!
+    var confirmBarBtn: UIBarButtonItem!
+    
+    //툴바
+    var normalToolBar: [UIBarButtonItem]!
+    var editToolBar: [UIBarButtonItem]!
+    
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if theme == .dark {
+            return .lightContent
+        }
+        return .default
+    }
+    
+    ///네비바를 초기화한다
+    private func initNavBar() {
+        editBarBtn = UIBarButtonItem(title: "편집",
+                                  style: .plain,
+                                  target: self,
+                                  action: #selector(editBarBtnTapped))
+        cancelBarBtn = UIBarButtonItem(title: "취소",
+                                    style: .plain,
+                                    target: self,
+                                    action: #selector(cancelBarBtnTapped))
+        cancelBarBtn.tintColor = .orange
+        confirmBarBtn = UIBarButtonItem(title: "확인",
+                                     style: .plain,
+                                     target: self,
+                                     action: #selector(confirmBarBtnTapped))
+        closeBarBtn = naviBackBarButtonItem()
+        
+        // 네비게이션 바 색상 설정
+        let appearance = UINavigationBarAppearance()
+        
+        // 투명한 배경을 유지하고 색상을 설정
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .naviBarBackground.withAlphaComponent(0.5)  // 반투명 효과
+        appearance.backgroundEffect = UIBlurEffect(style: .light)  // Blur 효과 추가
+        
+        // 제목 텍스트 색상 설정
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.label]
+
+        // 버튼 텍스트 색상 설정
+        navigationController?.navigationBar.tintColor = .systemCyan
+        
+        // standardAppearance와 scrollEdgeAppearance 모두에 적용
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
+        //아이콘 세팅
+        self.navigationItem.leftBarButtonItems = [closeBarBtn]
+        self.navigationItem.rightBarButtonItems = [editBarBtn]
+    
+    }
+
+    ///툴바를 초기화한다.
+    private func initToolBar() {
+        // Tool Bar
+        let shareBtn = UIBarButtonItem(image: SystemUIImage.squareAndArrowUp,
+                                       style: .plain,
+                                       target: self,
+                                       action: #selector(shareBtnTapped))
+        let trashBtn = UIBarButtonItem(image: SystemUIImage.trash,
+                                       style: .plain,
+                                       target: self,
+                                       action: #selector(trashBtnTapped))
+        let folderBtn = UIBarButtonItem(title: "이동",
+                                    style: .done,
+                                    target: self,
+                                    action: #selector(moveBtnTapped))
+        
+        let dummyBtn = UIBarButtonItem(image: nil,
+                                       style: .plain,
+                                       target: nil,
+                                       action: nil)
+        
+        let rotateBtn = UIBarButtonItem(image: SystemUIImage.rotateLeft,
+                                        style: .plain,
+                                        target: self,
+                                        action: #selector(rotateBtnTapped))
+        let spacing = 10.0
+        
+        normalToolBar = [shareBtn , .fixedSpace(spacing), dummyBtn, .flexibleSpace(), trashBtn, .fixedSpace(spacing), folderBtn]
+
+        editToolBar = [.flexibleSpace(), rotateBtn, .flexibleSpace()]
+        
+        setToolbar(items: normalToolBar)
+        navigationController?.setToolbarHidden(false, animated: true)
+    }
+    
+    ///편집 모드를 선택/해제 한다.
+    func setEditMode(_ isEditing: Bool) {
+        //아이콘 세팅
+        self.navigationItem.leftBarButtonItems = [closeBarBtn]
+        self.navigationItem.rightBarButtonItems = [editBarBtn]
+        if isEditing {
+            navigationItem.setLeftBarButtonItems([cancelBarBtn], animated: true)
+            navigationItem.setRightBarButtonItems([confirmBarBtn], animated: true)
+            setToolbarItems(editToolBar, animated: true)
+        } else {
+            navigationItem.setLeftBarButtonItems([closeBarBtn], animated: true)
+            navigationItem.setRightBarButtonItems([editBarBtn], animated: true)
+            setToolbarItems(normalToolBar, animated: true)
+        }
+        currentVC?.zoomOut()
     }
     
     
@@ -339,12 +344,8 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
         
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        if theme == .dark {
-            return .lightContent
-        }
-        return .default
-    }
+    //MARK: -
+
 }
 
 extension ImageCarouselViewController:UIPageViewControllerDataSource, UIPageViewControllerDelegate {
