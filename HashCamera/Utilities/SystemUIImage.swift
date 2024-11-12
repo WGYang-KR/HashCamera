@@ -26,4 +26,5 @@ class SystemUIImage {
     static let checkmarkRectangleStackFill = UIImage(systemName: "checkmark.rectangle.stack.fill") //􂂽
     static let folder = UIImage(systemName: "folder") // 􀈕
     static let folderBadgePlus = UIImage(systemName: "folder.badge.plus") //􀈙
+    static let rotateLeft = UIImage(systemName: "rotate.left")  //􀎮
 }

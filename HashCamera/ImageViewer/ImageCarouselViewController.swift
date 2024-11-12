@@ -84,12 +84,52 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
         fatalError("init(coder:) has not been implemented")
     }
     
+    var closeBarBtn: UIBarButtonItem!
+    var editBarBtn: UIBarButtonItem!
+    var cancelBarBtn: UIBarButtonItem!
+    var confirmBarBtn: UIBarButtonItem!
     private func addNavBar() {
-        // Add Navigation Bar
-        let closeBarButton = naviBackBarButtonItem()
-        setNaviBar("", leftItems: [closeBarButton], rightItems: nil)
+        editBarBtn = UIBarButtonItem(title: "편집",
+                                  style: .plain,
+                                  target: self,
+                                  action: #selector(editBarBtnTapped))
+        cancelBarBtn = UIBarButtonItem(title: "취소",
+                                    style: .plain,
+                                    target: self,
+                                    action: #selector(cancelBarBtnTapped))
+        cancelBarBtn.tintColor = .orange
+        confirmBarBtn = UIBarButtonItem(title: "확인",
+                                     style: .plain,
+                                     target: self,
+                                     action: #selector(confirmBarBtnTapped))
+        closeBarBtn = naviBackBarButtonItem()
+        
+        // 네비게이션 바 색상 설정
+        let appearance = UINavigationBarAppearance()
+        
+        // 투명한 배경을 유지하고 색상을 설정
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .naviBarBackground.withAlphaComponent(0.5)  // 반투명 효과
+        appearance.backgroundEffect = UIBlurEffect(style: .light)  // Blur 효과 추가
+        
+        // 제목 텍스트 색상 설정
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.label]
+
+        // 버튼 텍스트 색상 설정
+        navigationController?.navigationBar.tintColor = .systemCyan
+        
+        // standardAppearance와 scrollEdgeAppearance 모두에 적용
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
+        //아이콘 세팅
+        self.navigationItem.leftBarButtonItems = [closeBarBtn]
+        self.navigationItem.rightBarButtonItems = [editBarBtn]
+    
     }
     
+    var normalToolBar: [UIBarButtonItem]!
+    var editToolBar: [UIBarButtonItem]!
     private func addToolBar() {
         // Tool Bar
         let shareBtn = UIBarButtonItem(image: SystemUIImage.squareAndArrowUp,
@@ -110,11 +150,34 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
                                        target: nil,
                                        action: nil)
         
+        let rotateBtn = UIBarButtonItem(image: SystemUIImage.rotateLeft,
+                                        style: .plain,
+                                        target: self,
+                                        action: #selector(rotateBtnTapped))
         let spacing = 10.0
-        let items: [UIBarButtonItem] = [shareBtn , .fixedSpace(spacing), dummyBtn, .flexibleSpace(), trashBtn, .fixedSpace(spacing), folderBtn]
+        
+        normalToolBar = [shareBtn , .fixedSpace(spacing), dummyBtn, .flexibleSpace(), trashBtn, .fixedSpace(spacing), folderBtn]
 
-        setToolbar(items: items)
+        editToolBar = [.flexibleSpace(), rotateBtn, .flexibleSpace()]
+        
+        setToolbar(items: normalToolBar)
         navigationController?.setToolbarHidden(false, animated: true)
+    }
+    
+    func setEditMode(_ isEditing: Bool) {
+        //아이콘 세팅
+        self.navigationItem.leftBarButtonItems = [closeBarBtn]
+        self.navigationItem.rightBarButtonItems = [editBarBtn]
+        if isEditing {
+            navigationItem.setLeftBarButtonItems([cancelBarBtn], animated: true)
+            navigationItem.setRightBarButtonItems([confirmBarBtn], animated: true)
+            setToolbarItems(editToolBar, animated: true)
+        } else {
+            navigationItem.setLeftBarButtonItems([closeBarBtn], animated: true)
+            navigationItem.setRightBarButtonItems([editBarBtn], animated: true)
+            setToolbarItems(normalToolBar, animated: true)
+        }
+        currentVC?.zoomOut()
     }
     
     private func addBackgroundView() {
@@ -257,6 +320,24 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
         present(UINavigationController(rootViewController: nextVC), presentationStyle: .pageSheet, transitionStyle: nil, animated: true)
     }
     
+    
+    
+    @objc func editBarBtnTapped(_ sender: Any) {
+        setEditMode(true)
+    }
+    
+    @objc func cancelBarBtnTapped(_ sender: Any) {
+        setEditMode(false)
+        
+    }
+    
+    @objc func confirmBarBtnTapped (_ sender: Any) {
+        
+    }
+    
+    @objc func rotateBtnTapped(_ sender: Any) {
+        
+    }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         if theme == .dark {

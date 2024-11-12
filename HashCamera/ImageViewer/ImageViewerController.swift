@@ -192,6 +192,7 @@ UIGestureRecognizerDelegate {
         
         guard let navController else { return }
         isChangingNaviHidden = true
+        scrollView.backgroundColor = navController.isToolbarHidden ? .clear : .black
         navController.setToolbarHidden(!navController.isToolbarHidden, animated: true)
         navController.setNavigationBarHidden(!navController.isNavigationBarHidden, animated: true)
     }
@@ -249,6 +250,10 @@ extension ImageViewerController {
         let y = point.y - (h * 0.5)
         let rect = CGRect(x: x, y: y, width: w, height: h)
         scrollView.zoom(to: rect, animated: true)
+    }
+    
+    func zoomOut() {
+        scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
     }
     
     func updateConstraintsForSize(_ size: CGSize) {
