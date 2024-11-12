@@ -283,11 +283,16 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
             navigationItem.setLeftBarButtonItems([cancelBarBtn], animated: true)
             navigationItem.setRightBarButtonItems([confirmBarBtn], animated: true)
             setToolbarItems(editToolBar, animated: true)
+            currentVC?.view.isUserInteractionEnabled = false
+            self.view.isUserInteractionEnabled = false
         } else {
             navigationItem.setLeftBarButtonItems([closeBarBtn], animated: true)
             navigationItem.setRightBarButtonItems([editBarBtn], animated: true)
             setToolbarItems(normalToolBar, animated: true)
+            currentVC?.view.isUserInteractionEnabled = true
+            self.view.isUserInteractionEnabled = true
         }
+        
         currentVC?.zoomOut()
     }
     
