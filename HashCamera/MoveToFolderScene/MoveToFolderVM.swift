@@ -41,6 +41,12 @@ class MoveToFolderVM: SelectableFolderListVM {
         for file in files {
             let newFileURL = destFolderURL.appendingPathComponent(file.lastPathComponent)
             
+            guard file != newFileURL else {
+                //같은 폴더로 이동 시도
+                results.append(.failure(.sameFolder(file: file)))
+                continue
+            }
+            
             // 파일이 이미 존재할 경우 처리
             if fileManager.fileExists(atPath: newFileURL.path) {
                 if overwrite {
@@ -63,6 +69,16 @@ class MoveToFolderVM: SelectableFolderListVM {
                         let newName = "\(newFileURL.deletingPathExtension().lastPathComponent) (\(count))"
                         newNoExistFileURL = destFolderURL.appendingPathComponent(newName).appendingPathExtension(file.pathExtension)
                         count += 1
+                        
+                        if count > 1000 {
+                            results.append(.failure(.noFoundNoExistFileName(file: file)))
+                            break
+                        }
+                    }
+                    
+                    if count > 1000 {
+                        results.append(.failure(.noFoundNoExistFileName(file: file)))
+                        break
                     }
                     
                     do {
@@ -92,7 +108,9 @@ class MoveToFolderVM: SelectableFolderListVM {
     /// 파일 이동의 결과를 나타낼 Result 타입 정의
     enum FileMoveError: Error {
         case unknown
+        case sameFolder(file: URL)
         case fileOverwriteFailed(file: URL, error: Error)
+        case noFoundNoExistFileName(file: URL)
         case fileRenameFailed(file: URL, error: Error)
         case fileMoveFailed(file: URL, error: Error)
     }

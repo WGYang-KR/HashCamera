@@ -181,6 +181,14 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
                     let message = "Failed to move: \(file.lastPathComponent)/"
                     hcLog(message + " " + "Error: \(error)")
                     errorMessage += message + "\n"
+                case .sameFolder(let file):
+                    let message = "Failed to move: \(file.lastPathComponent)/"
+                    hcLog(message + " " + "Error: \(error)")
+                    errorMessage += message + "\n"
+                case .noFoundNoExistFileName(let file):
+                    let message = "Failed to move: \(file.lastPathComponent)/"
+                    hcLog(message + " " + "Error: \(error)")
+                    errorMessage += message + "\n"
                 }
             }
         }
