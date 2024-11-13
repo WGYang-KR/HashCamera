@@ -386,27 +386,16 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     private func cropAVPhotoData(_ avCapturePhoto: AVCapturePhoto, aspectRatio: CGFloat) -> Result<Data, CropAVPhotoDataError> {
         hcLog("변환 시작")
         
-        //AVCapturePhoto에서 방향 정보 추출.
-        var imageOrientation: UIImage.Orientation = .up
-        if let orientationValue = avCapturePhoto.metadata[ kCGImagePropertyOrientation as String ] as? Int32,
-           let cgImageOrientation = CGImagePropertyOrientation(rawValue: UInt32(orientationValue))
-        {
-            imageOrientation = UIImage.Orientation(cgImageOrientation) ?? .up
-            hcLog("cgImageOrientation:\(cgImageOrientation) imageOrientation: \(imageOrientation)")
-        } else {
-            hcLog("Fail cgImageOrientation")
-        }
- 
         //avCapturePhoto의 이미지 Data를 추출
         guard let originalPhotoData = avCapturePhoto.fileDataRepresentation() else { return .failure(.avCapturePhotoToData)}
         
         //UIImage로 변환하여 자르기
-        guard let originUIIamge = UIImage(data: originalPhotoData) else { return .failure(.dataToUIImage) }
-        guard let originCGImage = originUIIamge.cgImage else { return .failure(.uiImageToCGImage)}
+        guard let originUIImage = UIImage(data: originalPhotoData) else { return .failure(.dataToUIImage) }
+        guard let originCGImage = originUIImage.cgImage else { return .failure(.uiImageToCGImage)}
         guard let croppedCGImgage = try? originCGImage.crop(aspectRatio: aspectRatio) else { return .failure(.cropCGImage)}
         
         //위에서 저장한 방향 정보와 함께 uiImage로 변환
-        let croppedImage = UIImage(cgImage: croppedCGImgage, scale: originUIIamge.scale, orientation: imageOrientation)
+        let croppedImage = UIImage(cgImage: croppedCGImgage, scale: originUIImage.scale, orientation: originUIImage.imageOrientation)
 
         //파일 포맷에 맞춰 Data로 변환
         var croppedImageData: Data?
