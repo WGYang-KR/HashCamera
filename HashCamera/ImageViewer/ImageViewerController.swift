@@ -282,6 +282,7 @@ extension ImageViewerController {
         view.layoutIfNeeded()
     }
     
+    //MARK: - 이미지 회전
     ///이미지를 왼쪽으로 회전
     func rotateLeft() {
         guard let image = imageView.image, let cgImage = image.cgImage else { return }
@@ -321,9 +322,55 @@ extension ImageViewerController {
     func confirmRotate() {
         //현재 orientation 원본 방향으로 설정
         originOrientation = currentOrientation
-        //현재 orientation으로 사진EXIF 수정
+
+        if let image = imageView.image {
+            //현재 orientation으로 사진EXIF 수정 저장
+            let result = updateExifAttributes(imageURL: imageItem.url, newOrientation: .init(currentOrientation), newSize: image.size)
+            hcLog("confirmRotate: \(result ? "success" : "fail")")
+            //캐시 삭제
+            imageLoader.deleteCache(imageItem.url)
+        }
+    }
+    
+    func updateExifAttributes(imageURL: URL, newOrientation: CGImagePropertyOrientation, newSize: CGSize) -> Bool {
+        // 1. 이미지를 로드
+        guard let imageSource = CGImageSourceCreateWithURL(imageURL as CFURL, nil) else {
+            return false
+        }
         
+        // 2. 이미지 속성 읽기
+        guard let imageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [CFString: Any] else {
+            return false
+        }
         
+        // 3. EXIF 데이터 수정
+        var newProperties = imageProperties
+        
+        var exifDict = imageProperties[kCGImagePropertyExifDictionary] as? [CFString: Any] ?? [:]
+        exifDict[kCGImagePropertyExifPixelXDimension] = Int32(newSize.width)
+        exifDict[kCGImagePropertyExifPixelYDimension] = Int32(newSize.height)
+        
+        newProperties[kCGImagePropertyExifDictionary] = exifDict
+        newProperties[kCGImagePropertyOrientation] = newOrientation.rawValue
+        
+        // 4. 이미지 타입 추출
+        guard let uti = CGImageSourceGetType(imageSource) else {
+            return false
+        }
+        
+        // 5. 기존 파일을 덮어쓰는 방식으로 저장할 준비
+        guard let imageDestination = CGImageDestinationCreateWithURL(imageURL as CFURL, uti, 1, nil) else {
+            return false
+        }
+        
+        // 6. 새 속성 적용하여 이미지 저장
+        CGImageDestinationAddImageFromSource(imageDestination, imageSource, 0, newProperties as CFDictionary)
+        
+        if CGImageDestinationFinalize(imageDestination) {
+            return true
+        } else {
+            return false
+        }
     }
     
 }

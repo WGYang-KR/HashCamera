@@ -346,7 +346,8 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     @objc func confirmBarBtnTapped (_ sender: Any) {
         //원본 방향과 같지 않으면
         //변경된 방향 값으로 파일 저장
-        
+        currentVC?.confirmRotate()
+        setEditMode(false)
     }
     
     @objc func rotateBtnTapped(_ sender: Any) {

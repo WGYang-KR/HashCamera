@@ -5,6 +5,7 @@ import SDWebImage
 
 protocol ImageLoader {
     func loadImage(_ url: URL, placeholder: UIImage?, imageView: UIImageView, completion: @escaping (_ image: UIImage?) -> Void)
+    func deleteCache(_ url: URL)
 }
 
 struct URLSessionImageLoader: ImageLoader {
@@ -27,6 +28,10 @@ struct URLSessionImageLoader: ImageLoader {
             }
         }
     }
+    
+    func deleteCache(_ url: URL) {
+        
+    }
 }
 
 #if canImport(SDWebImage)
@@ -42,5 +47,10 @@ struct SDWebImageLoader: ImageLoader {
                 }
         }
     }
+    
+    func deleteCache(_ url: URL) {
+        SDImageCache.shared.removeImage(forKey: url.absoluteString, withCompletion: nil)
+    }
+    
 }
 #endif
