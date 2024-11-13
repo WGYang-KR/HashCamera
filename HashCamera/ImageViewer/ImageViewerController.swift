@@ -36,6 +36,12 @@ UIGestureRecognizerDelegate {
     private var isAnimating:Bool = false
     private var maxZoomScale:CGFloat = 1.0
     
+    
+    ///파일 상의 방향
+    var originOrientation: UIImage.Orientation = .up
+    ///현재 표시 방향
+    var currentOrientation: UIImage.Orientation = .up
+    
     init(
         index: Int,
         imageItem:ImageFileModel,
@@ -87,7 +93,15 @@ UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        imageLoader.loadImage(imageItem.url, placeholder: imageItem.thumbnailImage, imageView: imageView) { (image) in
+        imageLoader.loadImage(imageItem.url, placeholder: imageItem.thumbnailImage, imageView: imageView) {[weak self] (image) in
+            guard let self else { return }
+            //원본 방향 저장
+            if let image {
+                originOrientation = image.imageOrientation
+            } else {
+                hcLog("원본 사진 방향 누락")
+            }
+            
             DispatchQueue.main.async {[weak self] in
                 self?.layout()
             }
@@ -252,6 +266,7 @@ extension ImageViewerController {
         scrollView.zoom(to: rect, animated: true)
     }
     
+    ///줌을 해제한다
     func zoomOut() {
         scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
     }
@@ -265,6 +280,50 @@ extension ImageViewerController {
         leading.constant = xOffset
         trailing.constant = xOffset
         view.layoutIfNeeded()
+    }
+    
+    ///이미지를 왼쪽으로 회전
+    func rotateLeft() {
+        guard let image = imageView.image, let cgImage = image.cgImage else { return }
+            
+        // 현재 이미지의 orientation을 시계반대방향으로 한단계 회전
+        let newOrientation: UIImage.Orientation
+        switch image.imageOrientation {
+        case .up: newOrientation = .left
+        case .left: newOrientation = .down
+        case .down: newOrientation = .right
+        case .right: newOrientation = .up
+        case .upMirrored: newOrientation = .leftMirrored
+        case .leftMirrored: newOrientation = .downMirrored
+        case .downMirrored: newOrientation = .rightMirrored
+        case .rightMirrored: newOrientation = .upMirrored
+        @unknown default: newOrientation = .up
+        }
+        
+        // 새로운 orientation으로 UIImage 생성
+        let newImage = UIImage(cgImage: cgImage, scale: image.scale, orientation: newOrientation)
+        imageView.image = newImage
+        //회전된 현재 방향 임시 저장
+        currentOrientation = newOrientation
+        //줌 재조정
+        layout()
+    }
+    
+    func cancelRotate() {
+        guard let image = imageView.image, let cgImage = image.cgImage else { return }
+        //원래 orientation으로 UIImage 생성
+        let newImage = UIImage(cgImage: cgImage, scale: image.scale, orientation: originOrientation)
+        imageView.image = newImage
+        currentOrientation = originOrientation
+        layout()
+    }
+    
+    func confirmRotate() {
+        //현재 orientation 원본 방향으로 설정
+        originOrientation = currentOrientation
+        //현재 orientation으로 사진EXIF 수정
+        
+        
     }
     
 }

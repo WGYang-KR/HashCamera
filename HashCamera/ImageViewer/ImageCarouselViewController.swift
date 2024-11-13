@@ -338,15 +338,23 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     
     @objc func cancelBarBtnTapped(_ sender: Any) {
         setEditMode(false)
-        
+        //원본 방향과 같지 않으면
+        //원래 방향으로 imageViewer 복구
+        currentVC?.cancelRotate()
     }
     
     @objc func confirmBarBtnTapped (_ sender: Any) {
+        //원본 방향과 같지 않으면
+        //변경된 방향 값으로 파일 저장
         
     }
     
     @objc func rotateBtnTapped(_ sender: Any) {
+        //이미지 회전(회전한 값은 imageViewer 클래스에 저장)
         
+        //기본 줌 값 갱신
+        currentVC?.rotateLeft()
+                
     }
     
     //MARK: -
