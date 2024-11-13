@@ -55,6 +55,8 @@ class PhotoListVM {
                     let newItem = ImageFileModel(url: updateData.newFileList[addedIndex])
                     self.fileList.insert(newItem, at: addedIndex)
                 }
+            case .filesUpdated:
+                break
             }
             
             //선택된 파일 초기화

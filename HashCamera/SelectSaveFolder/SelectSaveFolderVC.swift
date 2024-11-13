@@ -78,6 +78,8 @@ class SelectSaveFolderVC: UIViewController, UITableViewDataSource, UITableViewDe
                     }
                     
                 }
+            case .filesUpdated:
+                break
             }
         })
         

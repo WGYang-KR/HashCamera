@@ -74,6 +74,8 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
                 if tableView.indexPathForSelectedRow != updateData.selectedIndexPath {
                     tempSelectedIndexPath = updateData.selectedIndexPath
                 }
+            case .filesUpdated:
+                break
             }
         })
         

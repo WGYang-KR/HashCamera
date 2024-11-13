@@ -154,6 +154,8 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
                         }
                     }
                 }
+            case .filesUpdated:
+                collectionView.reloadData()
             }
         }
         .disposed(by: disposeBag)

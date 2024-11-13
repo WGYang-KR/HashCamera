@@ -12,6 +12,8 @@ enum FileSystemChangeType {
     case initiate
     ///deletedIndice는 oldList에서의 Index이고, addedIndice는 newFileList에서의 Index이다)
     case changed(deletedIndice: [Int], addedIndice: [Int])
+    ///파일명, 폴더명의 변화는 없지만, 변경 이벤트 발생한 경우
+    case filesUpdated
 }
 
 class FolderMonitor {
@@ -211,8 +213,11 @@ class FolderMonitor {
         
         DispatchQueue.main.async { [weak self] in
             guard let self else  { return }
-            guard deletedFileIndice.count > 0 || addedFileIndice.count > 0 else { return }
-            folderListUpdated?(FolderUpdateData(newFileList: newFileList, changeType: .changed(deletedIndice: deletedFileIndice.sorted(), addedIndice: addedFileIndice.sorted())))
+            if deletedFileIndice.count > 0 || addedFileIndice.count > 0 {
+                folderListUpdated?(FolderUpdateData(newFileList: newFileList, changeType: .changed(deletedIndice: deletedFileIndice.sorted(), addedIndice: addedFileIndice.sorted())))
+            } else {
+                folderListUpdated?(.init(newFileList: newFileList, changeType: .filesUpdated))
+            }
         }
         
         hcLog("감시 1개 이벤트 완료")

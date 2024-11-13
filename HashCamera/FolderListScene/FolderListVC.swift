@@ -65,6 +65,8 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
                         tableView.selectRow(at: updateData.selectedIndexPath, animated: false, scrollPosition: .none)
                     }
                 }
+            case .filesUpdated:
+                break
             }
         })
         

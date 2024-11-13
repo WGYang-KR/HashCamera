@@ -75,8 +75,10 @@ class SelectableFolderListVM {
                         let newItem = FolderModel(type: .folder, url: updateData.newFileList[addedIndex])
                         self.folderList[1].insert(newItem, at: addedIndex)
                     }
+                case .filesUpdated:
+                    return
+                    
                 }
-                
                 //선택된 폴더정보 유지되도록 작업
                 updateSelection(updateData: updateData)
                 
@@ -176,6 +178,8 @@ class SelectableFolderListVM {
                 }
                 
             }
+        case .filesUpdated:
+            break
         }
         
     }

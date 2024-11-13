@@ -99,6 +99,8 @@ class CamVM: SelectSaveFolderVCDelegate {
                        !folderList.contains(where: { $0.url == self.selectedFolderRx.value.url}) {
                            selectedFolderRx.accept(Self.defaultFolder)
                     }
+                case .filesUpdated:
+                    break
                 }
             }
             .disposed(by: disposeBag)

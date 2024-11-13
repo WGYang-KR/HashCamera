@@ -144,6 +144,9 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
                 if shouldReinit {
                     setInitialPage(initialIndex)
                 }
+                
+            case .filesUpdated:
+                break
             }
             
         })
