@@ -22,6 +22,9 @@ class SelectableFolderListVM {
     ///초기 선택된 폴더
     private var initialSelectedFolder: FolderModel?
     
+    ///현재 폴더 추가 또는 수정하는 중인지 여부. 다른 객체에서 폴더 추가를 했을 경우에 선택 변경을 하지 않기 위함.
+    var isEditingFolder: Bool = false
+    
     ///선택된 폴더 인덱스 정보
     var selectedIndexPath: IndexPath? {
         didSet {
@@ -111,16 +114,7 @@ class SelectableFolderListVM {
         }
     }
     
-    //MARK: FolderListVMProtocol
-    func createFolder(folderName: String) async -> Result<URL, FolderService.CreationError> {
-        await FolderService.shared.createFolder(folderName: folderName)
-    }
-    
-    func renameFolder(at indexPath: IndexPath, newName: String) async -> Result<URL, FolderService.RenameError> {
-        guard indexPath.section == 1, folderList[indexPath.section][indexPath.row].type == .folder else { return .failure(.isNotRealFolder) }
-        return await FolderService.shared.renameFolder(at: indexPath.row, newName: newName)
-    }
-    
+
     func deleteFolder(at indexPath: IndexPath) async -> Result<Void, FolderService.DeleteError> {
         guard indexPath.section == 1, folderList[indexPath.section][indexPath.row].type == .folder else { return .failure(.isNotRealFolder) }
         return await FolderService.shared.deleteFolder(at: indexPath.row)
@@ -148,7 +142,8 @@ class SelectableFolderListVM {
             }
         case .changed(let deletedIndice, let addedIndice):
             
-            if addedIndice.count == 1, (deletedIndice.count == 0 || deletedIndice.count == 1), let newFolderIndex = addedIndice[safe: 0] {
+            if isEditingFolder,
+               addedIndice.count == 1, (deletedIndice.count == 0 || deletedIndice.count == 1), let newFolderIndex = addedIndice[safe: 0] {
                 //추가된 폴더가 딱 1개이면서, 삭제 폴더가 0개(폴더 추가) 또는 1개(이름변경)이면 선택폴더로 지정.
                 let newSelectedFolder = folderList[1][newFolderIndex]
                 if let index = folderList[1].firstIndex(where: { $0.url == newSelectedFolder.url }) {
@@ -178,6 +173,7 @@ class SelectableFolderListVM {
                 }
                 
             }
+            isEditingFolder = false
         case .filesUpdated:
             break
         }

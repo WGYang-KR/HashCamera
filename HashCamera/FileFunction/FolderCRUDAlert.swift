@@ -26,7 +26,7 @@ class FolderCRUDAlert {
         disBag = DisposeBag()
     }
 
-    func beginCreateAlert(baseVC: UIViewController) {
+    func beginCreateAlert(baseVC: UIViewController, completion: @escaping (Bool)-> Void ) {
         let alert = UIAlertController(title: "새 폴더 생성", message: nil, preferredStyle: .alert)
         alert.addTextField { textField in
             textField.placeholder = "새 폴더 이름을 입력하세요"
@@ -41,15 +41,19 @@ class FolderCRUDAlert {
                     switch result {
                     case .success(_):
                         AlertHelper.notesInform(message: "폴더 생성 성공")
+                        completion(true)
                     case .failure(let error):
                         AlertHelper.notesInform(message: "폴더명 생성 실패", color: .systemRed) //TODO:색상
+                        completion(false)
                     }
                 }
             }
         }
         confirmAction.isEnabled = false  // 초기에는 비활성화
         
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: {_ in 
+            completion(false)
+        }))
         alert.addAction(confirmAction)
         
         // 텍스트 필드 변경 감지

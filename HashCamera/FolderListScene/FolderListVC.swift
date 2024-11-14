@@ -78,8 +78,12 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     }
     
     @objc func addBtnTapped() {
+        //수정 진행 시작표시
+        vm.isEditingFolder = true
         // 생성 팝업 띄우기
-        FolderCRUDAlert().beginCreateAlert(baseVC: self)
+        FolderCRUDAlert().beginCreateAlert(baseVC: self) { [weak self] success in
+            if !success { self?.vm.isEditingFolder = false }
+        }
     }
     
     //MARK: - UITableViewDataSource
