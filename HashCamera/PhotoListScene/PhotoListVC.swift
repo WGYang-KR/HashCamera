@@ -137,6 +137,8 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
             if let indexPaths = self.collectionView.indexPathsForSelectedItems {
                 let _ = indexPaths.map({self.collectionView.deselectItem(at: $0, animated: false)})
             }
+            //툴바도 초기화
+            updateToolbarUI()
             
             //이벤트별 갱신
             switch updateData.folderUpdateData.changeType {
