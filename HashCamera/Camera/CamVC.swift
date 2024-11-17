@@ -22,6 +22,7 @@ class CamVC: UIViewController {
     @IBOutlet weak var preview34GuideView:UIView!
     
     @IBOutlet weak var bottomMenuContainer: UIView!
+    @IBOutlet weak var bottomMenuTopSpaceView: UIView!
     @IBOutlet weak var storageButton: UIButton!
     @IBOutlet weak var captureButton: UIButton!
     @IBOutlet weak var browseButton: UIButton!
@@ -65,6 +66,7 @@ class CamVC: UIViewController {
     }
     
     override func viewDidLayoutSubviews() {
+        setStorageBtnPosition()
         
         storageButton.layer.cornerRadius = storageButton.bounds.height / 2
         zoomFactorBtn.layer.cornerRadius = zoomFactorBtn.bounds.height / 2
@@ -237,6 +239,30 @@ class CamVC: UIViewController {
         }
         .disposed(by: disposeBag)
     
+    }
+    
+    func setStorageBtnPosition() {
+        let btnVerticalSpace = 8.0
+        let btnHeight = 37.0
+        
+        storageButton.snp.removeConstraints()
+        
+        if bottomMenuTopSpaceView.bounds.size.height >= btnHeight + ( btnVerticalSpace * 2 ) {
+            //Bottom 메뉴 안쪽으로 설정
+            storageButton.snp.makeConstraints { make in
+                make.height.equalTo(btnHeight)
+                make.centerX.equalToSuperview()
+                make.top.equalTo(bottomMenuTopSpaceView.snp.top).inset(btnVerticalSpace)
+                make.bottom.lessThanOrEqualTo(bottomMenuTopSpaceView.snp.bottom).offset(btnVerticalSpace)
+            }
+        } else {
+            //preview 위로 설정
+            storageButton.snp.makeConstraints { make in
+                make.height.equalTo(btnHeight)
+                make.centerX.equalToSuperview()
+                make.bottom.equalTo(bottomMenuTopSpaceView.snp.top).offset(-btnVerticalSpace)
+            }
+        }
     }
     
     //MARK: - Action Control
