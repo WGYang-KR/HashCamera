@@ -35,14 +35,17 @@ class AuthorizationManager {
     }
     
     /// 카메라 권한 설정이동 팝업
-    static func presentCameraAuthAlert(baseVC: UIViewController) {
-        let alert = UIAlertController(title: "카메라 권한 필요", message: "앱 사용을 위해 설정으로 이동하여 카메라 권한을 허용해주세요.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "취소", style: .default) { action in
+    static func presentCameraAuthAlert(baseVC: UIViewController, completion: @escaping (Bool) -> Void ) {
+        let alert = UIAlertController(title: localizedString(forKey: "N011_2", value: "Camera permission required"),
+                                      message: localizedString(forKey: "N011_3", value: "Please go to Settings and allow camera permission to use the app."), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: localizedString(forKey: "C_Cancel", value: "Cancel"), style: .default) { action in
           //취소처리...
+            completion(false)
             alert.dismiss(animated: true)
         })
-        alert.addAction(UIAlertAction(title: "설정", style: .default) { action in
+        alert.addAction(UIAlertAction(title: localizedString(forKey: "N011_4", value: "Settings"), style: .default) { action in
           //설정 이동
+            completion(true)
             Task {
                 await AuthorizationManager.openAppSettings()
             }
@@ -175,7 +178,7 @@ class AuthorizationManager {
     
     static func openAppSettings() async {
         // Create the URL that deep links to your app's custom settings.
-        if let url = await URL(string: UIApplication.openSettingsURLString),
+        if let url = URL(string: UIApplication.openSettingsURLString),
            await UIApplication.shared.canOpenURL(url) {
             // Ask the system to open that URL.
             await MainActor.run {

@@ -107,7 +107,11 @@ class CamVC: UIViewController {
                         }
                     }
             } else {
-                AuthorizationManager.presentCameraAuthAlert(baseVC: self)
+                AuthorizationManager.presentCameraAuthAlert(baseVC: self) {[weak self]_ in
+                    guard let self else { return }
+                    enableComponents(false)
+                    browseButton.isEnabled = true
+                }
             }
         }
     }
@@ -280,6 +284,7 @@ class CamVC: UIViewController {
         captureButton.isEnabled = isEnabled
         browseButton.isEnabled = isEnabled
         zoomFactorBtn.isEnabled = isEnabled
+        previewView.isUserInteractionEnabled = isEnabled
     }
     
     func setPreviewAspectRatio(aspectRatio: AspectRatioType, completion: ( () -> Void )?)  {
