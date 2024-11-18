@@ -58,6 +58,7 @@
 		6A8B32062AE7983F00D24E49 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A8B32042AE7983F00D24E49 /* LaunchScreen.storyboard */; };
 		6A8B32152AE7A03000D24E49 /* CamVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B32142AE7A03000D24E49 /* CamVC.swift */; };
 		6A961E602B011FA100A05F9B /* CALayer+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A961E5F2B011FA100A05F9B /* CALayer+Ext.swift */; };
+		6A971F6C2CEB915200B7851C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A971F6A2CEB915200B7851C /* InfoPlist.strings */; };
 		6AA609632CBE5E880011BB59 /* SelectSaveFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AA609622CBE5E880011BB59 /* SelectSaveFolderVC.xib */; };
 		6AA609642CBE5E880011BB59 /* SelectSaveFolderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA609612CBE5E880011BB59 /* SelectSaveFolderVC.swift */; };
 		6AA609672CBE60110011BB59 /* SelectSaveFolderVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA609662CBE600B0011BB59 /* SelectSaveFolderVM.swift */; };
@@ -139,6 +140,8 @@
 		6A8B32072AE7983F00D24E49 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6A8B32142AE7A03000D24E49 /* CamVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CamVC.swift; sourceTree = "<group>"; };
 		6A961E5F2B011FA100A05F9B /* CALayer+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Ext.swift"; sourceTree = "<group>"; };
+		6A971F6B2CEB915200B7851C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6A971F6D2CEB915600B7851C /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6AA609612CBE5E880011BB59 /* SelectSaveFolderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectSaveFolderVC.swift; sourceTree = "<group>"; };
 		6AA609622CBE5E880011BB59 /* SelectSaveFolderVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectSaveFolderVC.xib; sourceTree = "<group>"; };
 		6AA609662CBE600B0011BB59 /* SelectSaveFolderVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectSaveFolderVM.swift; sourceTree = "<group>"; };
@@ -249,6 +252,7 @@
 			children = (
 				6A7A50172CE63FF5006DAA22 /* Localization.swift */,
 				6A7A50132CE63E4F006DAA22 /* Localizable.strings */,
+				6A971F6A2CEB915200B7851C /* InfoPlist.strings */,
 			);
 			path = Localization;
 			sourceTree = "<group>";
@@ -460,6 +464,7 @@
 				6AA61AD02AFA8337002E3725 /* TopMenuBarView.xib in Resources */,
 				6A73A1062C610A2D007B6CAE /* FolderListItemCell.xib in Resources */,
 				6A8B32032AE7983F00D24E49 /* Assets.xcassets in Resources */,
+				6A971F6C2CEB915200B7851C /* InfoPlist.strings in Resources */,
 				6A0CAA9A2CA1B196006BC4D3 /* MoveToFolderListItemCell.xib in Resources */,
 				6A0CAA942CA1AF88006BC4D3 /* MoveToFolderVC.xib in Resources */,
 				6AA61AD62AFD2605002E3725 /* CaptureBtnView.xib in Resources */,
@@ -607,6 +612,15 @@
 				6A8B32052AE7983F00D24E49 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		6A971F6A2CEB915200B7851C /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6A971F6B2CEB915200B7851C /* en */,
+				6A971F6D2CEB915600B7851C /* ko */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
