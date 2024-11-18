@@ -10,6 +10,7 @@ import SwiftUI
 import RxSwift
 import RxRelay
 import SnapKit
+import FirebaseCrashlytics
 
 class CamVC: UIViewController {
     
@@ -235,7 +236,9 @@ class CamVC: UIViewController {
         
         camVM.errorOccuredRx.bind { [weak self] error in
             guard let self else { return }
-            AlertHelper.alertInform(baseVC: self, title: "\(error)\n\(error.localizedDescription)", message: "앱을 재실행해주세요", confirmCompletion: {})
+            AlertHelper.alertInform(baseVC: self,
+                                    title: localizedString(forKey: "N000_1", value: "An error occurred."),
+                                    message: localizedString(forKey: "N000_2", value: "Please, relaunch the app."), confirmCompletion: {})
         }
         .disposed(by: disposeBag)
     

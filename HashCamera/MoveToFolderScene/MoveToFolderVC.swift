@@ -31,13 +31,13 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
         
         tableView.register(UINib(nibName: "\(MoveToFolderListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(MoveToFolderListItemCell.self)")
         
-        moveBarButton = UIBarButtonItem(title: "이동",
+        moveBarButton = UIBarButtonItem(title: localizedString(forKey: "N005_2", value: "Move"),
                                         style: .plain,
                                         target: self,
                                         action: #selector(moveBtnTapped))
         moveBarButton.isEnabled = false
         //네비게이션바
-        let leftItems = [UIBarButtonItem(title: "취소",
+        let leftItems = [UIBarButtonItem(title: localizedString(forKey: "C_Cancel", value: "Cancel"),
                                          style: .plain,
                                          target: self,
                                          action: #selector(cancelBtnTapped))]
@@ -47,7 +47,7 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
                                           target: self,
                                           action: #selector(addBtnTapped))]
         
-        setNaviBar("이동할 폴더 선택", leftItems: leftItems, rightItems: rightItems)
+        setNaviBar(localizedString(forKey: "N005_1", value: "Move To Folder"), leftItems: leftItems, rightItems: rightItems)
         
         vm.configure(initialSelectedFolder: initialSelectedFolder, folderListUpdated: { [weak self] updateData in
             
@@ -128,25 +128,27 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
     /// 중복 파일 확인 후 알림창을 띄우는 함수
     func showDuplicateFilesAlert(_ duplicates: [String]) {
         // 알림창 생성
-        let alert = UIAlertController(title: "Duplicate Files Found", message: "There are \(duplicates.count) duplicate files. How would you like to proceed?", preferredStyle: .alert)
+        let alert = UIAlertController(title: localizedString(forKey: "N005_3", value: "Duplicate File Names Found"),
+                                      message: localizedString(forKey: "N005_4", value: "There are {DUPLICATES_COUNT} duplicate file names. How would you like to proceed?").replacingOccurrences(of: "{DUPLICATES_COUNT}", with: "\(duplicates.count)"),
+                                      preferredStyle: .alert)
         
         // 덮어쓰기 옵션
-        alert.addAction(UIAlertAction(title: "Overwrite All", style: .destructive, handler: { _ in
-            print("User chose to overwrite all duplicate files.")
+        alert.addAction(UIAlertAction(title: localizedString(forKey: "N005_5", value: "Overwrite All"), style: .destructive, handler: { _ in
+            hcLog("User chose to overwrite all duplicate files.")
             // 덮어쓰기 옵션으로 파일 이동 실행
             self.moveFilesOperation(overrite: true)
         }))
         
         // 이름 변경 옵션
-        alert.addAction(UIAlertAction(title: "Rename All", style: .default, handler: { _ in
-            print("User chose to rename all duplicate files.")
+        alert.addAction(UIAlertAction(title: localizedString(forKey: "N005_6", value: "Keep All"), style: .default, handler: { _ in
+            hcLog("User chose to rename all duplicate files.")
             // 이름 변경 옵션으로 파일 이동 실행
             self.moveFilesOperation(overrite: false)
         }))
         
         // 취소 옵션
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
-            print("User cancelled the operation.")
+        alert.addAction(UIAlertAction(title: localizedString(forKey: "C_Cancel", value: "Cancel"), style: .cancel, handler: { _ in
+            hcLog("User cancelled the operation.")
             // 취소 시 아무것도 하지 않음
         }))
         
@@ -163,7 +165,8 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
                     self.handleFileMoveResults(results)
                 }
             } catch(let error) {
-                AlertHelper.alertInform(baseVC: self, title: "이동 실패", message: "다시 시도해 주세요", confirmCompletion: {})
+                AlertHelper.alertInform(baseVC: self, title: localizedString(forKey: "N005_7", value: "Failed to move folder."),
+                                        message: localizedString(forKey: "N000_3", value: "Please try again."), confirmCompletion: {})
                 hcLog("\(error)")
             }
         }
@@ -208,9 +211,12 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
         }
         
         if !errorMessage.isEmpty {
-            AlertHelper.alertInform(baseVC: self, title: "이동 실패", message: "다시 시도해 주세요.", confirmCompletion: {})
+            AlertHelper.alertInform(baseVC: self,
+                                    title: localizedString(forKey: "N005_7", value: "Failed to move folder."),
+                                    message: localizedString(forKey: "N000_3", value: "Please try again."),
+                                    confirmCompletion: {})
         } else {
-            AlertHelper.notesInform(message: "\(results.count)개 사진 이동됨")
+            AlertHelper.notesInform(message: localizedString(forKey: "N005_8", value: "{MOVED_COUNT} moved").replacingOccurrences(of: "{MOVED_COUNT", with: "\(results.count)"))
             //성공
             moveBackVC(animated: true)
         }

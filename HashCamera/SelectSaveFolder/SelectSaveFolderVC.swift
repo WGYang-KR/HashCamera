@@ -33,7 +33,7 @@ class SelectSaveFolderVC: UIViewController, UITableViewDataSource, UITableViewDe
         tableView.register(UINib(nibName: "\(MoveToFolderListItemCell.self)", bundle: nil), forCellReuseIdentifier: "\(MoveToFolderListItemCell.self)")
         
         //네비게이션바
-        let leftItems = [UIBarButtonItem(title: "취소",
+        let leftItems = [UIBarButtonItem(title: localizedString(forKey: "C_Cancel", value: "Cancel"),
                                          style: .plain,
                                          target: self,
                                          action: #selector(cancelBtnTapped))]
@@ -42,7 +42,7 @@ class SelectSaveFolderVC: UIViewController, UITableViewDataSource, UITableViewDe
                                           target: self,
                                           action: #selector(addBtnTapped))]
         
-        setNaviBar("저장 폴더 선택", leftItems: leftItems, rightItems: rightItems)
+        setNaviBar(localizedString(forKey: "N004_1", value: "Save Folder"), leftItems: leftItems, rightItems: rightItems)
         
         vm.configure(initialSelectedFolder: initialSelectedFolder, folderListUpdated: { [weak self] updateData in
             
@@ -144,15 +144,18 @@ class SelectSaveFolderVC: UIViewController, UITableViewDataSource, UITableViewDe
         let deleteAction = UIContextualAction(style: .destructive, title: nil){ [weak self] action, view, completion in
             guard let self else { return }
             
-            AlertHelper.alertConfirm(baseVC: self, title: "폴더를 삭제하시겠습니까?", message: "") {
+            AlertHelper.alertConfirm(baseVC: self,
+                                     title: localizedString(forKey: "N009_1", value: "Delete Folder"),
+                                     message: localizedString(forKey: "N009_2", value: "All files in the folder will be deleted together.")) {
                 Task {
                     let result = await self.vm.deleteFolder(at: indexPath)
                     switch result {
                     case .success:
-                        AlertHelper.notesInform(message: "폴더 삭제 완료됨", color: .systemCyan)
+                        AlertHelper.notesInform(message: localizedString(forKey: "N009_3", value: "Folder deleted"),
+                                                color: .systemCyan)
                         completion(true)
                     case .failure(let error):
-                        AlertHelper.notesInform(message: "폴더 삭제 실패", color: .systemRed)
+                        AlertHelper.notesInform(message: localizedString(forKey: "N009_4", value: "Failed to delete folder"), color: .systemRed)
                         completion(false)
                     }
                 }

@@ -27,12 +27,15 @@ class FolderCRUDAlert {
     }
 
     func beginCreateAlert(baseVC: UIViewController, completion: @escaping (Bool)-> Void ) {
-        let alert = UIAlertController(title: "새 폴더 생성", message: nil, preferredStyle: .alert)
+        let alert = UIAlertController(title: localizedString(forKey: "N008_1", value: "New Folder"),
+                                      message: nil,
+                                      preferredStyle: .alert)
+        
         alert.addTextField { textField in
-            textField.placeholder = "새 폴더 이름을 입력하세요"
+            textField.placeholder = localizedString(forKey: "N008_2", value: "Enter a new folder name")
         }
         
-        let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+        let confirmAction = UIAlertAction(title: localizedString(forKey: "C_Confirm", value: "Confirm"), style: .default) { _ in
             guard let newName = alert.textFields?.first?.text else { return }
             Task {
                 
@@ -40,10 +43,11 @@ class FolderCRUDAlert {
                 await MainActor.run {
                     switch result {
                     case .success(_):
-                        AlertHelper.notesInform(message: "폴더 생성 성공")
+                        AlertHelper.notesInform(message: localizedString(forKey: "N008_3", value: "New folder created"))
                         completion(true)
                     case .failure(let error):
-                        AlertHelper.notesInform(message: "폴더명 생성 실패", color: .systemRed) //TODO:색상
+                        AlertHelper.notesInform(message: localizedString(forKey: "N008_4", value: "Failed to create new folder"),
+                                                color: .systemRed) //TODO:색상
                         completion(false)
                     }
                 }
@@ -51,7 +55,7 @@ class FolderCRUDAlert {
         }
         confirmAction.isEnabled = false  // 초기에는 비활성화
         
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: {_ in 
+        alert.addAction(UIAlertAction(title: localizedString(forKey: "C_Cancel", value: "Cancel"), style: .cancel, handler: {_ in
             completion(false)
         }))
         alert.addAction(confirmAction)
@@ -66,23 +70,23 @@ class FolderCRUDAlert {
     }
     
     func beginRenameAlert(baseVC: UIViewController, originURL: URL, completion: ((Bool) -> Void)? ) {
-        let alert = UIAlertController(title: "폴더 이름 변경", message: nil, preferredStyle: .alert)
+        let alert = UIAlertController(title: localizedString(forKey: "N010_1", value: "Rename folder"), message: nil, preferredStyle: .alert)
         alert.addTextField { textField in
-            textField.placeholder = "변경할 폴더 이름을 입력하세요"
+            textField.placeholder = localizedString(forKey: "N010_2", value: "Enter the folder name you want to change")
             textField.text = originURL.lastPathComponent
         }
         
-        let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+        let confirmAction = UIAlertAction(title: localizedString(forKey: "C_Confirm", value: "Confirm"), style: .default) { _ in
             guard let newName = alert.textFields?.first?.text else { return }
             Task {
                 let result = await FolderService.shared.renameFolder(originURL: originURL, newName: newName)
                 await MainActor.run {
                     switch result {
                     case .success(_):
-                        AlertHelper.notesInform(message: "폴더명 변경 성공")
+                        AlertHelper.notesInform(message: localizedString(forKey: "N010_3", value: "Folder name changed"))
                         completion?(true)
                     case .failure(let error):
-                        AlertHelper.notesInform(message: "폴더명 변경 실패", color: .systemRed) //TODO:색상
+                        AlertHelper.notesInform(message: localizedString(forKey: "N010_4", value: "Failed to rename folder"), color: .systemRed) //TODO:색상
                         completion?(false)
                     }
                   
@@ -92,7 +96,7 @@ class FolderCRUDAlert {
         }
         confirmAction.isEnabled = false  // 초기에는 비활성화
         
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel) { _ in
+        alert.addAction(UIAlertAction(title: localizedString(forKey: "C_Cancel", value: "Cancel"), style: .cancel) { _ in
             completion?(false)
         })
         alert.addAction(confirmAction)

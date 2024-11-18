@@ -5,3 +5,41 @@
   Created by Anto-Yang on 11/14/24.
   
 */
+
+"C_Confirm" = "Confirm";
+"C_Cancel" = "Cancel";
+"N000_1" = "An error has occurred.";
+"N000_2" = "Please restart the app.";
+"N000_3" = "Please try again.";
+"N002_1" = "Select";
+"N002_2" = "Move";
+"N002_3" = "{COUNT} seleted";
+"N003_1" = "Folder List";
+"N003_2" = "Default Folder";
+"N004_1" = "Save Folder";
+"N005_1" = "Move To Folder";
+"N005_2" = "Move";
+"N005_3" = "Duplicate File Names Found";
+"N005_4" = "There are {DUPLICATES_COUNT} duplicate file names. How would you like to proceed?";
+"N005_5" = "Overwrite All";
+"N005_6" = "Keep All";
+"N005_7" = "Failed to move folder. ";
+"N005_8" = "{MOVED_COUNT} moved.";
+"N006_1" = "Edit";
+"N007_1" = "Settings";
+"N007_2" = "Photo Format";
+"N007_3" = "Email";
+"N007_4" = "Version";
+"N008_1" = "New Folder";
+"N008_2" = "Enter a new folder name.";
+"N008_3" = "New folder created.";
+"N008_4" = "Failed to create new folder.";
+"N009_1" = "Delete folder";
+"N009_2" = "All files in the folder will be deleted together.";
+"N009_3" = "Folder deleted.";
+"N003_4" = "Failed to delete folder.";
+"N010_1" = "Rename folder";
+"N010_2" = "Enter the folder name you want to change.";
+"N010_3" = "Folder name changed.";
+"N010_4" = "Failed to rename folder.";
+

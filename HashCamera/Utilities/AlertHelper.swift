@@ -20,10 +20,10 @@ class AlertHelper {
         
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
-        let confirmAction = UIAlertAction(title: "확인", style: .default) { (_) in
+        let confirmAction = UIAlertAction(title: localizedString(forKey: "C_Confirm", value: "Confirm"), style: .default) { (_) in
             confirmCompletion()
         }
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel) { (_) in
+        let cancelAction = UIAlertAction(title: localizedString(forKey: "C_Cancel", value: "Cancel"), style: .cancel) { (_) in
             cancelCompletion?()
         }
         
@@ -42,7 +42,7 @@ class AlertHelper {
         
         
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let confirmAction = UIAlertAction(title: "확인", style: .default) { (_) in
+        let confirmAction = UIAlertAction(title: localizedString(forKey: "C_Confirm", value: "Confirm"), style: .default) { (_) in
             confirmCompletion()
         }
         alert.addAction(confirmAction)

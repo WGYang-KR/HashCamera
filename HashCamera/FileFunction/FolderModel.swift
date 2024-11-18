@@ -15,7 +15,7 @@ struct FolderModel: Codable {
     var name: String {
         switch type {
         case .defaultFolder:
-            return "Default Folder"
+            return localizedString(forKey: "N003_2", value: "Default Folder")
         case .folder:
             return url.lastPathComponent
         }

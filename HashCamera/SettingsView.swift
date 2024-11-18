@@ -27,7 +27,7 @@ struct SettingsView: View {
             
             HStack(alignment: .center) {
                 Spacer()
-                Text("설정")
+                Text(localizedString(forKey: "N007_1", value: "Settings"))
                     .font(.headline)
                     .padding()
                 Spacer()
@@ -45,7 +45,7 @@ struct SettingsView: View {
 //                    
 //                }
                 
-                Picker("Photo Format", selection: $photoFormat) {
+                Picker(localizedString(forKey: "N007_2", value: "Photo Format"), selection: $photoFormat) {
                     ForEach(PhotoFileFormat.allCases) {
                         Text("\($0.string)")
                             .tag($0)
@@ -70,13 +70,13 @@ struct SettingsView: View {
                                    """,
                                        to: "anto.wg.yang@gmail.com"  )
                     }, label: {
-                        Text("Help & Feedback")
+                        Text(localizedString(forKey: "N007_3", value: "Email"))
                     })
                 }
                 
                 Section {
                     HStack(alignment: .center) {
-                        Text("Version")
+                        Text(localizedString(forKey: "N007_4", value: "Version"))
                         Spacer()
                         Text(AppStatus.fullVersion)
                         
@@ -85,7 +85,7 @@ struct SettingsView: View {
                 
             }
         }
-        .navigationTitle("설정")
+        .navigationTitle(localizedString(forKey: "N007_1", value: "Settings"))
     }
     
     private var closeButton: some View {

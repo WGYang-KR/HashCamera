@@ -74,7 +74,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
                                              target: self,
                                              action: #selector(naviListBtnTapped))]
         
-        selectionModeBtn = UIBarButtonItem(title: "선택",
+        selectionModeBtn = UIBarButtonItem(title: localizedString(forKey: "N002_1", value: "Select"),
                                               style: .plain,
                                               target: self,
                                               action: #selector(naviSelectionBtnTapped))
@@ -96,7 +96,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
                                        style: .plain,
                                        target: self,
                                        action: #selector(trashBtnTapped))
-        folderBtn = UIBarButtonItem(title: "이동",
+        folderBtn = UIBarButtonItem(title: localizedString(forKey: "N002_2", value: "Move"),
                                     style: .done,
                                     target: self,
                                     action: #selector(moveBtnTapped))
@@ -281,7 +281,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     func setSelectionMode(_ selectionMode: Bool) {
         guard let navigationController else { return }
         navigationController.setToolbarHidden(!selectionMode, animated: true)
-        selectionModeBtn.title = selectionMode ? "취소" : "선택"
+        selectionModeBtn.title = selectionMode ? localizedString(forKey: "C_Cancel", value: "Cancel") : localizedString(forKey: "N002_1", value: "Select")
         
         collectionView.indexPathsForSelectedItems?.forEach{collectionView.deselectItem(at: $0, animated: false)}
         vm.selectedIndexPaths.removeAll()
@@ -335,7 +335,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     }
     
     @objc func updateToolbarUI() {
-        toolBarLabel.text = "\(vm.selectedFiles().count)개 선택"
+        toolBarLabel.text = localizedString(forKey: "N002_3", value: "{COUNT} seleted").replacingOccurrences(of: "{COUNT}", with: "\(vm.selectedFiles().count)")
         toolBarLabel.sizeToFit()
         
         let hasSelection = vm.selectedFiles().count > 0

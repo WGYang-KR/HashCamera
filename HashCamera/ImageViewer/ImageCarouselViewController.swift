@@ -203,16 +203,16 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     
     ///네비바를 초기화한다
     private func initNavBar() {
-        editBarBtn = UIBarButtonItem(title: "편집",
+        editBarBtn = UIBarButtonItem(title: localizedString(forKey: "N006_1", value: "Edit"),
                                   style: .plain,
                                   target: self,
                                   action: #selector(editBarBtnTapped))
-        cancelBarBtn = UIBarButtonItem(title: "취소",
+        cancelBarBtn = UIBarButtonItem(title: localizedString(forKey: "C_Cancel", value: "Cancel"),
                                     style: .plain,
                                     target: self,
                                     action: #selector(cancelBarBtnTapped))
         cancelBarBtn.tintColor = .orange
-        confirmBarBtn = UIBarButtonItem(title: "확인",
+        confirmBarBtn = UIBarButtonItem(title: localizedString(forKey: "C_Confirm", value: "Confirm"),
                                      style: .plain,
                                      target: self,
                                      action: #selector(confirmBarBtnTapped))
