@@ -104,7 +104,7 @@ class FolderCRUDAlert {
         // 텍스트 필드 변경 감지
         NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object: alert.textFields?.first, queue: .main) { _ in
             let text = alert.textFields?.first?.text ?? ""
-            confirmAction.isEnabled = !text.isEmpty && !Self.folderNames.contains(text) && Self.isFolderNameValid(text)
+            confirmAction.isEnabled = !text.isEmpty && text != originURL.lastPathComponent && !Self.folderNames.contains(text) && Self.isFolderNameValid(text)
         }
         
         baseVC.present(alert, animated: true, completion: nil)
