@@ -216,7 +216,7 @@ class MoveToFolderVC: UIViewController, UITableViewDataSource, UITableViewDelega
                                     message: localizedString(forKey: "N000_3", value: "Please try again."),
                                     confirmCompletion: {})
         } else {
-            AlertHelper.notesInform(message: localizedString(forKey: "N005_8", value: "{MOVED_COUNT} moved").replacingOccurrences(of: "{MOVED_COUNT", with: "\(results.count)"))
+            AlertHelper.notesInform(message: localizedString(forKey: "N005_8", value: "{MOVED_COUNT} moved").replacingOccurrences(of: "{MOVED_COUNT}", with: "\(results.count)"))
             //성공
             moveBackVC(animated: true)
         }
