@@ -36,8 +36,6 @@
 		6A3796562BB5A47900BAFC19 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3796552BB5A47900BAFC19 /* SettingsView.swift */; };
 		6A3796582BB5A4CD00BAFC19 /* AppStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3796572BB5A4CD00BAFC19 /* AppStatus.swift */; };
 		6A6B92FA2CEA08A0005B3BCA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A6B92F92CEA08A0005B3BCA /* GoogleService-Info.plist */; };
-		6A6B92FD2CEA0AB6005B3BCA /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 6A6B92FC2CEA0AB6005B3BCA /* FirebaseAnalytics */; };
-		6A6B92FF2CEA0AB6005B3BCA /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 6A6B92FE2CEA0AB6005B3BCA /* FirebaseCrashlytics */; };
 		6A6C4C572C8A049B007F794F /* FolderListVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6C4C562C8A049B007F794F /* FolderListVM.swift */; };
 		6A73A1022C5143B2007B6CAE /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1012C5143B2007B6CAE /* Utils.swift */; };
 		6A73A1052C610A2D007B6CAE /* FolderListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */; };
@@ -177,8 +175,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6A6B92FF2CEA0AB6005B3BCA /* FirebaseCrashlytics in Frameworks */,
-				6A6B92FD2CEA0AB6005B3BCA /* FirebaseAnalytics in Frameworks */,
 				68503708EA7E4DEC8BC3BEF6 /* Pods_HashCamera.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -407,6 +403,7 @@
 				6A8B31F32AE7983E00D24E49 /* Frameworks */,
 				6A8B31F42AE7983E00D24E49 /* Resources */,
 				B09689EB759C1A7319D1F79A /* [CP] Embed Pods Frameworks */,
+				6A971F6E2CEF9F3400B7851C /* Firebase crashlytics */,
 			);
 			buildRules = (
 			);
@@ -443,7 +440,6 @@
 			);
 			mainGroup = 6A8B31ED2AE7983E00D24E49;
 			packageReferences = (
-				6A6B92FB2CEA0AB6005B3BCA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 6A8B31F72AE7983E00D24E49 /* Products */;
 			projectDirPath = "";
@@ -482,6 +478,29 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		6A971F6E2CEF9F3400B7851C /* Firebase crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+			);
+			name = "Firebase crashlytics";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${CONFIGURATION}\" != \"Debug\" ]; then\n    \"${PODS_ROOT}/FirebaseCrashlytics/run\"\nfi\n";
+		};
 		9CAF7CF959C23D8A86EBA630 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -843,30 +862,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		6A6B92FB2CEA0AB6005B3BCA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 11.5.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		6A6B92FC2CEA0AB6005B3BCA /* FirebaseAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6A6B92FB2CEA0AB6005B3BCA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalytics;
-		};
-		6A6B92FE2CEA0AB6005B3BCA /* FirebaseCrashlytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6A6B92FB2CEA0AB6005B3BCA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseCrashlytics;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6A8B31EE2AE7983E00D24E49 /* Project object */;
 }

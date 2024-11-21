@@ -13,6 +13,9 @@ target 'HashCamera' do
   pod 'SideMenu'
   pod 'SDWebImage', '~> 5.0'
   pod 'SwiftEntryKit', '2.0.0'
+  pod 'FirebaseAnalytics'
+  pod 'FirebaseCrashlytics'
+  pod 'FirebaseRemoteConfig'
   
   post_install do |installer|
     installer.generated_projects.each do |project|
