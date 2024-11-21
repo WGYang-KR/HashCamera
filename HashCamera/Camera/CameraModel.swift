@@ -400,7 +400,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         //파일 포맷에 맞춰 Data로 변환
         var croppedImageData: Data?
         switch CameraSetting.photoFileFormat {
-        case .heif:
+        case .heic:
             croppedImageData = croppedImage.heic(compressionQuality: 1.0)
         case .jpeg:
             croppedImageData = croppedImage.jpegData(compressionQuality: 1.0)

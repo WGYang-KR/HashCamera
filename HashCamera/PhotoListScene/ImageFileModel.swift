@@ -43,11 +43,11 @@ class ImageFileModel {
         creationDate = resourceValues?.creationDate ?? Date.distantPast
         modificationDate = resourceValues?.contentModificationDate ?? creationDate
         
-        hcLog("File: \(fileName)")
-        hcLog("File Size: \(fileSize) bytes")
-        hcLog("Creation Date: \(creationDate)")
-        hcLog("Modification Date: \(modificationDate)")
-        
+//        hcLog("File: \(fileName)")
+//        hcLog("File Size: \(fileSize) bytes")
+//        hcLog("Creation Date: \(creationDate)")
+//        hcLog("Modification Date: \(modificationDate)")
+//        
         // 이미지의 메타데이터에서 사진 찍은 날짜 가져오기
         if let imageSource = CGImageSourceCreateWithURL(fileURL as CFURL, nil),
            let metadata = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [String: Any],
