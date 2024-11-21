@@ -108,7 +108,6 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         hcLog("셀 선택: \(indexPath)")
         vm.selectedIndexPath = indexPath
-        dismiss(animated: true)
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
