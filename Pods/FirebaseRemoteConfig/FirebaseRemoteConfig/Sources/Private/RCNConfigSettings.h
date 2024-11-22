@@ -22,7 +22,7 @@
 
 /// This internal class contains a set of variables that are unique among all the config instances.
 /// It also handles all metadata and internal metadata. This class is not thread safe and does not
-/// inherently allow for synchronized accesss. Callers are responsible for synchronization
+/// inherently allow for synchronized access. Callers are responsible for synchronization
 /// (currently using serial dispatch queues).
 @interface RCNConfigSettings : NSObject
 
@@ -41,9 +41,11 @@
 /// Device data version of checkin information.
 @property(nonatomic, copy) NSString *deviceDataVersion;
 /// InstallationsID.
-@property(nonatomic, copy) NSString *configInstallationsIdentifier;
+/// @note The property is atomic because it is accessed across multiple threads.
+@property(atomic, copy) NSString *configInstallationsIdentifier;
 /// Installations token.
-@property(nonatomic, copy) NSString *configInstallationsToken;
+/// @note The property is atomic because it is accessed across multiple threads.
+@property(atomic, copy) NSString *configInstallationsToken;
 
 /// A list of successful fetch timestamps in milliseconds.
 /// TODO Not used anymore. Safe to remove.

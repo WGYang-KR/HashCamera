@@ -6,12 +6,12 @@ target 'HashCamera' do
   use_frameworks!
   
   # Pods for HashCamera
-  pod 'RxSwift', '~> 6.5.0'
-  pod 'RxCocoa', '~> 6.5.0'
+  pod 'RxSwift'
+  pod 'RxCocoa'
   pod 'RxGesture'
-  pod 'SnapKit', '5.6.0'
+  pod 'SnapKit'
   pod 'SideMenu'
-  pod 'SDWebImage', '~> 5.0'
+  pod 'SDWebImage'
   pod 'SwiftEntryKit', '2.0.0'
   pod 'FirebaseAnalytics'
   pod 'FirebaseCrashlytics'
