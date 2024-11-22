@@ -54,6 +54,7 @@
 		6A8B32032AE7983F00D24E49 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A8B32022AE7983F00D24E49 /* Assets.xcassets */; };
 		6A8B32062AE7983F00D24E49 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A8B32042AE7983F00D24E49 /* LaunchScreen.storyboard */; };
 		6A8B32152AE7A03000D24E49 /* CamVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A8B32142AE7A03000D24E49 /* CamVC.swift */; };
+		6A8C3AF82CF04F1900127D4F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6A8C3AF72CF04F1900127D4F /* PrivacyInfo.xcprivacy */; };
 		6A961E602B011FA100A05F9B /* CALayer+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A961E5F2B011FA100A05F9B /* CALayer+Ext.swift */; };
 		6A971F6C2CEB915200B7851C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A971F6A2CEB915200B7851C /* InfoPlist.strings */; };
 		6AA609632CBE5E880011BB59 /* SelectSaveFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AA609622CBE5E880011BB59 /* SelectSaveFolderVC.xib */; };
@@ -135,6 +136,7 @@
 		6A8B32052AE7983F00D24E49 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6A8B32072AE7983F00D24E49 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6A8B32142AE7A03000D24E49 /* CamVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CamVC.swift; sourceTree = "<group>"; };
+		6A8C3AF72CF04F1900127D4F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		6A961E5F2B011FA100A05F9B /* CALayer+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Ext.swift"; sourceTree = "<group>"; };
 		6A971F6B2CEB915200B7851C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6A971F6D2CEB915600B7851C /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -292,6 +294,7 @@
 				6A8B31FF2AE7983E00D24E49 /* Main.storyboard */,
 				6A8B32022AE7983F00D24E49 /* Assets.xcassets */,
 				6A8B32042AE7983F00D24E49 /* LaunchScreen.storyboard */,
+				6A8C3AF72CF04F1900127D4F /* PrivacyInfo.xcprivacy */,
 				6A8B32072AE7983F00D24E49 /* Info.plist */,
 				6A6B92F92CEA08A0005B3BCA /* GoogleService-Info.plist */,
 				6AE8CF9E2AF4BF0D0063C8C6 /* HCError.swift */,
@@ -465,6 +468,7 @@
 				6A755F782CBE3286008B5F95 /* CamVC.xib in Resources */,
 				6AA6096A2CBEAE060011BB59 /* SelectSaveFolderItemCell.xib in Resources */,
 				6A7A50152CE63E4F006DAA22 /* Localizable.strings in Resources */,
+				6A8C3AF82CF04F1900127D4F /* PrivacyInfo.xcprivacy in Resources */,
 				6AA609632CBE5E880011BB59 /* SelectSaveFolderVC.xib in Resources */,
 				6A8B32012AE7983E00D24E49 /* Main.storyboard in Resources */,
 				6A7D4F692C775DED00ED0C59 /* FolderListVC.xib in Resources */,
