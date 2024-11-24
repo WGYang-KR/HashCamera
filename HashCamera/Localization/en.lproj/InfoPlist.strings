@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  HashCamera
+
+  Created by Anto-Yang on 11/19/24.
+  
+*/
+
+NSCameraUsageDescription = "We need access to your camera to take photos.";

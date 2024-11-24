@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SelectSaveFolderVC" customModule="HashCamera" customModuleProvider="target">
+            <connections>
+                <outlet property="tableView" destination="upU-bf-JC5" id="pkp-ix-OQ9"/>
+                <outlet property="view" destination="8TM-VZ-cEH" id="UWc-cs-59V"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="8TM-VZ-cEH">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="insetGrouped" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="upU-bf-JC5">
+                    <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                </tableView>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="OuX-6R-SZM"/>
+            <constraints>
+                <constraint firstItem="upU-bf-JC5" firstAttribute="top" secondItem="8TM-VZ-cEH" secondAttribute="top" id="0EQ-lJ-iIK"/>
+                <constraint firstItem="upU-bf-JC5" firstAttribute="leading" secondItem="OuX-6R-SZM" secondAttribute="leading" id="5g7-qT-LNO"/>
+                <constraint firstItem="upU-bf-JC5" firstAttribute="trailing" secondItem="OuX-6R-SZM" secondAttribute="trailing" id="h86-Jc-F2w"/>
+                <constraint firstAttribute="bottom" secondItem="upU-bf-JC5" secondAttribute="bottom" id="zDH-aF-mXd"/>
+            </constraints>
+            <point key="canvasLocation" x="138" y="21"/>
+        </view>
+    </objects>
+</document>
