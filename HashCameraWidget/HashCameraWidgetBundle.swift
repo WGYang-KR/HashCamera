@@ -12,6 +12,5 @@ import SwiftUI
 struct HashCameraWidgetBundle: WidgetBundle {
     var body: some Widget {
         HashCameraWidget()
-        HashCameraWidgetControl()
     }
 }
