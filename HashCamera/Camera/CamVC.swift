@@ -240,9 +240,25 @@ class CamVC: UIViewController {
         
         camVM.errorOccuredRx.bind { [weak self] error in
             guard let self else { return }
+            var message = localizedString(forKey: "N000_2", value: "Please, relaunch the app.")
+            
+
+
+#if DEBUG
+            if let captureError = error as? CameraModel.PostCaputreProcessError {
+                switch captureError {
+                case .avCapturePhotoToData(let log):
+                    message = log
+                default:
+                    break
+                }
+            }
+            #endif
+            
             AlertHelper.alertInform(baseVC: self,
                                     title: localizedString(forKey: "N000_1", value: "An error occurred."),
-                                    message: localizedString(forKey: "N000_2", value: "Please, relaunch the app."), confirmCompletion: {})
+                                    message: message,
+                                    confirmCompletion: {})
         }
         .disposed(by: disposeBag)
     
