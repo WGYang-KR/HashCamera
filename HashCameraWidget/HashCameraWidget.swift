@@ -33,7 +33,7 @@ struct FolderListProvider: TimelineProvider {
 
     // 샘플 데이터 생성
     private func sampleFolders() -> [String] {
-        return ["Documents", "Photos", "Music", "Videos"]
+        return  ["Documents", "Photos", "Buisness Photos"]
     }
 
     // App Group을 통해 폴더 데이터 가져오기
@@ -50,38 +50,99 @@ struct FolderListWidgetView: View {
 
     var body: some View {
         VStack {
-            HStack {
+            HStack(alignment: .top) {
                 Text("HashCamera")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(
+                         LinearGradient(
+                             gradient: Gradient(colors: [Color.majorLight,Color.majorDark]),
+                             startPoint: .top,
+                             endPoint: .bottom
+                         )
+                     )
                 Spacer()
-            }
-            Spacer(minLength: 16)
-            GeometryReader { geometry in
-                    HStack() {
-                        ForEach(entry.folderList, id: \.self) { folderName in
-                            VStack(spacing: 4) {
-                                Image(systemName: "folder.fill") // 공통 폴더 아이콘
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(height: geometry.size.height / 3)
-                                    .foregroundColor(.yellow)
-                                
-                                Text(folderName) // 폴더 이름
-                                    .font(.caption)
-                                    .lineLimit(2)
-                            }
-                            .padding(4)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.blue.opacity(0.2))
-                            .cornerRadius(8)
+                HStack(spacing: 4) {
+                    Link(destination: URL(string: "hashcamera://widget_select_camera")!) {
+                        Button {
+                            
+                        } label: {
+                            Image(systemName: "camera")
                         }
                     }
-                    .background(Color.orange.opacity(0.2))
+                    
+                    Link(destination: URL(string: "hashcamera://widget_select_settings")!) {
+                       Button {
+                           
+                       } label: {
+                           Image(systemName: "gearshape")
+                       }
+                   }
 
+                }
+
+            }
+            
+            VStack {
+                ForEach(0..<2) { rowIndex in
+                    HStack {
+                        ForEach(0..<2) { columnIndex in
+                            let index = rowIndex * 2 + columnIndex
+                            if index < entry.folderList.count {
+                                // Link로 감싸기
+                                folderItemButton(for: entry.folderList[index], index: index)
+                            } else {
+                                addFolderButton()
+                            }
+                        }
+                    }
+                }
             }
       
         }
         .applyContainerBackground()
     }
+    
+    func addFolderButton() -> some View {
+        return Link(destination: URL(string: "hashcamera://widget_add_folder")!) {
+            Button {
+                
+            } label: {
+                HStack {
+                    Spacer(minLength: 0.0)
+                    Image(systemName: "plus")
+                    Spacer(minLength: 0.0)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+          
+        }
+    }
+    
+    func folderItemButton(for folderName: String, index: Int) -> some View {
+        // URL 설정 (링크 방식으로만 동작 가능)
+        let url = URL(string: "hashcamera://widget_select_folder/\(index)")! // 특정 폴더의 고유 URL
+        
+        return Link(destination: url) {
+            Button {
+                
+            } label: {
+                HStack(spacing:4) {
+                    Image(systemName: "camera.fill")
+                    Text(folderName)
+                        .font(.caption2)
+                        .fontWeight(.semibold)
+                    
+                    Spacer(minLength: 0.0)
+                }
+                .frame(maxWidth: .infinity,maxHeight: .infinity)
+            }
+        }
+    }
+    
+
+
+    
 }
 
 
@@ -101,7 +162,7 @@ extension View {
     @ViewBuilder
     func applyContainerBackground() -> some View {
         if #available(iOS 17, *) {
-            self.containerBackground(Color.gray.gradient, for: .widget)
+            self.containerBackground(Color(.systemBackground), for: .widget)
 
         } else {
             ZStack {
@@ -117,7 +178,7 @@ struct FolderListWidget_Previews: PreviewProvider {
     static var previews: some View {
         FolderListWidgetView(entry: FolderListEntry(
             date: Date(),
-            folderList: ["Category01", "Category02", "Category03", "Meal Records"]
+            folderList: ["Documents", "Photos", "Buisness Photos"]//, "Meal Records"]
         ))
         .previewContext(WidgetPreviewContext(family: .systemMedium))
     }
