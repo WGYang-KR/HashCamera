@@ -15,6 +15,7 @@ class CameraSetting {
         case cameraSettingPosition
         case cmeraSettingPhotoFileFormat
         case cameraSettingSelectedFolder
+
     }
     
     ///위치 저장 여부
