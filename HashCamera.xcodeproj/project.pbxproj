@@ -218,6 +218,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		6A0470AE2CFB5E1F004EAA92 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				HashCameraWidget.swift,
+			);
+			target = 6A8B31F52AE7983E00D24E49 /* HashCamera */;
+		};
 		6AD05D4B2CF3478E00DA4274 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -228,7 +235,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		6AD05D392CF3478D00DA4274 /* HashCameraWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (6AD05D4B2CF3478E00DA4274 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = HashCameraWidget; sourceTree = "<group>"; };
+		6AD05D392CF3478D00DA4274 /* HashCameraWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (6A0470AE2CFB5E1F004EAA92 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 6AD05D4B2CF3478E00DA4274 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = HashCameraWidget; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */

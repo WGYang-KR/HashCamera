@@ -69,6 +69,8 @@ struct FolderListWidgetView: View {
                         } label: {
                             Image(systemName: "camera")
                         }
+                        .buttonStyle(.bordered)
+                        .buttonBorderShape(.capsule)
                     }
                     
                     Link(destination: URL(string: "hashcamera://widget_select_settings")!) {
@@ -77,6 +79,8 @@ struct FolderListWidgetView: View {
                        } label: {
                            Image(systemName: "gearshape")
                        }
+                       .buttonStyle(.bordered)
+                       .buttonBorderShape(.capsule)
                    }
 
                 }
@@ -115,6 +119,8 @@ struct FolderListWidgetView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .buttonStyle(.bordered)
+            .buttonBorderShape(.capsule)
           
         }
     }
@@ -137,6 +143,8 @@ struct FolderListWidgetView: View {
                 }
                 .frame(maxWidth: .infinity,maxHeight: .infinity)
             }
+            .buttonStyle(.bordered)
+            .buttonBorderShape(.capsule)
         }
     }
     
