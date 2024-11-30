@@ -23,6 +23,8 @@
 		6A0470892CFB4D37004EAA92 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A8B32022AE7983F00D24E49 /* Assets.xcassets */; };
 		6A04708A2CFB4D4B004EAA92 /* SystemUIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1072C6A3DF5007B6CAE /* SystemUIImage.swift */; };
 		6A04708C2CFB4D89004EAA92 /* VC+Navi+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A04708B2CFB4D7D004EAA92 /* VC+Navi+Ext.swift */; };
+		6A0470AA2CFB540E004EAA92 /* WidgetSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0470A92CFB540E004EAA92 /* WidgetSettingView.swift */; };
+		6A0470AC2CFB54A5004EAA92 /* WidgetSettingVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0470AB2CFB549D004EAA92 /* WidgetSettingVM.swift */; };
 		6A0486432C49519000C3989F /* PhotoListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0486412C49519000C3989F /* PhotoListVC.swift */; };
 		6A0486442C49519000C3989F /* PhotoListVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0486422C49519000C3989F /* PhotoListVC.xib */; };
 		6A04864A2C49617500C3989F /* PhotoListVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0486492C49617500C3989F /* PhotoListVM.swift */; };
@@ -131,6 +133,8 @@
 		6A04706E2CF89E57004EAA92 /* HashCameraWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HashCameraWidgetExtension.entitlements; sourceTree = "<group>"; };
 		6A0470832CFB4CAA004EAA92 /* WidgetSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSetting.swift; sourceTree = "<group>"; };
 		6A04708B2CFB4D7D004EAA92 /* VC+Navi+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VC+Navi+Ext.swift"; sourceTree = "<group>"; };
+		6A0470A92CFB540E004EAA92 /* WidgetSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSettingView.swift; sourceTree = "<group>"; };
+		6A0470AB2CFB549D004EAA92 /* WidgetSettingVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSettingVM.swift; sourceTree = "<group>"; };
 		6A0486412C49519000C3989F /* PhotoListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListVC.swift; sourceTree = "<group>"; };
 		6A0486422C49519000C3989F /* PhotoListVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PhotoListVC.xib; sourceTree = "<group>"; };
 		6A0486492C49617500C3989F /* PhotoListVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListVM.swift; sourceTree = "<group>"; };
@@ -263,6 +267,15 @@
 			path = ImageViewer;
 			sourceTree = "<group>";
 		};
+		6A0470A82CFB53ED004EAA92 /* WidgetSettingScene */ = {
+			isa = PBXGroup;
+			children = (
+				6A0470AB2CFB549D004EAA92 /* WidgetSettingVM.swift */,
+				6A0470A92CFB540E004EAA92 /* WidgetSettingView.swift */,
+			);
+			path = WidgetSettingScene;
+			sourceTree = "<group>";
+		};
 		6A04863C2C494FAB00C3989F /* PhotoListScene */ = {
 			isa = PBXGroup;
 			children = (
@@ -354,6 +367,7 @@
 				6A04863C2C494FAB00C3989F /* PhotoListScene */,
 				6A0188662C988CA1006F0A85 /* ImageViewer */,
 				6ACAB0842C9C78350009553E /* MoveToFolderScene */,
+				6A0470A82CFB53ED004EAA92 /* WidgetSettingScene */,
 				6A1C2F1B2B0CFBE20085C3E1 /* HashCamera.entitlements */,
 				6A3796552BB5A47900BAFC19 /* SettingsView.swift */,
 				6A8B31F92AE7983E00D24E49 /* AppDelegate.swift */,
@@ -694,6 +708,7 @@
 				6A0CAA992CA1B196006BC4D3 /* MoveToFolderListItemCell.swift in Sources */,
 				6AE8CFA12AF4D32D0063C8C6 /* CamPreviewView.swift in Sources */,
 				6A3796582BB5A4CD00BAFC19 /* AppStatus.swift in Sources */,
+				6A0470AC2CFB54A5004EAA92 /* WidgetSettingVM.swift in Sources */,
 				6A04708C2CFB4D89004EAA92 /* VC+Navi+Ext.swift in Sources */,
 				6AA63E612CD8F0B000AC0E97 /* UIView+GestureRecognizer.swift in Sources */,
 				6A73A1052C610A2D007B6CAE /* FolderListItemCell.swift in Sources */,
@@ -709,6 +724,7 @@
 				6A6C4C572C8A049B007F794F /* FolderListVM.swift in Sources */,
 				6A01887D2C988CF2006F0A85 /* ImageViewerTransitionPresentationManager.swift in Sources */,
 				6A7D4F682C775DED00ED0C59 /* FolderListVC.swift in Sources */,
+				6A0470AA2CFB540E004EAA92 /* WidgetSettingView.swift in Sources */,
 				6A2529D72B162BAA00721202 /* PhotoListItemCell.swift in Sources */,
 				6AADDC102C95E2C80093EECC /* ImageFileModel.swift in Sources */,
 				6A0188742C988CF2006F0A85 /* UIImageView_Extensions.swift in Sources */,
@@ -920,7 +936,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -960,7 +976,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
