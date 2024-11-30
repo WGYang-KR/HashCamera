@@ -9,7 +9,7 @@ import UIKit
 import AVFoundation
 import RxSwift
 import RxRelay
-
+import FirebaseCrashlytics
 
 //사진 촬영을 제외하고는 rx를 이용해서 get, set
 class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
@@ -42,7 +42,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     ///화면비율 설정 set get
     var aspectRatio: AspectRatioType
     ///촬영 완료된 사진 반환 get
-    let capturedPhotoData = PublishRelay<Result<Data,Error>>()
+    let capturedPhotoData = PublishRelay<Result<Data,PostCaputreProcessError>>()
     ///에러 get
     let errorOccuredRx = PublishRelay<HCError>()
     
@@ -383,11 +383,40 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     //MARK: 사진 처리
     
     //기존 Exif 유지하면서, 비율처리된 이미지로 교체
-    private func cropAVPhotoData(_ avCapturePhoto: AVCapturePhoto, aspectRatio: CGFloat) -> Result<Data, CropAVPhotoDataError> {
+    private func cropAVPhotoData(_ avCapturePhoto: AVCapturePhoto, aspectRatio: CGFloat) -> Result<Data, PostCaputreProcessError> {
         hcLog("변환 시작")
         
+   //에러 파악위한 상태 메시지 만들기
+        var statusMsg = ""
+        statusMsg += "avCapturePhoto: \(avCapturePhoto)\n"
+        statusMsg += "videoInput: \(String(describing: videoInput))\n"
+   
+        var photoOutputDump = ""
+        dump(photoOutput, to: &photoOutputDump)
+        statusMsg += "photoOutput: \(photoOutputDump)\n"
+        
+        statusMsg += "captureSession isRunnig: \(captureSession.isRunning)\n"
+        if let videoInput {
+            statusMsg += "captureSession containsInput: \(captureSession.inputs.contains(videoInput))\n"
+        } else {
+            statusMsg += "captureSession containsInput: nil\n"
+        }
+        statusMsg += "captureSession containsOutput: \(captureSession.outputs.contains(photoOutput))\n"
+        hcLog(statusMsg)
+        
         //avCapturePhoto의 이미지 Data를 추출
-        guard let originalPhotoData = avCapturePhoto.fileDataRepresentation() else { return .failure(.avCapturePhotoToData)}
+        guard let originalPhotoData = avCapturePhoto.fileDataRepresentation() else {
+            let error = NSError.init(domain: "PostCaputreProcessError.avCapturePhotoToData",
+                                     code: -0001,
+                                     userInfo: [
+                                        NSLocalizedDescriptionKey: "PostCaputreProcessError.avCapturePhotoToData",
+                                        NSLocalizedFailureReasonErrorKey: statusMsg
+                                     ])
+            
+            Crashlytics.crashlytics().record(error: error)
+            
+            return .failure(.avCapturePhotoToData(log: statusMsg))}
+        
         
         //UIImage로 변환하여 자르기
         guard let originUIImage = UIImage(data: originalPhotoData) else { return .failure(.dataToUIImage) }
@@ -437,8 +466,8 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         hcLog("변환 종료")
         return .success(resultPhotoData as Data)
     }
-    enum CropAVPhotoDataError: Error {
-        case avCapturePhotoToData
+    enum PostCaputreProcessError: Error {
+        case avCapturePhotoToData(log: String)
         case dataToUIImage
         case uiImageToCGImage
         case cropCGImage
