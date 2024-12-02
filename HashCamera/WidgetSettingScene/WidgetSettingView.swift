@@ -89,11 +89,11 @@ struct WidgetSettingView: View {
                     .listStyle(.insetGrouped)
                     .environment(\.defaultMinListHeaderHeight, 0)
                     .onAppear {
-#if DEBUG
-                        vm.initSampleData()
-#else
-                        vm.initFolders()
-#endif
+                        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+                            vm.initSampleData()
+                        } else {
+                            vm.initVM()
+                        }
                     }
                 }
                 .background(Color(uiColor: .secondarySystemBackground))

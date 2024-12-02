@@ -31,10 +31,22 @@ struct FolderModel: Codable, Hashable {
           // 객체를 고유하게 식별할 수 있는 속성으로 해시값을 생성
           hasher.combine(url) // 고유한 식별자로 url를 사용
       }
-      
-      // `==` 연산자 구현
-      static func == (lhs: FolderModel, rhs: FolderModel) -> Bool {
-          return lhs.url == rhs.url
-      }
-
+    
+    // `==` 연산자 구현(UUID이후 /Documents 부터 비교)
+    static func == (lhs: FolderModel, rhs: FolderModel) -> Bool {
+        guard let lhsIndex = lhs.url.pathComponents.firstIndex(of: "Documents"),
+              let rhsIndex = rhs.url.pathComponents.firstIndex(of: "Documents") else {
+            return false
+        }
+        
+        // "Documents" 이후의 경로만 비교
+        let lhsRelativePath = lhs.url.pathComponents[lhsIndex...]
+        let rhsRelativePath = rhs.url.pathComponents[rhsIndex...]
+        return lhsRelativePath == rhsRelativePath
+    }
+    
+    // '===' 연산자 구현(전체 경로가 같아야함)
+    static func === (lhs: FolderModel, rhs: FolderModel) -> Bool {
+        return lhs.url == rhs.url
+    }
 }
