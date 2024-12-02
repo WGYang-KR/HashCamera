@@ -33,14 +33,13 @@ struct FolderListProvider: TimelineProvider {
 
     // 샘플 데이터 생성
     private func sampleFolders() -> [String] {
-        return  ["Documents", "Photos", "Buisness Photos"]
+        return  ["Documents", "Diets", "Work Photos"]
     }
 
     // App Group을 통해 폴더 데이터 가져오기
     private func fetchFolders() -> [String] {
         // 실제 앱 데이터 로드
-        let defaults = UserDefaults(suiteName: "group.com.yourapp.identifier")
-        return defaults?.stringArray(forKey: "FolderNames") ?? sampleFolders()
+        return WidgetSetting.folderList.map { $0.name }
     }
 }
 
