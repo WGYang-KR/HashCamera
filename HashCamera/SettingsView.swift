@@ -76,7 +76,7 @@ struct SettingsView: View {
             .navigationBarItems(leading: Button(action: {
                 presentationMode.wrappedValue.dismiss()
             }) {
-                Image(uiImage: SystemUIImage.xmark!)
+                Image(uiImage: SystemUIImage.xmark)
             })
         } //./NavigationView
     }

@@ -13,15 +13,25 @@ struct WidgetSettingView: View {
     
     // 선택된 아이템을 저장하는 배열
     @State private var selectedItems: [String] = []
+
+    init() {
+        UITableView.appearance().backgroundColor = UIColor.systemRed // 전체 리스트 배경 변경
+    }
     
     var body: some View {
             GeometryReader { geometry in
                 
-                VStack {
+                VStack(spacing:0.0) {
+                    
+                    Text("Widget Preview")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 22)
+                        .padding(.vertical, 8)
                     
                     Rectangle()
                         .foregroundStyle(Color.cyan.opacity(0.2))
-                    //                    .frame(width: 350, height: 150)
                         .frame(height:geometry.size.height/4)
                         .overlay {
                             FolderListWidgetView(entry: FolderListEntry(
@@ -31,20 +41,40 @@ struct WidgetSettingView: View {
                             .padding(16)
                         }
                         .cornerRadius(16)
-                        .padding(16)
+                        .padding(.horizontal, 16).padding(.bottom, 8)
+                        
+                    Divider()
+                        .padding(.vertical, 8)
+                    
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Folder List")
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                        Text("Select folders for widget.")
+                            .font(.body)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 22)
+                    .padding(.vertical, 8)
+                  
+              
                     List {
                         Section(header: Spacer(minLength: 0)) {
                             
                             ForEach(vm.folders, id: \.self) { item in
                                 HStack {
+                                    Image(systemName:"folder")
+                                        .foregroundColor(.cyan)
+                                        .font(.system(size: 16))
                                     Text(item.name)
                                     
                                     Spacer()
                                     
                                     // 선택된 아이템일 경우 별표 표시
                                     if vm.selectedItems.contains(item) {
-                                        Image(systemName: "star.fill")
-                                            .foregroundColor(.yellow)
+                                        Image(systemName:"checkmark")
+                                            .foregroundColor(.blue)
                                             .font(.system(size: 16))
                                     }
                                 }
@@ -66,8 +96,8 @@ struct WidgetSettingView: View {
 #endif
                     }
                 }
+                .background(Color(uiColor: .secondarySystemBackground))
             }
-//            .navigationTitle("Widget Setting")
             .navigationBarTitle("Widget Setting", displayMode: .inline)
     }
 }
