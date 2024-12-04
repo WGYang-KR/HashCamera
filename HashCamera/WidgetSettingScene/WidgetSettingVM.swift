@@ -5,60 +5,45 @@
 //  Created by Anto-Yang on 11/30/24.
 //
 import SwiftUI
-import RxSwift
+import Combine
 
 class WidgetSettingVM: ObservableObject {
-    var disBag = DisposeBag()
+    
+    var cancellables = Set<AnyCancellable>()
     
     @Published var folders: [FolderModel] = []
     @Published var selectedItems: [FolderModel] = []
 
-    var rootURL: URL? = URL(string: "./", relativeTo: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first)
-    
-
     ///폴더목록 관찰 시작
     func initVM() {
-        guard let rootURL else { return }
-        selectedItems = WidgetSetting.folderList
+
+        WidgetSettingManager.shared.$folders.sink { [weak self] list in
+            guard let self else { return }
+            ///폴더목록 변화생기면 갱신
+            folders = list
+        }.store(in: &cancellables)
         
-        FolderService.shared.folderListUpdatedRx
-            .bind {  [weak self] updateData in
-                //업데이트 이벤트 핸들러
-                guard let self else { return }
-                folders = updateData.newFileList.map({ FolderModel(type: .folder, url: $0)})
-                validateSeletedFolders()
-                
-            }
-            .disposed(by: disBag)
         
-        ///폴더목록 가져오기
-        if FolderService.shared.isMonitoring == false {
-            FolderService.shared.configure(rootURL: rootURL)
-        } else {
-            folders = FolderService.shared.folderList.map({ FolderModel(type: .folder, url: $0)})
-            validateSeletedFolders()
-        }
-        
-        //사라진 폴더는 목록에서 삭제
-        func validateSeletedFolders() {
-            selectedItems = selectedItems.filter{ self.folders.contains($0)}
-        }
+        WidgetSettingManager.shared.$selectedfolders.sink { [weak self] list in
+            guard let self else { return }
+            ///폴더목록 변화생기면 갱신
+            selectedItems = list
+        }.store(in: &cancellables)
         
     }
-    
 
-    
     ///선택/해제 로직
     func toggleSelection(for item: FolderModel) {
+        var _seletedItems = selectedItems
         if let index = selectedItems.firstIndex(of: item) {
             // 이미 선택된 아이템은 해제
-            selectedItems.remove(at: index)
+            _seletedItems.remove(at: index)
         } else if selectedItems.count < 4 {
             // 최대 4개까지만 선택 가능
-            selectedItems.append(item)
+            _seletedItems.append(item)
         }
         
-        WidgetSetting.folderList = selectedItems
+        WidgetSettingManager.shared.selectedfolders = _seletedItems
     }
     
 }

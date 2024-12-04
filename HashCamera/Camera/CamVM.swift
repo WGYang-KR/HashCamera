@@ -37,6 +37,7 @@ class CamVM: SelectSaveFolderVCDelegate {
     init() {
         initCamera()
         initFolderSelection()
+        WidgetSettingManager.shared.startMonitor()
     }
 
     //MARK: - 카메라, 촬영

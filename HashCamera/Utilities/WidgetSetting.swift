@@ -2,26 +2,26 @@
 //  WidgetSetting.swift
 //  HashCamera
 //
-//  Created by Anto-Yang on 11/30/24.
+//  Created by Anto-Yang on 12/4/24.
 //
-
 import Foundation
+import WidgetKit
 
 class WidgetSetting {
     
     enum Keys: String {
         case widgetFolderList
     }
-    
+    ///UserDefaults에 저장되어 있는 폴더 목록
     static var folderList: [FolderModel] {
         get {
             return UserDefaults.shared.getObject(forKey: Keys.widgetFolderList.rawValue, objectType: [FolderModel].self) ?? []
         }
         set {
             UserDefaults.shared.setObject(newValue, forKey: Keys.widgetFolderList.rawValue)
+            WidgetCenter.shared.reloadTimelines(ofKind: "HashCameraWidget")
         }
     }
-
 }
 
 extension UserDefaults {

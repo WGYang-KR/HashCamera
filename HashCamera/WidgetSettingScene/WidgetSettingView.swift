@@ -13,10 +13,6 @@ struct WidgetSettingView: View {
     
     // 선택된 아이템을 저장하는 배열
     @State private var selectedItems: [String] = []
-
-    init() {
-        UITableView.appearance().backgroundColor = UIColor.systemRed // 전체 리스트 배경 변경
-    }
     
     var body: some View {
             GeometryReader { geometry in

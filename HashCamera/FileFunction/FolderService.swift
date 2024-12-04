@@ -27,6 +27,9 @@ class FolderService {
         folderMonitor?.isMonitoring ?? false
     }
     
+    ///최초 Fetch가 이루어졌는지
+    var isOnceFetched: Bool = false
+    
     private init() {}
     
     deinit {
@@ -44,6 +47,7 @@ class FolderService {
                                       eventMask: [.write],
                                       folderListUpdated: { [weak self] updateData in
             guard let self else { return }
+            if !isOnceFetched { isOnceFetched = true }
             folderList = updateData.newFileList
             folderListUpdatedRx.accept(updateData)
         })
