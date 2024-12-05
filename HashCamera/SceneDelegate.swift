@@ -70,17 +70,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 if host == "widget_select_folder" {
                     if let indexString = url.path.split(separator: "/").last {
                         let index = Int(indexString) ?? 0
-                        // index에 따라 동작 처리 (예: 폴더 선택)
-                        hcLog("widget_select_folder index: \(index)")
-                        // 여기서 폴더 선택 관련 로직 추가
+                       
+                        let folder = WidgetSetting.folderList[index]
+                        hcLog("widget_select_folder index: \(index), name: \(folder.name)")
+                        WidgetSettingManager.shared.widgetOrder = .selectFolder
+                        WidgetSettingManager.shared.widgetSelectedFolder = folder
+                        
+                        NotificationCenter.default.post(name: .widgetDidOrder, object: nil, userInfo: nil)
                     }
+                    
                 } else if host == "widget_select_camera" {
                     hcLog("widget_select_camera")
-                    
+                    WidgetSettingManager.shared.widgetOrder = .camera
                 } else if host == "widget_select_settings" {
                     hcLog("widget_select_setting")
+                    WidgetSettingManager.shared.widgetOrder = .setting
                 } else if host == "widget_add_folder" {
                     hcLog("widget_add_folder")
+                    WidgetSettingManager.shared.widgetOrder = .addFolder
                 }
             }
         }

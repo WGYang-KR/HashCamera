@@ -143,6 +143,23 @@ extension UIViewController {
         }
     }
     
+    static func removeAllViewControllersAbove(_ baseViewController: UIViewController, completion: (() -> Void)? = nil) {
+        // 1. 내비게이션 스택을 정리 (pop)
+        if let navigationController = baseViewController.navigationController {
+            navigationController.popToViewController(baseViewController, animated: true)
+        }
+        
+        // 2. presentedViewController를 재귀적으로 dismiss
+        if let presented = baseViewController.presentedViewController {
+            presented.dismiss(animated: true) {
+                self.removeAllViewControllersAbove(baseViewController, completion: completion)
+            }
+        } else {
+            // 모든 뷰 컨트롤러가 정리된 후 completion 호출
+            completion?()
+        }
+    }
+    
 }
 
 extension UINavigationController { //navigation controller completion 추가

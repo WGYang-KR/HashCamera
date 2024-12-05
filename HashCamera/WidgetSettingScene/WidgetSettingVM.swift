@@ -17,14 +17,14 @@ class WidgetSettingVM: ObservableObject {
     ///폴더목록 관찰 시작
     func initVM() {
 
-        WidgetSettingManager.shared.$folders.sink { [weak self] list in
+        WidgetSettingManager.shared.$allFolders.sink { [weak self] list in
             guard let self else { return }
             ///폴더목록 변화생기면 갱신
             folders = list
         }.store(in: &cancellables)
         
         
-        WidgetSettingManager.shared.$selectedfolders.sink { [weak self] list in
+        WidgetSettingManager.shared.$selectedFolderList.sink { [weak self] list in
             guard let self else { return }
             ///폴더목록 변화생기면 갱신
             selectedItems = list
@@ -43,7 +43,7 @@ class WidgetSettingVM: ObservableObject {
             _seletedItems.append(item)
         }
         
-        WidgetSettingManager.shared.selectedfolders = _seletedItems
+        WidgetSettingManager.shared.selectedFolderList = _seletedItems
     }
     
 }

@@ -47,7 +47,7 @@ class CamVC: UIViewController {
                 self?.previewView.opaqueEffect()
             }
         }.disposed(by: disposeBag)
-     
+        NotificationCenter.default.addObserver(self, selector: #selector(self.widgetDidOrder), name: .widgetDidOrder, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -338,4 +338,11 @@ class CamVC: UIViewController {
         present(vc , animated: true)
     }
 
+    //MARK: - Widget이벤트 처리
+    @objc func widgetDidOrder() {
+        Self.removeAllViewControllersAbove(self) { [weak self] in
+            guard let self else { return }
+            let _ = camVM.doWidgetOrderIfNeeded()
+        }
+    }
 }
