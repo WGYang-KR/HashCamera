@@ -84,8 +84,8 @@ class CamVM: SelectSaveFolderVCDelegate {
                 switch updateData.changeType {
                     case .initiate:
   
-                    if doWidgetOrderIfNeeded() {
-                        hcLog("doWidgetOrderIfNeeded")
+                    if doWidgetFolderSelectionIfNeeded() {
+                        hcLog("doWidgetFolderSelectionIfNeeded")
                     }
                     else if let savedSelectedFolder = CameraSetting.selectedFolder,
                             savedSelectedFolder.type == .folder,
@@ -169,25 +169,28 @@ class CamVM: SelectSaveFolderVCDelegate {
 
     //MARK: - Widget
     ///위젯 호출 정보가 잇는지 확인하여 동작을 수행한다.
-    func doWidgetOrderIfNeeded() -> Bool {
+    func doWidgetFolderSelectionIfNeeded() -> Bool {
         guard FolderService.shared.isOnceFetched else { return false }
         
-        if let widgetOrder = WidgetSettingManager.shared.widgetOrder,
-           widgetOrder == .selectFolder,
-           let selectedFolder = WidgetSettingManager.shared.widgetSelectedFolder,
-           let selectedFolderURL = folderList.first(where: {$0.url.lastPathComponent == selectedFolder.url.lastPathComponent})?.url{
-            //위젯에서 폴더 선택하여 진입시에 처리\
-            
-            let folder = FolderModel(type: .folder, url: selectedFolderURL)
-            CameraSetting.selectedFolder = folder
-            selectedFolderRx.accept(folder)
-            
-            WidgetSettingManager.shared.widgetOrder = nil
-            WidgetSettingManager.shared.widgetSelectedFolder = nil
-            return true
+        if let widgetOrder = WidgetSettingManager.shared.widgetOrder, widgetOrder == .selectFolder{
+            if let selectedFolder = WidgetSettingManager.shared.widgetSelectedFolder,
+               let selectedFolderURL = folderList.first(where: {$0.url.lastPathComponent == selectedFolder.url.lastPathComponent})?.url{
+                //위젯에서 폴더 선택하여 진입시에 처리\
+                
+                let folder = FolderModel(type: .folder, url: selectedFolderURL)
+                CameraSetting.selectedFolder = folder
+                selectedFolderRx.accept(folder)
+                
+                WidgetSettingManager.shared.widgetOrder = nil
+                WidgetSettingManager.shared.widgetSelectedFolder = nil
+                return true
+            } else {
+                WidgetSettingManager.shared.widgetOrder = nil
+                WidgetSettingManager.shared.widgetSelectedFolder = nil
+                return false
+            }
         } else {
-            WidgetSettingManager.shared.widgetOrder = nil
-            WidgetSettingManager.shared.widgetSelectedFolder = nil
+            //명령없거나, selectFolder 아닌경우 widgetOrder 초기화 하지 않는다.
             return false
         }
     }

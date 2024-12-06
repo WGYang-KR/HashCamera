@@ -33,6 +33,7 @@ class CamVC: UIViewController {
     let camVM: CamVM = CamVM()
     let isLoading = BehaviorRelay(value: true)
 
+    var didOnceAppear = false //화면 표시가 완료되었는지.
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,7 +60,9 @@ class CamVC: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        didOnceAppear = true
         startCamera()
+        doWidgetOrderIfNeeded()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -344,18 +347,31 @@ class CamVC: UIViewController {
     @objc func widgetFolderTapped() {
         Self.removeAllViewControllersAbove(self) { [weak self] in
             guard let self else { return }
-            let _ = camVM.doWidgetOrderIfNeeded()
+            let _ = camVM.doWidgetFolderSelectionIfNeeded()
         }
     }
     @objc func widgetSettingTapped() {
-        Self.removeAllViewControllersAbove(self) { [weak self] in
-            guard let self else { return }
-            presentFull(UIHostingController(rootView: WidgetSettingViewNaviWrapper()), animated: true)
-        }
+        doWidgetOrderIfNeeded()
     }
     @objc func widgetCameraTapped() {
-        Self.removeAllViewControllersAbove(self) { [weak self] in
-            guard let self else { return }
+        doWidgetOrderIfNeeded()
+    }
+    
+    func doWidgetOrderIfNeeded(){
+        if didOnceAppear, let widgetOrder = WidgetSettingManager.shared.widgetOrder {
+            switch widgetOrder {
+            case .selectFolder:
+                break
+            case .camera:
+                WidgetSettingManager.shared.widgetOrder = nil
+                Self.removeAllViewControllersAbove(self)
+            case .setting, .addFolder:
+                WidgetSettingManager.shared.widgetOrder = nil
+                Self.removeAllViewControllersAbove(self) { [weak self] in
+                    guard let self else { return }
+                    presentFull(UIHostingController(rootView: WidgetSettingViewNaviWrapper()), animated: true)
+                }
+            }
         }
     }
 }
