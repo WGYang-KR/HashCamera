@@ -37,7 +37,7 @@ struct WidgetSettingView: View {
                             .padding(16)
                         }
                         .cornerRadius(16)
-                        .padding(.horizontal, 16).padding(.bottom, 8)
+                        .padding(.horizontal, 20).padding(.bottom, 8)
                         
                     Divider()
                         .padding(.vertical, 8)

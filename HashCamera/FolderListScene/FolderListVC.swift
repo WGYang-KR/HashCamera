@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
@@ -30,12 +31,16 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         tableView.backgroundColor = .sidebarBackground
         
         //네비게이션바
+        let leftItems = [UIBarButtonItem(image: SystemUIImage.checkmarkRectangleStack,
+                                         style: .plain,
+                                         target: self,
+                                         action: #selector(widgetSettingBtnTapped))]
         let rightItems = [UIBarButtonItem(image: SystemUIImage.folderBadgePlus,
                                       style: .plain,
                                       target: self,
                                       action: #selector(addBtnTapped))]
 
-        setNaviBar(localizedString(forKey: "N003_1", value: "Folder List"), leftItems: [], rightItems: rightItems)
+        setNaviBar(localizedString(forKey: "N003_1", value: "Folder List"), leftItems: leftItems, rightItems: rightItems)
         
         vm.configure(initialSelectedFolder: initialSelectedFolder, folderListUpdated: { [weak self] updateData in
             guard let self else { return }
@@ -84,6 +89,11 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         FolderCRUDAlert().beginCreateAlert(baseVC: self) { [weak self] success in
             if !success { self?.vm.isEditingFolder = false }
         }
+    }
+    
+    @objc func widgetSettingBtnTapped() {
+
+        presentFull(UIHostingController(rootView: WidgetSettingViewNaviWrapper()), animated: true)
     }
     
     //MARK: - UITableViewDataSource

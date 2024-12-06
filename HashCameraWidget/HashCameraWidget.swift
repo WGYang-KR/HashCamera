@@ -135,7 +135,7 @@ struct FolderListWidgetView: View {
                 HStack(spacing:4) {
                     Image(systemName: "camera.fill")
                     Text(folderName)
-                        .font(.caption2)
+                        .font(.system(size: 14))
                         .fontWeight(.semibold)
                     
                     Spacer(minLength: 0.0)
