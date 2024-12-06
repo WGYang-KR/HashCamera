@@ -7,6 +7,8 @@
 import Foundation
 
 extension NSNotification.Name {
-    static let widgetDidOrder = NSNotification.Name("widgetDidOrder")
+    static let widgetFolderTapped = NSNotification.Name("widgetFolderTapped")
+    static let widgetSettingTapped = NSNotification.Name("widgetSettingTapped")
+    static let widgetCameraTapped = NSNotification.Name("widgetCameraTapped")
 }
 

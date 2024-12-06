@@ -83,18 +83,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                         WidgetSettingManager.shared.widgetOrder = .selectFolder
                         WidgetSettingManager.shared.widgetSelectedFolder = folder
                         
-                        NotificationCenter.default.post(name: .widgetDidOrder, object: nil, userInfo: nil)
+                        NotificationCenter.default.post(name: .widgetFolderTapped, object: nil, userInfo: nil)
                     }
                     
                 } else if host == "widget_select_camera" {
                     hcLog("widget_select_camera")
                     WidgetSettingManager.shared.widgetOrder = .camera
+                    NotificationCenter.default.post(name: .widgetCameraTapped, object: nil, userInfo: nil)
                 } else if host == "widget_select_settings" {
                     hcLog("widget_select_setting")
                     WidgetSettingManager.shared.widgetOrder = .setting
+                    NotificationCenter.default.post(name: .widgetSettingTapped, object: nil, userInfo: nil)
                 } else if host == "widget_add_folder" {
                     hcLog("widget_add_folder")
                     WidgetSettingManager.shared.widgetOrder = .addFolder
+                    NotificationCenter.default.post(name: .widgetSettingTapped, object: nil, userInfo: nil)
                 }
             }
         }

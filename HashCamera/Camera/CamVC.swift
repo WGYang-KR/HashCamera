@@ -47,7 +47,9 @@ class CamVC: UIViewController {
                 self?.previewView.opaqueEffect()
             }
         }.disposed(by: disposeBag)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.widgetDidOrder), name: .widgetDidOrder, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.widgetFolderTapped), name: .widgetFolderTapped, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.widgetSettingTapped), name: .widgetSettingTapped, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.widgetCameraTapped), name: .widgetCameraTapped, object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -339,10 +341,21 @@ class CamVC: UIViewController {
     }
 
     //MARK: - Widget이벤트 처리
-    @objc func widgetDidOrder() {
+    @objc func widgetFolderTapped() {
         Self.removeAllViewControllersAbove(self) { [weak self] in
             guard let self else { return }
             let _ = camVM.doWidgetOrderIfNeeded()
+        }
+    }
+    @objc func widgetSettingTapped() {
+        Self.removeAllViewControllersAbove(self) { [weak self] in
+            guard let self else { return }
+            presentFull(UIHostingController(rootView: WidgetSettingViewNaviWrapper()), animated: true)
+        }
+    }
+    @objc func widgetCameraTapped() {
+        Self.removeAllViewControllersAbove(self) { [weak self] in
+            guard let self else { return }
         }
     }
 }
