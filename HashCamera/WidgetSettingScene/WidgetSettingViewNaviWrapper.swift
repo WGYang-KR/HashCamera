@@ -20,7 +20,11 @@ struct WidgetSettingViewNaviWrapper: View {
                         Button(action: {
                             presentationMode.wrappedValue.dismiss()
                         }) {
-                            Image(uiImage: SystemUIImage.xmark)
+                            Image(uiImage: SystemUIImage.xmark.withRenderingMode(.alwaysTemplate))
+                                .resizable()
+                                .tint(.cyan)
+                                .frame(width: 18, height: 18)
+                            
                         }
                     }
                 }

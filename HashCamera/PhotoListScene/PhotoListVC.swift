@@ -68,7 +68,10 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
     
     func initUI() {
         // Navi Bar
-        let naviLeftItems = [naviBackBarButtonItem(),
+        let naviLeftItems = [UIBarButtonItem(image: SystemUIImage.xmark,
+                                             style: .plain,
+                                             target: self,
+                                             action: #selector(naviBackBtnTapped)),
                              UIBarButtonItem(image: SystemUIImage.listBullet,
                                              style: .plain,
                                              target: self,
