@@ -123,7 +123,8 @@ extension UIViewController {
     
     //현재 보여지는 가장 Top VC를 찾아서 반환한다
     static func getTopViewController() -> UIViewController? {
-        if let viewController = UIApplication.shared.windows.first?.rootViewController {
+        if let screen = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let viewController = screen.windows.first?.rootViewController {
             if let presentedViewController = viewController.presentedViewController {
                 // 현재 Modal로 표시되고 있는 뷰 컨트롤러
                 print("Presented view controller: \(presentedViewController)")

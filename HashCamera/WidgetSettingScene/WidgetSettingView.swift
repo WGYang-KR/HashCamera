@@ -94,8 +94,22 @@ struct WidgetSettingView: View {
                 }
                 .background(Color(uiColor: .secondarySystemBackground))
             }
+            .toolbar(content: {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        FolderCRUDAlert().beginCreateAlertSWiftUI()
+                    } label: {
+                        Image(uiImage: SystemUIImage.folderBadgePlus.withRenderingMode(.alwaysTemplate))
+                            .resizable()
+                            .scaledToFit()
+                            .tint(.cyan)
+                            .frame(height: 20)
+                    }
+                }
+            })
             .navigationBarTitle(localizedString(forKey: "N012_1", value: "Widget Setting"), displayMode: .inline)
     }
+
 }
 
 #Preview {

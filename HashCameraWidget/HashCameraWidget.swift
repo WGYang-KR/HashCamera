@@ -137,6 +137,7 @@ struct FolderListWidgetView: View {
                     Text(folderName)
                         .font(.system(size: 14))
                         .fontWeight(.semibold)
+                        .lineLimit(1)
                     
                     Spacer(minLength: 0.0)
                 }
