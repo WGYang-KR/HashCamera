@@ -31,7 +31,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
         tableView.backgroundColor = .sidebarBackground
         
         //네비게이션바
-        let leftItems = [UIBarButtonItem(image: SystemUIImage.checkmarkRectangleStack,
+        let leftItems = [UIBarButtonItem(image: UIImage(named: "widget.medium.badge.plus"),
                                          style: .plain,
                                          target: self,
                                          action: #selector(widgetSettingBtnTapped))]

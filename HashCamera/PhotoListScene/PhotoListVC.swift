@@ -72,7 +72,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
                                              style: .plain,
                                              target: self,
                                              action: #selector(naviBackBtnTapped)),
-                             UIBarButtonItem(image: SystemUIImage.listBullet,
+                             UIBarButtonItem(image: UIImage(systemName: "sidebar.left"),
                                              style: .plain,
                                              target: self,
                                              action: #selector(naviListBtnTapped))]
