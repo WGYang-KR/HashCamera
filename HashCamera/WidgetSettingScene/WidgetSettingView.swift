@@ -27,7 +27,7 @@ struct WidgetSettingView: View {
                         .padding(.vertical, 8)
                     
                     Rectangle()
-                        .foregroundStyle(Color.cyan.opacity(0.2))
+                        .foregroundStyle(Color.widgetBackground)
                         .frame(height:geometry.size.height/4)
                         .overlay {
                             FolderListWidgetView(entry: FolderListEntry(
@@ -92,7 +92,7 @@ struct WidgetSettingView: View {
                         }
                     }
                 }
-                .background(Color(uiColor: .secondarySystemBackground))
+                .background(Color.widgetSettingBackground)
             }
             .toolbar(content: {
                 ToolbarItem(placement: .topBarTrailing) {

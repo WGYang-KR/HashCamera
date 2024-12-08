@@ -170,11 +170,11 @@ extension View {
     @ViewBuilder
     func applyContainerBackground() -> some View {
         if #available(iOS 17, *) {
-            self.containerBackground(Color(.systemBackground), for: .widget)
+            self.containerBackground(Color.widgetBackground, for: .widget)
 
         } else {
             ZStack {
-                Color(.systemBackground) // iOS 15-16: 기본 배경
+                Color.widgetBackground // iOS 15-16: 기본 배경
                 self
             }
         }
