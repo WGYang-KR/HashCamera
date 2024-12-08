@@ -93,7 +93,7 @@ class FolderListVC: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     @objc func widgetSettingBtnTapped() {
 
-        presentFull(UIHostingController(rootView: WidgetSettingViewNaviWrapper()), animated: true)
+        navigationController?.pushViewController(UIHostingController(rootView: WidgetSettingView()), animated: true)
     }
     
     //MARK: - UITableViewDataSource

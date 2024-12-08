@@ -102,7 +102,7 @@ struct WidgetSettingView: View {
                         Image(uiImage: SystemUIImage.folderBadgePlus.withRenderingMode(.alwaysTemplate))
                             .resizable()
                             .scaledToFit()
-                            .tint(.cyan)
+                            .tint(.blue)
                             .frame(height: 20)
                     }
                 }

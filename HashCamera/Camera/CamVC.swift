@@ -369,7 +369,7 @@ class CamVC: UIViewController {
                 WidgetSettingManager.shared.widgetOrder = nil
                 Self.removeAllViewControllersAbove(self) { [weak self] in
                     guard let self else { return }
-                    presentFull(UIHostingController(rootView: WidgetSettingViewNaviWrapper()), animated: true)
+                    navigationController?.pushViewController(UIHostingController(rootView: WidgetSettingView()), animated: true)
                 }
             }
         }
