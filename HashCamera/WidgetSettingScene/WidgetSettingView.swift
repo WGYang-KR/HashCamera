@@ -19,7 +19,7 @@ struct WidgetSettingView: View {
                 
                 VStack(spacing:0.0) {
                     
-                    Text("Widget Preview")
+                    Text(localizedString(forKey: "N012_4", value: "Home Screen Widget Preview"))
                         .font(.headline)
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -44,10 +44,10 @@ struct WidgetSettingView: View {
                     
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Folder List")
+                        Text(localizedString(forKey: "N012_2", value: "Folder List"))
                             .font(.headline)
                             .fontWeight(.semibold)
-                        Text("Select folders for widget.")
+                        Text(localizedString(forKey: "N012_3", value: "Select the folder to display on the widget."))
                             .font(.body)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -94,7 +94,7 @@ struct WidgetSettingView: View {
                 }
                 .background(Color(uiColor: .secondarySystemBackground))
             }
-            .navigationBarTitle("Widget Setting", displayMode: .inline)
+            .navigationBarTitle(localizedString(forKey: "N012_1", value: "Widget Setting"), displayMode: .inline)
     }
 }
 

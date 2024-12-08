@@ -41,7 +41,7 @@ struct SettingsView: View {
                     
                     Section {
                         NavigationLink(destination: WidgetSettingView()) {
-                            Text("Widget Setting")
+                            Text(localizedString(forKey: "N007_5", value: "Widget Setting"))
                         }
                     }
                     

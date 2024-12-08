@@ -30,6 +30,7 @@
 "N007_2" = "Photo Format";
 "N007_3" = "Email";
 "N007_4" = "Version";
+"N007_5" = "Widget Setting";
 "N008_1" = "New Folder";
 "N008_2" = "Enter a new folder name.";
 "N008_3" = "New folder created.";
@@ -42,6 +43,11 @@
 "N010_2" = "Enter the folder name you want to change.";
 "N010_3" = "Folder name changed.";
 "N010_4" = "Failed to rename folder.";
+"NSCameraUsageDescription" = "We need access to your camera to take photos.";
 "N011_2" = "Camera permission required";
 "N011_3" = "Please go to Settings and allow camera permission to take photos";
 "N011_4" = "Settings";
+"N012_1" = "Widget Setting";
+"N012_2" = "Folder List";
+"N012_3" = "Select the folders to display on the widget.";
+"N012_4" = "Home Screen Widget Preview";
