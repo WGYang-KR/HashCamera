@@ -512,8 +512,8 @@
 				6A8B31F32AE7983E00D24E49 /* Frameworks */,
 				6A8B31F42AE7983E00D24E49 /* Resources */,
 				838D0943E409634876F89E3B /* [CP] Embed Pods Frameworks */,
-				6A971F6E2CEF9F3400B7851C /* Firebase crashlytics */,
 				6AD05D482CF3478E00DA4274 /* Embed Foundation Extensions */,
+				6A971F6E2CEF9F3400B7851C /* Firebase crashlytics */,
 			);
 			buildRules = (
 			);
