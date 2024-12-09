@@ -9,6 +9,7 @@ import WidgetKit
 
 class WidgetSetting {
     
+    static let shortcutWidgetID = "com.hashcamera.shortcutWidge"
     enum Keys: String {
         case widgetFolderList
     }
@@ -19,7 +20,7 @@ class WidgetSetting {
         }
         set {
             UserDefaults.shared.setObject(newValue, forKey: Keys.widgetFolderList.rawValue)
-            WidgetCenter.shared.reloadTimelines(ofKind: "HashCameraWidget")
+            WidgetCenter.shared.reloadTimelines(ofKind: Self.shortcutWidgetID)
         }
     }
 }

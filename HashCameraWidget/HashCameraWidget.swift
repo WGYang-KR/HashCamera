@@ -21,7 +21,7 @@ struct FolderListProvider: TimelineProvider {
     }
 
     func getSnapshot(in context: Context, completion: @escaping (FolderListEntry) -> Void) {
-        let entry = FolderListEntry(date: Date(), folderList: fetchFolders())
+        let entry = FolderListEntry(date: Date(), folderList: sampleFolders())
         completion(entry)
     }
 
@@ -33,7 +33,7 @@ struct FolderListProvider: TimelineProvider {
 
     // 샘플 데이터 생성
     private func sampleFolders() -> [String] {
-        return  ["Documents", "Diets", "Work Photos"]
+        return  ["Folder01", "Folder02", "FolderO3"]
     }
 
     // App Group을 통해 폴더 데이터 가져오기
@@ -155,12 +155,13 @@ struct FolderListWidgetView: View {
 
 
 struct HashCameraWidget: Widget {
-    let kind: String = "HashCameraWidget"
+    let kind: String = WidgetSetting.shortcutWidgetID
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: FolderListProvider()) { entry in
             FolderListWidgetView(entry: entry)
         }
+        .configurationDisplayName("HashCamera")
         .supportedFamilies([.systemMedium]) // 지원하는 크기
     }
 }
