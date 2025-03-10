@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import RxRelay
+import SwiftUI
 
 class FolderCRUDAlert {
     
@@ -26,7 +27,15 @@ class FolderCRUDAlert {
         disBag = DisposeBag()
     }
 
-    func beginCreateAlert(baseVC: UIViewController, completion: @escaping (Bool)-> Void ) {
+    func beginCreateAlert(baseVC: UIViewController, completion: ((Bool)-> Void)? ) {
+        let alert = createAlert(completion: completion)
+        baseVC.present(alert, animated: true, completion: nil)
+    }
+    func beginCreateAlertSWiftUI() {
+        UIViewController.getTopViewController()?.present(createAlert(completion: nil), animated: true, completion: nil)
+    }
+    ///폴더추가 alert를 만든다.
+    func createAlert(completion: ((Bool) -> Void)? ) -> UIAlertController {
         let alert = UIAlertController(title: localizedString(forKey: "N008_1", value: "New Folder"),
                                       message: nil,
                                       preferredStyle: .alert)
@@ -44,11 +53,11 @@ class FolderCRUDAlert {
                     switch result {
                     case .success(_):
                         AlertHelper.notesInform(message: localizedString(forKey: "N008_3", value: "New folder created"))
-                        completion(true)
+                        completion?(true)
                     case .failure(let error):
                         AlertHelper.notesInform(message: localizedString(forKey: "N008_4", value: "Failed to create new folder"),
                                                 color: .systemRed) //TODO:색상
-                        completion(false)
+                        completion?(false)
                     }
                 }
             }
@@ -56,7 +65,7 @@ class FolderCRUDAlert {
         confirmAction.isEnabled = false  // 초기에는 비활성화
         
         alert.addAction(UIAlertAction(title: localizedString(forKey: "C_Cancel", value: "Cancel"), style: .cancel, handler: {_ in
-            completion(false)
+            completion?(false)
         }))
         alert.addAction(confirmAction)
         
@@ -66,7 +75,7 @@ class FolderCRUDAlert {
             confirmAction.isEnabled = !text.isEmpty && !Self.folderNames.contains(text) && Self.isFolderNameValid(text)
         }
         
-        baseVC.present(alert, animated: true, completion: nil)
+        return alert
     }
     
     func beginRenameAlert(baseVC: UIViewController, originURL: URL, completion: ((Bool) -> Void)? ) {
@@ -116,4 +125,18 @@ class FolderCRUDAlert {
         return !name.isEmpty && !name.hasPrefix(".") && name.rangeOfCharacter(from: invalidCharacters) == nil
     }
 
+    // SwiftUI에서 사용 가능한 UIViewControllerRepresentable
+    struct FolderCreateAlertWrapper: UIViewControllerRepresentable {
+        
+        func makeUIViewController(context: Context) -> UIViewController {
+            return FolderCRUDAlert().createAlert(completion: nil)
+        }
+
+        func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+            // 업데이트가 필요하면 처리
+        }
+    }
 }
+
+
+
