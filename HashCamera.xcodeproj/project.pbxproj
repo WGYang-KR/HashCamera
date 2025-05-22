@@ -32,6 +32,7 @@
 		6A0CAA962CA1AFFE006BC4D3 /* MoveToFolderVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0CAA952CA1AFF8006BC4D3 /* MoveToFolderVM.swift */; };
 		6A0CAA992CA1B196006BC4D3 /* MoveToFolderListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0CAA972CA1B196006BC4D3 /* MoveToFolderListItemCell.swift */; };
 		6A0CAA9A2CA1B196006BC4D3 /* MoveToFolderListItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0CAA982CA1B196006BC4D3 /* MoveToFolderListItemCell.xib */; };
+		6A0E37F32DDFCC3C0084B74D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A0E37F22DDFCC3C0084B74D /* GoogleService-Info.plist */; };
 		6A1083012D009B8900C24FF6 /* WidgetSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1083002D009B7B00C24FF6 /* WidgetSetting.swift */; };
 		6A1083022D009BE100C24FF6 /* WidgetSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1083002D009B7B00C24FF6 /* WidgetSetting.swift */; };
 		6A1083042D01F17000C24FF6 /* NotificationName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A1083032D01F16700C24FF6 /* NotificationName.swift */; };
@@ -46,7 +47,6 @@
 		6A3796542BB5A44000BAFC19 /* PhotoFileFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3796532BB5A44000BAFC19 /* PhotoFileFormat.swift */; };
 		6A3796562BB5A47900BAFC19 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3796552BB5A47900BAFC19 /* SettingsView.swift */; };
 		6A3796582BB5A4CD00BAFC19 /* AppStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A3796572BB5A4CD00BAFC19 /* AppStatus.swift */; };
-		6A6B92FA2CEA08A0005B3BCA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6A6B92F92CEA08A0005B3BCA /* GoogleService-Info.plist */; };
 		6A6C4C572C8A049B007F794F /* FolderListVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6C4C562C8A049B007F794F /* FolderListVM.swift */; };
 		6A73A1022C5143B2007B6CAE /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1012C5143B2007B6CAE /* Utils.swift */; };
 		6A73A1052C610A2D007B6CAE /* FolderListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */; };
@@ -145,6 +145,7 @@
 		6A0CAA952CA1AFF8006BC4D3 /* MoveToFolderVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveToFolderVM.swift; sourceTree = "<group>"; };
 		6A0CAA972CA1B196006BC4D3 /* MoveToFolderListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveToFolderListItemCell.swift; sourceTree = "<group>"; };
 		6A0CAA982CA1B196006BC4D3 /* MoveToFolderListItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MoveToFolderListItemCell.xib; sourceTree = "<group>"; };
+		6A0E37F22DDFCC3C0084B74D /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6A1083002D009B7B00C24FF6 /* WidgetSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSetting.swift; sourceTree = "<group>"; };
 		6A1083032D01F16700C24FF6 /* NotificationName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationName.swift; sourceTree = "<group>"; };
 		6A133E4C2B0503690018A769 /* AppLifeCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLifeCycle.swift; sourceTree = "<group>"; };
@@ -159,7 +160,6 @@
 		6A3796532BB5A44000BAFC19 /* PhotoFileFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoFileFormat.swift; sourceTree = "<group>"; };
 		6A3796552BB5A47900BAFC19 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		6A3796572BB5A4CD00BAFC19 /* AppStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStatus.swift; sourceTree = "<group>"; };
-		6A6B92F92CEA08A0005B3BCA /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6A6C4C562C8A049B007F794F /* FolderListVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListVM.swift; sourceTree = "<group>"; };
 		6A73A1012C5143B2007B6CAE /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListItemCell.swift; sourceTree = "<group>"; };
@@ -400,7 +400,7 @@
 				6A8B32042AE7983F00D24E49 /* LaunchScreen.storyboard */,
 				6A8C3AF72CF04F1900127D4F /* PrivacyInfo.xcprivacy */,
 				6A8B32072AE7983F00D24E49 /* Info.plist */,
-				6A6B92F92CEA08A0005B3BCA /* GoogleService-Info.plist */,
+				6A0E37F22DDFCC3C0084B74D /* GoogleService-Info.plist */,
 				6AE8CF9E2AF4BF0D0063C8C6 /* HCError.swift */,
 			);
 			path = HashCamera;
@@ -591,6 +591,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A0486442C49519000C3989F /* PhotoListVC.xib in Resources */,
+				6A0E37F32DDFCC3C0084B74D /* GoogleService-Info.plist in Resources */,
 				6A8B32062AE7983F00D24E49 /* LaunchScreen.storyboard in Resources */,
 				6AA61AD02AFA8337002E3725 /* TopMenuBarView.xib in Resources */,
 				6A73A1062C610A2D007B6CAE /* FolderListItemCell.xib in Resources */,
@@ -607,7 +608,6 @@
 				6A8B32012AE7983E00D24E49 /* Main.storyboard in Resources */,
 				6A7D4F692C775DED00ED0C59 /* FolderListVC.xib in Resources */,
 				6A2529D82B162BAA00721202 /* PhotoListItemCell.xib in Resources */,
-				6A6B92FA2CEA08A0005B3BCA /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -653,9 +653,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-HashCamera/Pods-HashCamera-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-HashCamera/Pods-HashCamera-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
