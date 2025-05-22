@@ -16,6 +16,7 @@ class CamVC: UIViewController {
     
     var disposeBag = DisposeBag()
     
+    @IBOutlet weak var rootContView: UIView!
     @IBOutlet weak var topMenuView: TopMenuBarView!
  
     @IBOutlet weak var previewView: CameraPreviewView!
@@ -34,6 +35,9 @@ class CamVC: UIViewController {
     let isLoading = BehaviorRelay(value: true)
 
     var didOnceAppear = false //화면 표시가 완료되었는지.
+    
+    // 상태 바를 숨길지 결정
+    override var prefersStatusBarHidden: Bool { true }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -128,6 +132,17 @@ class CamVC: UIViewController {
     }
     
     func initView() {
+
+        rootContView.snp.removeConstraints()
+        rootContView.snp.makeConstraints { make in
+            make.left.bottom.right.equalTo(view.safeAreaLayoutGuide)
+            
+            if UIDevice.current.topCutout == .none {        //상단 노치 없는 폰에서는 savearea무시한다
+                make.top.equalToSuperview()
+            } else {
+                make.top.equalTo(view.safeAreaLayoutGuide)
+            }
+        }
         
         //폴더선택 화면 표시
         storageButton.rx.tap.bind(onNext: { [weak self] in
@@ -375,3 +390,31 @@ class CamVC: UIViewController {
         }
     }
 }
+
+extension UIDevice {
+    /// 화면 상단 ‘컷아웃’ 형태
+    enum TopCutout {
+        case none          // 노치 없음
+        case notch         // 노치 (iPhone X ~ 14 / 14 Plus 등)
+        case dynamicIsland // 다이내믹 아일랜드 (14 Pro, 15 전 모델 등)
+    }
+
+    /// 현재 디바이스가 갖는 상단 컷아웃 유형
+    var topCutout: TopCutout {
+        // iPad 등은 굳이 조사할 필요 X
+        guard UIDevice.current.userInterfaceIdiom == .phone,
+              let someWindow = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene })
+            .first?.windows.first(where: { $0.windowLevel == .normal })
+        else { return .none }
+        
+        // 세로 모드에서의 top inset
+        let topInset = someWindow.safeAreaInsets.top
+
+        switch topInset {
+        case 0..<21:   return .none          // 20pt 이하: 홈버튼 세대
+        case 21..<55:  return .notch         // 44~54pt: 일반 노치
+        default:       return .dynamicIsland // 55pt 이상: 다이내믹 아일랜드
+        }
+    }
+}
+
