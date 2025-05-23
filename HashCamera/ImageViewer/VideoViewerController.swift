@@ -10,14 +10,20 @@ import AVKit
 
 /// 동영상을 전체 화면으로 보여주는 뷰 컨트롤러
 class VideoViewerController: UIViewController, MediaViewerControllerProtocol {
-
- 
+    
+    
     private let videoURL: URL
     private var player: AVPlayer?
     private var playerViewController: AVPlayerViewController?
+    private var timeControlStatusObserver: NSKeyValueObservation?
     
     var index: Int = 0
     var imageItem: ImageFileModel!
+    
+    var navController: UINavigationController? {
+        return (parent as? ImageCarouselViewController)?.navigationController
+        
+    }
     
     init(index: Int, imageItem: ImageFileModel) {
         self.index = index
@@ -61,7 +67,32 @@ class VideoViewerController: UIViewController, MediaViewerControllerProtocol {
         view.addSubview(playerVC.view)
         playerVC.didMove(toParent: self)
         self.playerViewController = playerVC
+        // 🔍 KVO 등록
+          observePlayerStatus()
+    }
     
+    private func observePlayerStatus() {
+        timeControlStatusObserver = player?.observe(\.timeControlStatus, options: [.initial, .new]) { [weak self] player, _ in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                switch player.timeControlStatus {
+                case .playing:
+                    self.setNavi(hidden: true)
+                case .paused:
+                    self.setNavi(hidden: false)
+                case .waitingToPlayAtSpecifiedRate:
+                    break
+                @unknown default:
+                    break
+                }
+            }
+        }
+    }
+        
+    func setNavi(hidden: Bool) {
+        guard let navController else { return }
+        navController.setToolbarHidden(hidden, animated: true)
+        navController.setNavigationBarHidden(hidden, animated: true)
     }
     
     func zoomOut() {}
