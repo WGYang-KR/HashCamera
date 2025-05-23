@@ -11,24 +11,24 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     
     ///이 VC를 호출한 ImageView
     var sourceView: UIImageView? {
-        guard let vc = viewControllers?.first as? ImageViewerController else {
+        guard let vc = viewControllers?.first as? MediaViewerControllerProtocol else {
             return nil
         }
         return initialIndex == vc.index ? initialSourceView : nil
     }
     
     var targetView: UIImageView? {
-        guard let vc = viewControllers?.first as? ImageViewerController else {
+        guard let vc = viewControllers?.first as? MediaViewerControllerProtocol else {
             return nil
         }
-        return vc.imageView
+        return UIImageView() //vc.imageView
     }
     
  
     var initialIndex = 0
     ///현재 보여지고 있는 뷰어
-    var currentVC: ImageViewerController? {
-        return (viewControllers?.first) as? ImageViewerController
+    var currentVC: MediaViewerControllerProtocol? {
+        return (viewControllers?.first) as? MediaViewerControllerProtocol
     }
     ///현재보여지고 있는 이미지 정보
     var currentItem: ImageFileModel? {
@@ -105,7 +105,7 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
             case .changed(let deletedIndice, let addedIndice):
                 
                 //현재 vc없으면 dismiss
-                guard let currentVC = viewControllers?.first as? ImageViewerController else { dismiss(nil); return}
+                guard let currentVC = viewControllers?.first as? MediaViewerControllerProtocol else { dismiss(nil); return}
                 
                 var shouldReinit = false
                 
@@ -126,7 +126,7 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
                 deletedIndice.reversed().forEach{ deletedIndex in
                     //현재 vc들 뒤에서 부터 deletedIndex가 존재하면 index가 크거나 같은 vc들 index -1 한다.
                     self.children.forEach({ vc in
-                        if let imageViewerVC = vc as? ImageViewerController, imageViewerVC.index >= deletedIndex {
+                        if let imageViewerVC = vc as? MediaViewerControllerProtocol, imageViewerVC.index >= deletedIndex {
                             imageViewerVC.index -= 1
                         }
                     })
@@ -134,7 +134,7 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
                 addedIndice.reversed().forEach { addedIndex in
                     //현재 vc들 뒤에서 부터 addedIndex가 존재하면 index가 크거나 작은 vc들 index + 1 한다.
                     self.children.forEach({ vc in
-                        if let imageViewerVC = vc as? ImageViewerController, imageViewerVC.index >= addedIndex {
+                        if let imageViewerVC = vc as? MediaViewerControllerProtocol, imageViewerVC.index >= addedIndex {
                             imageViewerVC.index += 1
                         }
                     })
@@ -172,10 +172,17 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     
     private func setInitialPage(_ index: Int) {
         //첫번째 사진을 세팅한다
-        if let photoListVM, let item = photoListVM.fileList[safe: initialIndex] {
+        guard let photoListVM, let item = photoListVM.fileList[safe: initialIndex] else { return }
+        
+        if item.isImage {
             let initialVC:ImageViewerController = .init(index: initialIndex,
                                                         imageItem: item,
                                                         imageLoader: SDWebImageLoader())
+            navigationController?.navigationBar.topItem?.title = item.fileName
+            setViewControllers([initialVC], direction: .reverse, animated: true)
+        } else if item.isVideo {
+            let initialVC:VideoViewerController = .init(index: initialIndex,
+                                                        imageItem: item)
             navigationController?.navigationBar.topItem?.title = item.fileName
             setViewControllers([initialVC], direction: .reverse, animated: true)
         }
@@ -311,7 +318,7 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
     }
     
     @objc func trashBtnTapped(_ sender: Any) {
-        guard let currentVC = viewControllers?.first as? ImageViewerController else { dismiss(nil); return}
+        guard let currentVC = viewControllers?.first as? MediaViewerControllerProtocol else { dismiss(nil); return}
         guard let photoListVM else { return }
         AlertHelper.alertConfirm(baseVC: self, title: "사진을 삭제하시겠습니까?", message: "") {
             Task {
@@ -369,21 +376,27 @@ extension ImageCarouselViewController:UIPageViewControllerDataSource, UIPageView
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         
-        guard let vc = viewController as? ImageViewerController else { return nil }
+        guard let vc = viewController as? MediaViewerControllerProtocol else { return nil }
         guard let photoListVM else { return nil }
         guard vc.index > 0 else { return nil }
         
         let newIndex = vc.index - 1
         guard let item = photoListVM.fileList[safe: newIndex] else { return nil}
-        return ImageViewerController.init(
-            index: newIndex,
-            imageItem: item,
-            imageLoader: vc.imageLoader)
+        
+        if item.isImage {
+            return ImageViewerController.init(
+                index: newIndex,
+                imageItem: item,
+                imageLoader: SDWebImageLoader())
+        } else {
+            return VideoViewerController(index: newIndex,
+                                         imageItem: item)
+        }
     }
     
     func pageViewController( _ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         
-        guard let vc = viewController as? ImageViewerController else { return nil }
+        guard let vc = viewController as? MediaViewerControllerProtocol else { return nil }
         guard let photoListVM else { return nil }
         guard vc.index <= (photoListVM.fileList.count - 2) else { return nil }
         
@@ -392,13 +405,13 @@ extension ImageCarouselViewController:UIPageViewControllerDataSource, UIPageView
         return ImageViewerController.init(
             index: newIndex,
             imageItem: item,
-            imageLoader: vc.imageLoader)
+            imageLoader: SDWebImageLoader())
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating: Bool, previousViewControllers: [UIViewController], transitionCompleted: Bool) {
         
         if transitionCompleted {
-            guard let currentVC = pageViewController.viewControllers?.first as? ImageViewerController else { return }
+            guard let currentVC = pageViewController.viewControllers?.first as? MediaViewerControllerProtocol else { return }
             navigationController?.navigationBar.topItem?.title = currentVC.imageItem.fileName
         }
     }

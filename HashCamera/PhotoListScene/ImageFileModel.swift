@@ -76,5 +76,23 @@ class ImageFileModel {
         formatter.dateFormat = "yyyy:MM:dd HH:mm:ssZZZZZ"
         return formatter.date(from: dateString)
     }
+    
+    
+    /// 파일 URL로부터 UTType을 반환한다.
+    var fileUTType: UTType? {
+        return try? url.resourceValues(forKeys: [.contentTypeKey]).contentType
+    }
+    
+    
+    /// 파일이 이미지인지 여부
+    var isImage: Bool {
+        guard let type = try? url.resourceValues(forKeys: [.contentTypeKey]).contentType else { return false }
+        return type.conforms(to: .image)
+    }
 
+    /// 파일이 비디오인지 여부
+    var isVideo: Bool {
+        guard let type = try? url.resourceValues(forKeys: [.contentTypeKey]).contentType else { return false }
+        return type.conforms(to: .movie)
+    }
 }
