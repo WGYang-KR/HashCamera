@@ -11,16 +11,22 @@ import AVKit
 /// 동영상을 전체 화면으로 보여주는 뷰 컨트롤러
 class VideoViewerController: UIViewController, MediaViewerControllerProtocol {
     
-    
-    private let videoURL: URL
-    private var player: AVPlayer?
-    private var playerViewController: AVPlayerViewController?
-    private var timeControlStatusObserver: NSKeyValueObservation?
-    
     var index: Int = 0
     var imageItem: ImageFileModel!
     
-    var navController: UINavigationController? {
+    private let videoURL: URL
+    private var player: AVPlayer? {
+        get {
+            playerViewController?.player
+        }
+        set {
+            playerViewController?.player = newValue
+        }
+    }
+    private var playerViewController: CustomVideoPlayerViewController?
+    private var currentAngle: CGFloat = 0
+
+    private var navController: UINavigationController? {
         return (parent as? ImageCarouselViewController)?.navigationController
         
     }
@@ -52,44 +58,28 @@ class VideoViewerController: UIViewController, MediaViewerControllerProtocol {
     }
     
     private func setupPlayer() {
-        let player = AVPlayer(url: videoURL)
-        self.player = player
+//        let player = AVPlayer(url: videoURL)
+//        self.player = player
+//        
+        let playerVC = CustomVideoPlayerViewController(videoURL: videoURL)
         
-        let playerVC = AVPlayerViewController()
-        playerVC.player = player
-        playerVC.showsPlaybackControls = true
-        playerVC.entersFullScreenWhenPlaybackBegins = false
-        playerVC.exitsFullScreenWhenPlaybackEnds = false
-        playerVC.modalPresentationStyle = .overFullScreen
-        playerVC.view.frame = view.bounds
+//        let playerVC = AVPlayerViewController()
+//        playerVC.player = player
+//        playerVC.showsPlaybackControls = true
+//        playerVC.entersFullScreenWhenPlaybackBegins = false
+//        playerVC.exitsFullScreenWhenPlaybackEnds = false
+//        playerVC.modalPresentationStyle = .overFullScreen
+//        playerVC.view.frame = view.bounds
         
         addChild(playerVC)
         view.addSubview(playerVC.view)
         playerVC.didMove(toParent: self)
         self.playerViewController = playerVC
-        // 🔍 KVO 등록
-          observePlayerStatus()
+
     }
     
-    private func observePlayerStatus() {
-        timeControlStatusObserver = player?.observe(\.timeControlStatus, options: [.initial, .new]) { [weak self] player, _ in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                switch player.timeControlStatus {
-                case .playing:
-                    self.setNavi(hidden: true)
-                case .paused:
-                    self.setNavi(hidden: false)
-                case .waitingToPlayAtSpecifiedRate:
-                    break
-                @unknown default:
-                    break
-                }
-            }
-        }
-    }
         
-    func setNavi(hidden: Bool) {
+    private func setNavi(hidden: Bool) {
         guard let navController else { return }
         navController.setToolbarHidden(hidden, animated: true)
         navController.setNavigationBarHidden(hidden, animated: true)
@@ -98,7 +88,21 @@ class VideoViewerController: UIViewController, MediaViewerControllerProtocol {
     func zoomOut() {}
     func cancelRotate(){}
     func confirmRotate(){}
-    func rotateLeft(){}
+    @objc func rotateLeft() {
+        currentAngle -= 90
+        if currentAngle <= -360 { currentAngle = 0 }
+        applyRotation(angle: currentAngle)
+    }
+
+    private func applyRotation(angle: CGFloat) {
+        guard let playerVC = playerViewController else { return }
+
+        let radians = angle * .pi / 180
+        playerVC.view.transform = CGAffineTransform(rotationAngle: radians)
+
+        // 회전 후 프레임 재조정
+        playerVC.view.frame = view.bounds
+    }
     
     deinit {
         player?.pause()
