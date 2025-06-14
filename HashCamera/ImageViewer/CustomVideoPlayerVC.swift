@@ -82,10 +82,11 @@ final class CustomVideoPlayerVC: UIViewController {
             angle = 0
         case .landscapeRight:
             angle = -.pi / 2
-        case .landscapeLeft:
-            angle = .pi / 2
         case .upsideDown:
             angle = .pi
+        case .landscapeLeft:
+            angle = .pi / 2
+
         }
 
         // 앵커 포인트 기준 회전

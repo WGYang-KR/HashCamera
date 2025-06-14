@@ -69,22 +69,24 @@ class VideoViewerController: UIViewController, MediaViewerControllerProtocol {
     }
     
     func zoomOut() {}
-    func cancelRotate(){}
-    func confirmRotate(){}
+    func cancelRotate(){
+        let nextOrient: OrientationType = .portrait
+        playerVC?.rotate(nextOrient)
+        curOrientation = nextOrient
+    }
+    
+    func confirmRotate(){
+        if curOrientation != .portrait {
+            let editor = VideoEditor()
+            editor.rotateVideo(url: videoURL, orientation: curOrientation)
+        }
+        
+    }
+    
     @objc func rotateLeft() {
         let nextOrient = curOrientation.next()
         playerVC?.rotate(nextOrient)
         curOrientation = nextOrient
-    }
-
-    private func applyRotation(angle: CGFloat) {
-        guard let playerVC else { return }
-
-        let radians = angle * .pi / 180
-        playerVC.view.transform = CGAffineTransform(rotationAngle: radians)
-
-        // 회전 후 프레임 재조정
-        playerVC.view.frame = view.bounds
     }
     
     deinit {
