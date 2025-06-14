@@ -15,15 +15,7 @@ class VideoViewerController: UIViewController, MediaViewerControllerProtocol {
     var imageItem: ImageFileModel!
     
     private let videoURL: URL
-    private var player: AVPlayer? {
-        get {
-            playerViewController?.player
-        }
-        set {
-            playerViewController?.player = newValue
-        }
-    }
-    private var playerViewController: CustomVideoPlayerViewController?
+    private var playerVC: CustomVideoPlayerVC?
     private var currentAngle: CGFloat = 0
 
     private var navController: UINavigationController? {
@@ -49,40 +41,29 @@ class VideoViewerController: UIViewController, MediaViewerControllerProtocol {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        player?.pause()
+        playerVC?.pause()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        player?.play()
+        playerVC?.play()
     }
     
     private func setupPlayer() {
-//        let player = AVPlayer(url: videoURL)
-//        self.player = player
-//        
-        let playerVC = CustomVideoPlayerViewController(videoURL: videoURL)
-        
-//        let playerVC = AVPlayerViewController()
-//        playerVC.player = player
-//        playerVC.showsPlaybackControls = true
-//        playerVC.entersFullScreenWhenPlaybackBegins = false
-//        playerVC.exitsFullScreenWhenPlaybackEnds = false
-//        playerVC.modalPresentationStyle = .overFullScreen
-//        playerVC.view.frame = view.bounds
+        let playerVC = CustomVideoPlayerVC(videoURL: videoURL)
+        playerVC.delegate = self
         
         addChild(playerVC)
         view.addSubview(playerVC.view)
         playerVC.didMove(toParent: self)
-        self.playerViewController = playerVC
+        self.playerVC = playerVC
 
     }
     
-        
-    private func setNavi(hidden: Bool) {
+    private func naviToggle(animated: Bool = true) {
         guard let navController else { return }
-        navController.setToolbarHidden(hidden, animated: true)
-        navController.setNavigationBarHidden(hidden, animated: true)
+        navController.setToolbarHidden(!navController.isToolbarHidden, animated: animated)
+        navController.setNavigationBarHidden(!navController.isNavigationBarHidden, animated: animated)
     }
     
     func zoomOut() {}
@@ -95,7 +76,7 @@ class VideoViewerController: UIViewController, MediaViewerControllerProtocol {
     }
 
     private func applyRotation(angle: CGFloat) {
-        guard let playerVC = playerViewController else { return }
+        guard let playerVC else { return }
 
         let radians = angle * .pi / 180
         playerVC.view.transform = CGAffineTransform(rotationAngle: radians)
@@ -105,7 +86,14 @@ class VideoViewerController: UIViewController, MediaViewerControllerProtocol {
     }
     
     deinit {
-        player?.pause()
-        player = nil
+        playerVC?.pause()
+        playerVC = nil
     }
+}
+
+extension VideoViewerController: CustomVideoPlayerVCDelegate {
+    func customVideoPlayerVCTapped(_ vc: CustomVideoPlayerVC) {
+        naviToggle()
+    }
+    
 }
