@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 import RxRelay
 import QuickLookThumbnailing
+import AVFoundation
 
 class PhotoListVM {
     
@@ -105,6 +106,32 @@ class PhotoListVM {
         if let request = fileList[index].thumbnailRequest {
             QLThumbnailGenerator.shared.cancel(request)
         }
+    }
+    
+    func durationString(index: Int) -> String? {
+        guard let duration = duration(index: index), duration.isFinite, duration > 0 else {
+               return nil
+           }
+           let minutes = Int(duration) / 60
+           let seconds = Int(duration) % 60
+           return String(format: "%02d:%02d", minutes, seconds)
+    }
+    
+    private func duration(index: Int) -> Double? {
+        guard index >= 0, index < fileList.count else { return nil }
+        
+        let item = fileList[index]
+        let asset = AVAsset(url: item.url)
+        
+        // 영상인지 확인
+        let hasVideoTrack = !asset.tracks(withMediaType: .video).isEmpty
+        guard hasVideoTrack else { return nil }
+        
+        let time = asset.duration
+        guard time.isNumeric else { return nil }
+        
+        let seconds = CMTimeGetSeconds(time)
+        return seconds.isFinite ? seconds : nil
     }
     
     func deleteFiles(at indexPaths: [IndexPath]) async -> Result<Void, FileService.DeleteError> {

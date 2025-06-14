@@ -11,7 +11,8 @@ class PhotoListItemCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var selectionCoverView: UIView!
-
+    @IBOutlet weak var label: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -26,5 +27,6 @@ class PhotoListItemCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         imageView.image = nil
+        label.text = nil
     }
 }

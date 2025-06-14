@@ -217,12 +217,15 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         
         return cell
     }
+    
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let cell = cell as? PhotoListItemCell else { return }
         
-//        hcLog("썸네일 로드요청 index:\(indexPath.item) imageSize: \(itemSize)")
+
+        cell.label.text = vm.durationString(index: indexPath.item)
         
         //썸네일 설정
+        //hcLog("썸네일 로드요청 index:\(indexPath.item) imageSize: \(itemSize)")
         vm.startFetchingThumb(index: indexPath.item) { image in
             DispatchQueue.main.async {
                 //셀 indexPath가 바뀌었는지 확인
