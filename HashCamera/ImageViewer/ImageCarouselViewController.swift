@@ -237,7 +237,7 @@ class ImageCarouselViewController:UIPageViewController, ImageViewerTransitionVie
         appearance.titleTextAttributes = [.foregroundColor: UIColor.label]
 
         // 버튼 텍스트 색상 설정
-        navigationController?.navigationBar.tintColor = .systemCyan
+//        navigationController?.navigationBar.tintColor = .systemCyan
         
         // standardAppearance와 scrollEdgeAppearance 모두에 적용
         navigationController?.navigationBar.standardAppearance = appearance
