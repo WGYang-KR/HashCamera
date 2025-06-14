@@ -16,12 +16,14 @@ class VideoViewerController: UIViewController, MediaViewerControllerProtocol {
     
     private let videoURL: URL
     private var playerVC: CustomVideoPlayerVC?
-    private var currentAngle: CGFloat = 0
+    private var curOrientation: OrientationType = .portrait
 
     private var navController: UINavigationController? {
         return (parent as? ImageCarouselViewController)?.navigationController
         
     }
+    
+    //MARK: - Life Cycle
     
     init(index: Int, imageItem: ImageFileModel) {
         self.index = index
@@ -70,9 +72,9 @@ class VideoViewerController: UIViewController, MediaViewerControllerProtocol {
     func cancelRotate(){}
     func confirmRotate(){}
     @objc func rotateLeft() {
-        currentAngle -= 90
-        if currentAngle <= -360 { currentAngle = 0 }
-        applyRotation(angle: currentAngle)
+        let nextOrient = curOrientation.next()
+        playerVC?.rotate(nextOrient)
+        curOrientation = nextOrient
     }
 
     private func applyRotation(angle: CGFloat) {

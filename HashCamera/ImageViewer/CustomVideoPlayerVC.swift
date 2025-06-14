@@ -71,6 +71,30 @@ final class CustomVideoPlayerVC: UIViewController {
         playPauseButton.setImage(playImage, for: .normal)
     }
     
+    
+    func rotate(_ orientation: OrientationType) {
+        guard let playerLayer else { return }
+
+        var angle: CGFloat = 0
+
+        switch orientation {
+        case .portrait:
+            angle = 0
+        case .landscapeRight:
+            angle = -.pi / 2
+        case .landscapeLeft:
+            angle = .pi / 2
+        case .upsideDown:
+            angle = .pi
+        }
+
+        // 앵커 포인트 기준 회전
+        CATransaction.begin()
+        CATransaction.setDisableActions(true) // 애니메이션 제거
+        playerLayer.setAffineTransform(CGAffineTransform(rotationAngle: angle))
+        CATransaction.commit()
+    }
+    
     // MARK: - View Lifecycle
 
     override func viewDidLoad() {
