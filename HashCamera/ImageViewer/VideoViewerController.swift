@@ -9,7 +9,7 @@ import UIKit
 import AVKit
 
 /// 동영상을 전체 화면으로 보여주는 뷰 컨트롤러
-class VideoViewerController: UIViewController, MediaViewerControllerProtocol {
+class VideoViewerController: UIViewController, MediaViewerVCProtocol {
     
     var index: Int = 0
     var imageItem: ImageFileModel!

@@ -1,5 +1,5 @@
 //
-//  MediaViewerControllerProtocol.swift
+//  MediaViewerVCProtocol.swift
 //  HashCamera
 //
 //  Created by Anto-Yang on 5/23/25.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol MediaViewerControllerProtocol: UIViewController {
+protocol MediaViewerVCProtocol: UIViewController {
     var index: Int { get set }
     var imageItem: ImageFileModel! { get set }
     
