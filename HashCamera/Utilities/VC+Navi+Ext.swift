@@ -61,7 +61,7 @@ extension UIViewController {
         appearance.backgroundEffect = UIBlurEffect(style: .light)  // Blur 효과 추가
         
         // 버튼 텍스트 색상 설정
-        navigationController?.toolbar.tintColor = .systemCyan
+//        navigationController?.toolbar.tintColor = .systemCyan
         
         // standardAppearance와 scrollEdgeAppearance 모두에 적용
         navigationController?.toolbar.standardAppearance = appearance

@@ -1,8 +1,7 @@
 import UIKit
 
 ///이미지 핀치줌을 지원하는 뷰컨트롤러
-class ImageViewerController:UIViewController,
-UIGestureRecognizerDelegate {
+class ImageViewerController:UIViewController, MediaViewerVCProtocol, UIGestureRecognizerDelegate {
     
     var imageView: UIImageView = UIImageView(frame: .zero)
     let imageLoader: ImageLoader
