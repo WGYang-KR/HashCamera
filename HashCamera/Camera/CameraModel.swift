@@ -12,15 +12,17 @@ import RxRelay
 import FirebaseCrashlytics
 
 //사진 촬영을 제외하고는 rx를 이용해서 get, set
-class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
+class CameraModel: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureFileOutputRecordingDelegate {
     
     let captureSession: AVCaptureSession
     private var videoInput: AVCaptureDeviceInput?
     private let photoOutput: AVCapturePhotoOutput
+    private let movieOutput = AVCaptureMovieFileOutput() // 🔹추가
     private var disposeBag = DisposeBag()
     
     ///촬영시작 true, 촬영끝 false
     let isCapturingPhoto: BehaviorRelay<Bool>
+    let isRecordingVideo: BehaviorRelay<Bool> = BehaviorRelay(value: false) // 🔹추가
 
     ///카메라 전/후면 설정 set get
     private(set) var position: AVCaptureDevice.Position
@@ -43,10 +45,11 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
     var aspectRatio: AspectRatioType
     ///촬영 완료된 사진 반환 get
     let capturedPhotoData = PublishRelay<Result<Data,PostCaputreProcessError>>()
+    ///촬영 완료된 비디오 반환
+    let capturedVideoURL = PublishRelay<Result<URL, Error>>() // 🔹추가
     ///에러 get
     let errorOccuredRx = PublishRelay<HCError>()
     
-
     //MARK: - 카메라 시작, 설정, 중지
     //카메라 모델 init
     init(position: AVCaptureDevice.Position,
@@ -302,6 +305,13 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         } else {
             self.errorOccuredRx.accept(.cameraUnknown)
         }
+        
+        if captureSession.canAddOutput(movieOutput) {
+            captureSession.addOutput(movieOutput)
+            captureSession.sessionPreset = .high // or .hd1920x1080 etc.
+        } else {
+            self.errorOccuredRx.accept(.cameraUnknown)
+        }
         captureSession.commitConfiguration()
        
     }
@@ -377,6 +387,37 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate {
         isCapturingPhoto.accept(false)
         hcLog("카메라 촬영 프로세스 완료")
         
+    }
+    
+    // MARK: - 비디오 촬영
+    func startRecording() {
+        guard !movieOutput.isRecording else { return }
+        
+        let tempDirectory = FileManager.default.temporaryDirectory
+        let outputFileURL = tempDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension("mov")
+        if let connection = movieOutput.connection(with: .video),
+           connection.isVideoOrientationSupported {
+            let deviceOrientation = UIDevice.current.orientation
+            connection.videoOrientation = AVCaptureVideoOrientation(deviceOrientation: deviceOrientation) ?? .portrait
+        }
+        movieOutput.startRecording(to: outputFileURL, recordingDelegate: self)
+        isRecordingVideo.accept(true)
+    }
+    
+    func stopRecording() {
+        guard movieOutput.isRecording else { return }
+        movieOutput.stopRecording()
+        isRecordingVideo.accept(false)
+    }
+    
+    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL,
+                    from connections: [AVCaptureConnection], error: Error?) {
+        if let error = error {
+            hcLog("비디오 녹화 에러: \(error.localizedDescription)")
+            capturedVideoURL.accept(.failure(error))
+        } else {
+            capturedVideoURL.accept(.success(outputFileURL))
+        }
     }
     
     

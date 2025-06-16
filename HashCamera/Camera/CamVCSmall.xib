@@ -70,7 +70,7 @@
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7aI-vq-Pix">
                                             <rect key="frame" x="0.0" y="0.0" width="393" height="60"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YRb-si-be8">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YRb-si-be8" customClass="CaptureBtnView" customModule="HashCamera" customModuleProvider="target">
                                                     <rect key="frame" x="166.66666666666666" y="0.0" width="60" height="60"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
@@ -78,7 +78,7 @@
                                                         <constraint firstAttribute="height" priority="750" constant="88" id="sa7-Je-zuD"/>
                                                     </constraints>
                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                    <state key="normal" image="CaptureButton"/>
+                                                    <state key="normal" image="iconCapturePhoto"/>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b6s-rZ-Qb4">
                                                     <rect key="frame" x="28" y="9" width="42" height="42"/>
@@ -126,7 +126,7 @@
                                         </view>
                                         <view contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="F3x-TE-FAG" userLabel="Space">
                                             <rect key="frame" x="0.0" y="60" width="393" height="0.0"/>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iqR-Qb-Vcs">
                                             <rect key="frame" x="0.0" y="60" width="393" height="44"/>
@@ -212,9 +212,9 @@
         </view>
     </objects>
     <resources>
-        <image name="CaptureButton" width="80" height="80"/>
         <image name="folder" catalog="system" width="128" height="96"/>
         <image name="folder.fill" catalog="system" width="128" height="96"/>
+        <image name="iconCapturePhoto" width="80" height="80"/>
         <namedColor name="majorLightColor">
             <color red="0.53333333333333333" green="0.81568627450980391" blue="0.89803921568627454" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

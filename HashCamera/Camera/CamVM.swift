@@ -31,6 +31,7 @@ class CamVM: SelectSaveFolderVCDelegate {
     
     ///촬영시 true -> 저장 완료 후 false
     let isCapturingPhoto = BehaviorRelay(value: false)
+    let isRecordingVideo = BehaviorRelay(value: false) // 🔹 비디오 녹화 상태 추가
     let errorOccuredRx = PublishRelay<Error>()
     var disposeBag = DisposeBag()
     
@@ -59,15 +60,52 @@ class CamVM: SelectSaveFolderVCDelegate {
                 errorOccuredRx.accept(error)
             }
             
-            isCapturingPhoto.accept(false) //촬영저장 끝
-            
         }.disposed(by: disposeBag)
+        
+        // 🔹 비디오 캡처 결과 저장
+        cameraModel.capturedVideoURL
+            .bind { [weak self] videoRecordResult in
+                guard let self else { return }
+                switch videoRecordResult {
+                case .success(let videoURL):
+                    let result = saveVideo(videoURL: videoURL)
+                    switch result {
+                    case .success(let savedURL):
+                        hcLog("🎬 비디오 저장 완료: \(savedURL.lastPathComponent)")
+                    case .failure(let error):
+                        errorOccuredRx.accept(error)
+                    }
+                case .failure(let error):
+                    errorOccuredRx.accept(error)
+                }
+                
+            }
+            .disposed(by: disposeBag)
+        
+        // 🔹 상태 동기화
+        cameraModel.isCapturingPhoto
+            .bind(to: isCapturingPhoto)
+            .disposed(by: disposeBag)
+        
+        cameraModel.isRecordingVideo
+            .bind(to: isRecordingVideo)
+            .disposed(by: disposeBag)
     }
     
     func capturePhoto() {
-        isCapturingPhoto.accept(true) //촬영 저장 시작
         cameraModel.capturePhoto() //촬영 후 결과값은 capturedPhotoData로 수신
     }
+    
+    // 🔹 비디오 촬영 시작
+    func startVideoRecording() {
+        cameraModel.startRecording()
+    }
+    
+    // 🔹 비디오 촬영 종료
+    func stopVideoRecording() {
+        cameraModel.stopRecording()
+    }
+
     
     //MARK: - 저장폴더
     static var defaultFolder: FolderModel {
@@ -132,9 +170,26 @@ class CamVM: SelectSaveFolderVCDelegate {
         let newFileURL = destination.appendingPathComponent(fileName)
         guard let uniqueURL = makeUniqueFileURL(url: newFileURL) else { return .failure(.failToMakeUniqueName) }
         return fileManager.createFile(atPath: uniqueURL.path, contents: data) ?  .success(uniqueURL) : .failure(.failToSaveAtPath)
-
+        
     }
-
+    // 🔹 비디오 저장 처리
+    private func saveVideo(videoURL: URL) -> Result<URL, SavePhotoError> {
+        let destination = selectedFolderRx.value.url
+        let fileName = makePhotoFileName(fileTypeString: "mov")
+        let destURL = destination.appendingPathComponent(fileName)
+        
+        guard let uniqueURL = makeUniqueFileURL(url: destURL) else {
+            return .failure(.failToMakeUniqueName)
+        }
+        
+        do {
+            try fileManager.copyItem(at: videoURL, to: uniqueURL)
+            return .success(uniqueURL)
+        } catch {
+            return .failure(.failToSaveAtPath)
+        }
+    }
+    
     ///현재시간을 베이스로 파일명을 반환
     private func makePhotoFileName(fileTypeString: String ) -> String {
         let format = "yyyyMMdd_HHmmss_SSS"

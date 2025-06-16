@@ -39,6 +39,8 @@ class CamVC: UIViewController {
     // 상태 바를 숨길지 결정
     override var prefersStatusBarHidden: Bool { true }
     
+    var captureMode: CaptureModeType = .video
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -210,10 +212,19 @@ class CamVC: UIViewController {
         
         
         //촬영버튼
-        captureButton.rx.tap.bind { [weak self] _ in
+        captureButton.addTapGestureRecognizer({ [weak self] in
             guard let self else { return }
-            camVM.capturePhoto() //캡처
-        }.disposed(by: disposeBag)
+            switch captureMode {
+            case .photo:
+                camVM.capturePhoto() //캡처
+            case .video:
+                if camVM.isRecordingVideo.value {
+                    camVM.startVideoRecording() //캡처
+                } else {
+                    camVM.stopVideoRecording()
+                }
+            }
+        })
         
         //캡처시 테두리 효과 색 지정.
         previewView.layer.borderColor = UIColor(resource: .majorLight).cgColor
