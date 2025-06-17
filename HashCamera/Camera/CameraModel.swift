@@ -71,10 +71,15 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureFileOutputR
     func initCamera() {
         setupSessionOutput()
     }
+    
+    let cameraSessionQueue = DispatchQueue(label: "com.hashcamera.cameraSessionQueue", qos: .userInteractive)
     ///카메라 시작. global thread에서 실행되는 것 주의
     func startCamera(_ completion: ( () -> Void )? = nil)  {
-        DispatchQueue.global(qos: .background).async {[weak self] in
-            self?.captureSession.startRunning() // 카메라 세션 시작
+        cameraSessionQueue.async {[weak self] in
+            guard let self else { return }
+            if !self.captureSession.isRunning {
+                self.captureSession.startRunning() // 카메라 세션 시작
+            }
             completion?()
         }
 
@@ -83,8 +88,11 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureFileOutputR
     
     ///카메라 중지. global thread에서 실행되는 것 주의
     func stopCamera(_ completion: ( () -> Void )? = nil) {
-        DispatchQueue.global(qos: .background).async {
-            self.captureSession.stopRunning()
+        cameraSessionQueue.async { [weak self] in
+            guard let self else { return }
+            if self.captureSession.isRunning {
+                self.captureSession.stopRunning()
+            }
             completion?()
         }
 

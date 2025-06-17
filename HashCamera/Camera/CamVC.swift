@@ -26,10 +26,11 @@ class CamVC: UIViewController {
     @IBOutlet weak var bottomMenuContainer: UIView!
     @IBOutlet weak var bottomMenuTopSpaceView: UIView!
     @IBOutlet weak var storageButton: UIButton!
-    @IBOutlet weak var captureButton: UIButton!
+    @IBOutlet weak var captureButton: CaptureBtnView!
     @IBOutlet weak var browseButton: UIButton!
     
     @IBOutlet weak var zoomFactorBtn: UIButton!
+    @IBOutlet weak var photoVideoSegControl: UISegmentedControl!
     
     let camVM: CamVM = CamVM()
     let isLoading = BehaviorRelay(value: true)
@@ -39,7 +40,7 @@ class CamVC: UIViewController {
     // 상태 바를 숨길지 결정
     override var prefersStatusBarHidden: Bool { true }
     
-    var captureMode: CaptureModeType = .video
+    var captureMode: CaptureModeType = .photo
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,8 +79,7 @@ class CamVC: UIViewController {
     }
     
     override func viewDidLayoutSubviews() {
-        setStorageBtnPosition()
-        
+
         storageButton.layer.cornerRadius = storageButton.bounds.height / 2
         zoomFactorBtn.layer.cornerRadius = zoomFactorBtn.bounds.height / 2
 
@@ -135,17 +135,17 @@ class CamVC: UIViewController {
     
     func initView() {
 
-        rootContView.snp.removeConstraints()
-        rootContView.snp.makeConstraints { make in
-            make.left.bottom.right.equalTo(view.safeAreaLayoutGuide)
-            
-            if UIDevice.current.topCutout == .none {        //상단 노치 없는 폰에서는 savearea무시한다
-                make.top.equalToSuperview()
-            } else {
-                make.top.equalTo(view.safeAreaLayoutGuide)
-            }
-        }
-        
+//        rootContView.snp.removeConstraints()
+//        rootContView.snp.makeConstraints { make in
+//            make.left.bottom.right.equalTo(view.safeAreaLayoutGuide)
+//            
+//            if UIDevice.current.topCutout == .none {        //상단 노치 없는 폰에서는 savearea무시한다
+//                make.top.equalToSuperview()
+//            } else {
+//                make.top.equalTo(view.safeAreaLayoutGuide)
+//            }
+//        }
+//        
         //폴더선택 화면 표시
         storageButton.rx.tap.bind(onNext: { [weak self] in
             guard let self else { return }
@@ -218,10 +218,12 @@ class CamVC: UIViewController {
             case .photo:
                 camVM.capturePhoto() //캡처
             case .video:
-                if camVM.isRecordingVideo.value {
+                if !camVM.isRecordingVideo.value {
                     camVM.startVideoRecording() //캡처
+                    captureButton.setIcon(.stopRecord)
                 } else {
                     camVM.stopVideoRecording()
+                    captureButton.setIcon(.startRecord)
                 }
             }
         })
@@ -295,29 +297,6 @@ class CamVC: UIViewController {
     
     }
     
-    func setStorageBtnPosition() {
-        let btnVerticalSpace = 8.0
-        let btnHeight = 37.0
-        
-        storageButton.snp.removeConstraints()
-        
-        if bottomMenuTopSpaceView.bounds.size.height >= btnHeight + ( btnVerticalSpace * 2 ) {
-            //Bottom 메뉴 안쪽으로 설정
-            storageButton.snp.makeConstraints { make in
-                make.height.equalTo(btnHeight)
-                make.centerX.equalToSuperview()
-                make.top.equalTo(bottomMenuTopSpaceView.snp.top).inset(btnVerticalSpace)
-                make.bottom.lessThanOrEqualTo(bottomMenuTopSpaceView.snp.bottom).offset(btnVerticalSpace)
-            }
-        } else {
-            //preview 위로 설정
-            storageButton.snp.makeConstraints { make in
-                make.height.equalTo(btnHeight)
-                make.centerX.equalToSuperview()
-                make.bottom.equalTo(bottomMenuTopSpaceView.snp.top).offset(-btnVerticalSpace)
-            }
-        }
-    }
     
     //MARK: - Action Control
     
@@ -362,6 +341,20 @@ class CamVC: UIViewController {
         }
     }
 
+    @IBAction func photoVideoSegChanged(_ sender: UISegmentedControl) {
+        if sender.selectedSegmentIndex == 0 {
+            stopCamera()
+            captureButton.setIcon(.capturePhoto)
+            captureMode = .photo
+            startCamera()
+        } else {
+            stopCamera()
+            captureButton.setIcon(.startRecord)
+            captureMode = .video
+            startCamera()
+            
+        }
+    }
     
     func moveSettingsView() {
         let vc = UIHostingController(rootView: SettingsView())

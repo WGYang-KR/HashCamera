@@ -30,6 +30,7 @@
 		6A051FD62DFD2F8500C3DE23 /* OrientationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A051FD52DFD2F8000C3DE23 /* OrientationType.swift */; };
 		6A051FD82DFD388400C3DE23 /* VideoEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A051FD72DFD385200C3DE23 /* VideoEditor.swift */; };
 		6A051FE82DFDA7DE00C3DE23 /* CaptureModeType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A051FE72DFDA7D800C3DE23 /* CaptureModeType.swift */; };
+		6A051FEA2E0051F900C3DE23 /* CamVCSmall.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A051FE92E0051F900C3DE23 /* CamVCSmall.xib */; };
 		6A0CAA932CA1AF88006BC4D3 /* MoveToFolderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0CAA912CA1AF88006BC4D3 /* MoveToFolderVC.swift */; };
 		6A0CAA942CA1AF88006BC4D3 /* MoveToFolderVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A0CAA922CA1AF88006BC4D3 /* MoveToFolderVC.xib */; };
 		6A0CAA962CA1AFFE006BC4D3 /* MoveToFolderVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0CAA952CA1AFF8006BC4D3 /* MoveToFolderVM.swift */; };
@@ -85,7 +86,6 @@
 		6AA61AD02AFA8337002E3725 /* TopMenuBarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AA61ACF2AFA8337002E3725 /* TopMenuBarView.xib */; };
 		6AA61AD22AFA850E002E3725 /* FlashMode+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA61AD12AFA850E002E3725 /* FlashMode+Ext.swift */; };
 		6AA61AD42AFD22E3002E3725 /* TopMenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA61AD32AFD22E3002E3725 /* TopMenuBarView.swift */; };
-		6AA61AD62AFD2605002E3725 /* CaptureBtnView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AA61AD52AFD2605002E3725 /* CaptureBtnView.xib */; };
 		6AA61AD82AFE71E1002E3725 /* CaseIterable+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA61AD72AFE71E1002E3725 /* CaseIterable+Ext.swift */; };
 		6AA63E572CD106BD00AC0E97 /* AlertHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA63E562CD1068B00AC0E97 /* AlertHelper.swift */; };
 		6AA63E592CD3BB3200AC0E97 /* SelectableFolderListVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA63E582CD3BB2A00AC0E97 /* SelectableFolderListVM.swift */; };
@@ -149,6 +149,7 @@
 		6A051FD52DFD2F8000C3DE23 /* OrientationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationType.swift; sourceTree = "<group>"; };
 		6A051FD72DFD385200C3DE23 /* VideoEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoEditor.swift; sourceTree = "<group>"; };
 		6A051FE72DFDA7D800C3DE23 /* CaptureModeType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureModeType.swift; sourceTree = "<group>"; };
+		6A051FE92E0051F900C3DE23 /* CamVCSmall.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CamVCSmall.xib; sourceTree = "<group>"; };
 		6A0CAA912CA1AF88006BC4D3 /* MoveToFolderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveToFolderVC.swift; sourceTree = "<group>"; };
 		6A0CAA922CA1AF88006BC4D3 /* MoveToFolderVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MoveToFolderVC.xib; sourceTree = "<group>"; };
 		6A0CAA952CA1AFF8006BC4D3 /* MoveToFolderVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveToFolderVM.swift; sourceTree = "<group>"; };
@@ -208,7 +209,6 @@
 		6AA61ACF2AFA8337002E3725 /* TopMenuBarView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TopMenuBarView.xib; sourceTree = "<group>"; };
 		6AA61AD12AFA850E002E3725 /* FlashMode+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FlashMode+Ext.swift"; sourceTree = "<group>"; };
 		6AA61AD32AFD22E3002E3725 /* TopMenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopMenuBarView.swift; sourceTree = "<group>"; };
-		6AA61AD52AFD2605002E3725 /* CaptureBtnView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CaptureBtnView.xib; sourceTree = "<group>"; };
 		6AA61AD72AFE71E1002E3725 /* CaseIterable+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CaseIterable+Ext.swift"; sourceTree = "<group>"; };
 		6AA63E562CD1068B00AC0E97 /* AlertHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertHelper.swift; sourceTree = "<group>"; };
 		6AA63E582CD3BB2A00AC0E97 /* SelectableFolderListVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectableFolderListVM.swift; sourceTree = "<group>"; };
@@ -428,6 +428,7 @@
 				6AE8CFA22AF4D5A70063C8C6 /* Components */,
 				6A8B32142AE7A03000D24E49 /* CamVC.swift */,
 				6A755F772CBE3286008B5F95 /* CamVC.xib */,
+				6A051FE92E0051F900C3DE23 /* CamVCSmall.xib */,
 				6A133E502B0655320018A769 /* CamVM.swift */,
 				6AA61ACB2AF14A5C002E3725 /* CameraModel.swift */,
 			);
@@ -488,7 +489,6 @@
 				6AE8CFA02AF4D32D0063C8C6 /* CamPreviewView.swift */,
 				6AA61ACF2AFA8337002E3725 /* TopMenuBarView.xib */,
 				6AA61AD32AFD22E3002E3725 /* TopMenuBarView.swift */,
-				6AA61AD52AFD2605002E3725 /* CaptureBtnView.xib */,
 				6AFB72D32B0113D00029592F /* CaptureBtnView.swift */,
 			);
 			path = Components;
@@ -617,7 +617,7 @@
 				6A971F6C2CEB915200B7851C /* InfoPlist.strings in Resources */,
 				6A0CAA9A2CA1B196006BC4D3 /* MoveToFolderListItemCell.xib in Resources */,
 				6A0CAA942CA1AF88006BC4D3 /* MoveToFolderVC.xib in Resources */,
-				6AA61AD62AFD2605002E3725 /* CaptureBtnView.xib in Resources */,
+				6A051FEA2E0051F900C3DE23 /* CamVCSmall.xib in Resources */,
 				6A755F782CBE3286008B5F95 /* CamVC.xib in Resources */,
 				6AA6096A2CBEAE060011BB59 /* SelectSaveFolderItemCell.xib in Resources */,
 				6A7A50152CE63E4F006DAA22 /* Localizable.strings in Resources */,
