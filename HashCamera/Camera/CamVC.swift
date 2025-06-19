@@ -49,13 +49,8 @@ class CamVC: UIViewController {
         initView()
         initCamera()
         bindAppLifeCycle()
+
         
-        camVM.isCapturingPhoto.observe(on: MainScheduler.instance).bind { [weak self] isCapturing in
-            self?.enableComponents( !isCapturing )
-            if isCapturing {
-                self?.previewView.opaqueEffect()
-            }
-        }.disposed(by: disposeBag)
         NotificationCenter.default.addObserver(self, selector: #selector(self.widgetFolderTapped), name: .widgetFolderTapped, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.widgetSettingTapped), name: .widgetSettingTapped, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.widgetCameraTapped), name: .widgetCameraTapped, object: nil)
@@ -230,6 +225,19 @@ class CamVC: UIViewController {
         }
         .disposed(by: disposeBag)
         
+        
+        camVM.isCapturingPhoto.observe(on: MainScheduler.instance).bind { [weak self] isCapturing in
+            self?.enableComponents( !isCapturing )
+            if isCapturing {
+                self?.previewView.opaqueEffect()
+            }
+        }.disposed(by: disposeBag)
+        
+        camVM.isRecordingVideo.observe(on: MainScheduler.instance).bind { [weak self] isRecording in
+            self?.updateRecordingUI( isRecording )
+        }.disposed(by: disposeBag)
+        
+        
         //캡처시 테두리 효과 색 지정.
         previewView.layer.borderColor = UIColor(resource: .majorLight).cgColor
         
@@ -316,7 +324,7 @@ class CamVC: UIViewController {
     ///화면 모든 버튼 활성화/비활성화
     func enableComponents(_ isEnabled: Bool) {
         topMenuView.moreMenuBtn.isEnabled = isEnabled
-        topMenuView.aspectRatioBtn.isEnabled = isEnabled
+        topMenuView.aspectRatioBtn.isEnabled = isEnabled && captureMode == .photo
         topMenuView.flashModeBtn.isEnabled = isEnabled
         topMenuView.cameraPositionBtn.isEnabled = isEnabled
         storageButton.isEnabled = isEnabled
@@ -324,6 +332,29 @@ class CamVC: UIViewController {
         browseButton.isEnabled = isEnabled
         zoomFactorBtn.isEnabled = isEnabled
         previewView.isUserInteractionEnabled = isEnabled
+    }
+    
+    func updateRecordingUI(_ isRecording: Bool){
+        topMenuView.moreMenuBtn.isEnabled = !isRecording
+        topMenuView.flashModeBtn.isEnabled = !isRecording
+        topMenuView.cameraPositionBtn.isEnabled = !isRecording
+        storageButton.isEnabled = !isRecording
+        browseButton.isEnabled = !isRecording
+    }
+    
+    func updateMode() {
+        stopCamera()
+        switch captureMode {
+        case .photo:
+            captureButton.setIcon(.capturePhoto)
+            topMenuView.aspectRatioBtn.isEnabled = true
+            topMenuView.aspectRatioRx.accept(.standard)
+        case .video:
+            captureButton.setIcon(.startRecord)
+            topMenuView.aspectRatioBtn.isEnabled = false
+            topMenuView.aspectRatioRx.accept(.wide)
+        }
+        startCamera()
     }
     
     func setPreviewAspectRatio(aspectRatio: AspectRatioType, completion: ( () -> Void )?)  {
@@ -355,18 +386,14 @@ class CamVC: UIViewController {
     }
 
     @IBAction func photoVideoSegChanged(_ sender: UISegmentedControl) {
+        
         if sender.selectedSegmentIndex == 0 {
-            stopCamera()
-            captureButton.setIcon(.capturePhoto)
             captureMode = .photo
-            startCamera()
         } else {
-            stopCamera()
-            captureButton.setIcon(.startRecord)
             captureMode = .video
-            startCamera()
-            
         }
+        
+        updateMode()
     }
     
     func moveSettingsView() {
