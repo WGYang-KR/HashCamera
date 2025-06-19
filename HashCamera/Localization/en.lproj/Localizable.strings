@@ -44,8 +44,8 @@
 "N010_3" = "Folder name changed.";
 "N010_4" = "Failed to rename folder.";
 "NSCameraUsageDescription" = "We need access to your camera to take photos.";
-"N011_2" = "Camera permission required";
-"N011_3" = "Please go to Settings and allow camera permission to take photos";
+"N011_2" = "Camera and microphone permission required";
+"N011_3" = "Please go to Settings and allow camera and microphone permission to take photos";
 "N011_4" = "Settings";
 "N012_1" = "Widget Setting";
 "N012_2" = "Folder List";

@@ -34,10 +34,28 @@ class AuthorizationManager {
         }
     }
     
+    /// 마이크 권한 상태 확인
+    static func checkMicrophoneAuth() async -> Bool {
+        switch AVCaptureDevice.authorizationStatus(for: .audio) {
+        case .notDetermined:
+            hcLog("마이크 권한 notDetermined")
+            return await AVCaptureDevice.requestAccess(for: .audio)
+        case .restricted:
+            hcLog("마이크 권한 restricted")
+            return false
+        case .authorized:
+            return true
+        default:
+            hcLog("마이크 권한 declined")
+            return false
+        }
+    }
+    
+    
     /// 카메라 권한 설정이동 팝업
     static func presentCameraAuthAlert(baseVC: UIViewController, completion: @escaping (Bool) -> Void ) {
-        let alert = UIAlertController(title: localizedString(forKey: "N011_2", value: "Camera permission required"),
-                                      message: localizedString(forKey: "N011_3", value: "Please go to Settings and allow camera permission to use the app."), preferredStyle: .alert)
+        let alert = UIAlertController(title: localizedString(forKey: "N011_2", value: "Camera and microPhone permission required"),
+                                      message: localizedString(forKey: "N011_3", value: "Please go to Settings and allow camera and microphone permission to use the app."), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: localizedString(forKey: "C_Cancel", value: "Cancel"), style: .default) { action in
           //취소처리...
             completion(false)

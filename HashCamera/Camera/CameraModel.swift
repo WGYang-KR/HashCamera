@@ -17,12 +17,13 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureFileOutputR
     let captureSession: AVCaptureSession
     private var videoInput: AVCaptureDeviceInput?
     private let photoOutput: AVCapturePhotoOutput
-    private let movieOutput = AVCaptureMovieFileOutput() // 🔹추가
+    private let movieOutput = AVCaptureMovieFileOutput()
+    private var audioInput: AVCaptureDeviceInput?
     private var disposeBag = DisposeBag()
     
     ///촬영시작 true, 촬영끝 false
     let isCapturingPhoto: BehaviorRelay<Bool>
-    let isRecordingVideo: BehaviorRelay<Bool> = BehaviorRelay(value: false) // 🔹추가
+    let isRecordingVideo: BehaviorRelay<Bool> = BehaviorRelay(value: false)
 
     ///카메라 전/후면 설정 set get
     private(set) var position: AVCaptureDevice.Position
@@ -276,6 +277,19 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureFileOutputR
                 captureSession.addInput(videoDeviceInput)
             }
             self.videoInput = videoDeviceInput
+            
+            // 🔹 오디오 입력 설정
+            if let audioDevice = AVCaptureDevice.default(for: .audio) {
+                let audioInput = try AVCaptureDeviceInput(device: audioDevice)
+                if captureSession.canAddInput(audioInput) {
+                    captureSession.addInput(audioInput)
+                    self.audioInput = audioInput
+                } else {
+                    hcLog("❌ audioInput 추가 실패")
+                }
+            } else {
+                hcLog("❌ audioDevice 없음")
+            }
             
  
             if let device = self.videoInput?.device {

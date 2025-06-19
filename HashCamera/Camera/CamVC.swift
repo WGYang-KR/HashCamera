@@ -105,19 +105,26 @@ class CamVC: UIViewController {
     }
     
     func startCamera() {
-        Task {
-            if await AuthorizationManager.checkCameraAuth() { //권한 확인
-                    camVM.cameraModel.startCamera() { [weak self] in //프리뷰 시작.
-                        DispatchQueue.main.async {
-                            self?.enableComponents(true)
-                            self?.previewView.blurEffect(false)
-                        }
-                    }
-            } else {
-                AuthorizationManager.presentCameraAuthAlert(baseVC: self) {[weak self]_ in
+        Task {[weak self] in
+            guard let self else { return }
+            
+            let cameraGranted = await AuthorizationManager.checkCameraAuth()
+            let micGranted = await AuthorizationManager.checkMicrophoneAuth()
+            
+            guard cameraGranted && micGranted else {
+                AuthorizationManager.presentCameraAuthAlert(baseVC: self) { [weak self] _ in
                     guard let self else { return }
-                    enableComponents(false)
-                    browseButton.isEnabled = true
+                    self.enableComponents(false)
+                    self.browseButton.isEnabled = true
+                }
+                return
+            }
+            
+            // 프리뷰 시작
+            camVM.cameraModel.startCamera { [weak self] in
+                DispatchQueue.main.async {
+                    self?.enableComponents(true)
+                    self?.previewView.blurEffect(false)
                 }
             }
         }
