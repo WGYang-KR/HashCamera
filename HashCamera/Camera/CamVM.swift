@@ -102,6 +102,22 @@ class CamVM: SelectSaveFolderVCDelegate {
             .bind(to:recordingDuration)
             .disposed(by: disposeBag)
     }
+
+    func stopCamera() {
+        //녹화 진행중이면 녹화완료후 카메라를 끝낸다.
+        if cameraModel.isRecordingVideo.value {
+            cameraModel.capturedVideoURL.asMaybe().subscribe(onDisposed: {
+                self.cameraModel.stopCamera()
+            })
+            .disposed(by: disposeBag)
+            
+            cameraModel.stopRecording()
+        }
+        else {
+            cameraModel.stopCamera()
+        }
+    }
+    
     
     func capturePhoto() {
         cameraModel.capturePhoto() //촬영 후 결과값은 capturedPhotoData로 수신

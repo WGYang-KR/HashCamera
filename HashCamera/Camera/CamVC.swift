@@ -131,7 +131,7 @@ class CamVC: UIViewController {
     func stopCamera() {
         enableComponents(false)
         previewView.blurEffect(true)
-        camVM.cameraModel.stopCamera()
+        camVM.stopCamera()
     }
     
     func initView() {
@@ -210,13 +210,25 @@ class CamVC: UIViewController {
             case .video:
                 if !camVM.isRecordingVideo.value {
                     camVM.startVideoRecording() //캡처
-                    captureButton.setIcon(.stopRecord)
+                
                 } else {
                     camVM.stopVideoRecording()
-                    captureButton.setIcon(.startRecord)
                 }
             }
         })
+        
+        camVM.isRecordingVideo.bind { [weak self] isRecording in
+            guard let self else { return }
+            if captureMode == .video {
+                if isRecording {
+                    captureButton.setIcon(.stopRecord)
+                } else {
+                    
+                    captureButton.setIcon(.startRecord)
+                }
+            }
+        }
+        .disposed(by: disposeBag)
         
         //캡처시 테두리 효과 색 지정.
         previewView.layer.borderColor = UIColor(resource: .majorLight).cgColor
