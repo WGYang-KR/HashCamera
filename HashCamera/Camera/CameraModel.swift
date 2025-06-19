@@ -50,6 +50,11 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureFileOutputR
     ///에러 get
     let errorOccuredRx = PublishRelay<HCError>()
     
+    /* 타이머 변수 */
+    private var recordingTimer: Timer?
+    private var recordingStartDate: Date?
+    let recordingDuration = BehaviorRelay<TimeInterval>(value: 0) // seconds
+    
     //MARK: - 카메라 시작, 설정, 중지
     //카메라 모델 init
     init(position: AVCaptureDevice.Position,
@@ -410,12 +415,14 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureFileOutputR
         }
         movieOutput.startRecording(to: outputFileURL, recordingDelegate: self)
         isRecordingVideo.accept(true)
+        startRecordingTimer()
     }
     
     func stopRecording() {
         guard movieOutput.isRecording else { return }
         movieOutput.stopRecording()
         isRecordingVideo.accept(false)
+        stopRecordingTimer()
     }
     
     func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL,
@@ -428,6 +435,26 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureFileOutputR
         }
     }
     
+    //MARK: 타이머
+    private func startRecordingTimer() {
+        recordingStartDate = Date()
+        recordingDuration.accept(0)
+        
+        recordingTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let start = self?.recordingStartDate else { return }
+            let elapsed = Date().timeIntervalSince(start)
+            self?.recordingDuration.accept(elapsed)
+        }
+        RunLoop.main.add(recordingTimer!, forMode: .common)
+    }
+
+    private func stopRecordingTimer() {
+        recordingTimer?.invalidate()
+        recordingTimer = nil
+        recordingStartDate = nil
+    }
+    
+
     
     //MARK: 사진 처리
     

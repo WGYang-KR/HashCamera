@@ -31,6 +31,7 @@ class CamVC: UIViewController {
     
     @IBOutlet weak var zoomFactorBtn: UIButton!
     @IBOutlet weak var photoVideoSegControl: UISegmentedControl!
+    @IBOutlet weak var timeLabel: UILabel!
     
     let camVM: CamVM = CamVM()
     let isLoading = BehaviorRelay(value: true)
@@ -135,17 +136,6 @@ class CamVC: UIViewController {
     
     func initView() {
 
-//        rootContView.snp.removeConstraints()
-//        rootContView.snp.makeConstraints { make in
-//            make.left.bottom.right.equalTo(view.safeAreaLayoutGuide)
-//            
-//            if UIDevice.current.topCutout == .none {        //상단 노치 없는 폰에서는 savearea무시한다
-//                make.top.equalToSuperview()
-//            } else {
-//                make.top.equalTo(view.safeAreaLayoutGuide)
-//            }
-//        }
-//        
         //폴더선택 화면 표시
         storageButton.rx.tap.bind(onNext: { [weak self] in
             guard let self else { return }
@@ -295,6 +285,17 @@ class CamVC: UIViewController {
         }
         .disposed(by: disposeBag)
     
+        
+        //MARK: 녹화시간
+        timeLabel.roundCorners(corners: .allCorners, radius: 6)
+        Observable.combineLatest(camVM.isRecordingVideo, camVM.recordingDuration)
+            .bind { [weak self] isRecording, duration in
+                guard let self else { return }
+                timeLabel.isHidden = !isRecording
+                timeLabel.text = duration
+
+            }
+            .disposed(by: disposeBag)
     }
     
     

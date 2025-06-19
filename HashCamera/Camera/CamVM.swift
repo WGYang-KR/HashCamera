@@ -12,7 +12,7 @@ import RxRelay
 
 class CamVM: SelectSaveFolderVCDelegate {
 
-    var disBag = DisposeBag()
+    var disposeBag = DisposeBag()
     
     let cameraModel: CameraModel = CameraModel(position: .back,
                                                flashMode: .off,
@@ -33,8 +33,10 @@ class CamVM: SelectSaveFolderVCDelegate {
     let isCapturingPhoto = BehaviorRelay(value: false)
     let isRecordingVideo = BehaviorRelay(value: false) // 🔹 비디오 녹화 상태 추가
     let errorOccuredRx = PublishRelay<Error>()
-    var disposeBag = DisposeBag()
     
+    let recordingDuration = BehaviorRelay<String>(value: "00:00")
+    
+
     init() {
         initCamera()
         initFolderSelection()
@@ -89,6 +91,15 @@ class CamVM: SelectSaveFolderVCDelegate {
         
         cameraModel.isRecordingVideo
             .bind(to: isRecordingVideo)
+            .disposed(by: disposeBag)
+        
+        cameraModel.recordingDuration
+            .map {  duration -> String in
+                let minutes = Int(duration) / 60
+                let seconds = Int(duration) % 60
+                return String(format: "%02d:%02d", minutes, seconds)
+            }
+            .bind(to:recordingDuration)
             .disposed(by: disposeBag)
     }
     

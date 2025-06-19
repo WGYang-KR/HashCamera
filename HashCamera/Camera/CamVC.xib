@@ -23,6 +23,7 @@
                 <outlet property="previewView" destination="c6e-ur-MYJ" id="cgs-Am-Iy3"/>
                 <outlet property="rootContView" destination="mkK-hE-Tq7" id="fMs-l4-R1K"/>
                 <outlet property="storageButton" destination="B8L-qT-kWe" id="MNK-1O-ST1"/>
+                <outlet property="timeLabel" destination="K1Z-8H-bgg" id="vuy-Zd-9ie"/>
                 <outlet property="topMenuView" destination="VTJ-hg-TEg" id="4qo-Ih-2fH"/>
                 <outlet property="view" destination="iN0-l3-epB" id="v9G-S5-4YA"/>
                 <outlet property="zoomFactorBtn" destination="3Pd-YR-xfB" id="dpK-kJ-Too"/>
@@ -44,7 +45,7 @@
                             </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lju-sV-rxs" userLabel="Guide4:3">
-                            <rect key="frame" x="0.0" y="42" width="393" height="524"/>
+                            <rect key="frame" x="0.0" y="38" width="393" height="524"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstAttribute="width" secondItem="lju-sV-rxs" secondAttribute="height" multiplier="3:4" id="jMj-F3-GPE"/>
@@ -55,24 +56,35 @@
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         </view>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VTJ-hg-TEg" userLabel="TopMenu" customClass="TopMenuBarView" customModule="HashCamera" customModuleProvider="target">
-                            <rect key="frame" x="0.0" y="0.0" width="393" height="42"/>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K1Z-8H-bgg">
+                            <rect key="frame" x="166.66666666666666" y="42" width="60" height="24"/>
+                            <color key="backgroundColor" systemColor="systemRedColor"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="42" id="sFU-Wl-ADz"/>
+                                <constraint firstAttribute="width" constant="60" id="TL6-5k-Gav"/>
+                                <constraint firstAttribute="height" constant="24" id="bxy-ye-IO5"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VTJ-hg-TEg" userLabel="TopMenu" customClass="TopMenuBarView" customModule="HashCamera" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="393" height="38"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="38" id="sFU-Wl-ADz"/>
                             </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ceo-hc-2GB">
-                            <rect key="frame" x="0.0" y="566" width="393" height="132.66666666666663"/>
+                            <rect key="frame" x="0.0" y="562" width="393" height="136.66666666666663"/>
                             <subviews>
                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="2bV-zH-han">
-                                    <rect key="frame" x="0.0" y="0.0" width="393" height="132.66666666666666"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="393" height="136.66666666666666"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="VVd-zF-zEZ" userLabel="Space">
-                                            <rect key="frame" x="0.0" y="0.0" width="393" height="7.666666666666667"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="9"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cm2-rP-JNf">
-                                            <rect key="frame" x="0.0" y="7.6666666666666288" width="393" height="40"/>
+                                            <rect key="frame" x="0.0" y="9" width="393" height="40"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B8L-qT-kWe">
                                                     <rect key="frame" x="135" y="0.0" width="123" height="40"/>
@@ -106,11 +118,11 @@
                                             </constraints>
                                         </view>
                                         <view contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="KjT-YI-rcY" userLabel="Space">
-                                            <rect key="frame" x="0.0" y="47.666666666666629" width="393" height="7.3333333333333357"/>
+                                            <rect key="frame" x="0.0" y="49" width="393" height="8.6666666666666643"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7aI-vq-Pix">
-                                            <rect key="frame" x="0.0" y="55" width="393" height="70"/>
+                                            <rect key="frame" x="0.0" y="57.666666666666629" width="393" height="70"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YRb-si-be8" customClass="CaptureBtnView" customModule="HashCamera" customModuleProvider="target">
                                                     <rect key="frame" x="161.66666666666666" y="0.0" width="70" height="70"/>
@@ -164,7 +176,7 @@
                                             </constraints>
                                         </view>
                                         <view contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="F3x-TE-FAG" userLabel="Space">
-                                            <rect key="frame" x="0.0" y="125.00000000000001" width="393" height="7.6666666666666714"/>
+                                            <rect key="frame" x="0.0" y="127.66666666666663" width="393" height="9"/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </view>
                                     </subviews>
@@ -187,21 +199,27 @@
                             <rect key="frame" x="0.0" y="698.66666666666663" width="393" height="64.333333333333371"/>
                             <subviews>
                                 <view contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="iCW-2M-bmS" userLabel="Space">
-                                    <rect key="frame" x="0.0" y="0.0" width="393" height="16.666666666666668"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="393" height="12.333333333333334"/>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </view>
-                                <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="4IY-oL-3P9">
-                                    <rect key="frame" x="141" y="16.666666666666742" width="111" height="32"/>
+                                <segmentedControl opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="4IY-oL-3P9">
+                                    <rect key="frame" x="136.66666666666666" y="12.333333333333371" width="119.99999999999997" height="41"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="40" id="jkE-Th-bfg"/>
+                                        <constraint firstAttribute="width" constant="120" id="xI9-zB-hzi"/>
+                                    </constraints>
                                     <segments>
-                                        <segment title="Photo"/>
-                                        <segment title="Video"/>
+                                        <segment title="" image="camera.fill" catalog="system"/>
+                                        <segment title="">
+                                            <imageReference key="image" image="video.fill" catalog="system" symbolScale="default"/>
+                                        </segment>
                                     </segments>
                                     <connections>
-                                        <action selector="photoVideoSegChanged:" destination="-1" eventType="valueChanged" id="TRv-nK-zL7"/>
+                                        <action selector="photoVideoSegChanged:" destination="-1" eventType="valueChanged" id="KoZ-Ur-4GN"/>
                                     </connections>
                                 </segmentedControl>
                                 <view contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="pcO-Xj-8Hb" userLabel="Space">
-                                    <rect key="frame" x="0.0" y="47.666666666666742" width="393" height="16.666666666666671"/>
+                                    <rect key="frame" x="0.0" y="52.333333333333371" width="393" height="12"/>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </view>
                             </subviews>
@@ -216,6 +234,7 @@
                         <constraint firstAttribute="trailing" secondItem="lju-sV-rxs" secondAttribute="trailing" id="Ase-aE-yYw"/>
                         <constraint firstItem="lju-sV-rxs" firstAttribute="leading" secondItem="mkK-hE-Tq7" secondAttribute="leading" id="DId-Ua-Rnc"/>
                         <constraint firstAttribute="trailing" secondItem="ceo-hc-2GB" secondAttribute="trailing" id="Dfi-A8-r96"/>
+                        <constraint firstItem="K1Z-8H-bgg" firstAttribute="centerX" secondItem="mkK-hE-Tq7" secondAttribute="centerX" id="FA2-6r-VSi"/>
                         <constraint firstAttribute="trailing" secondItem="VTJ-hg-TEg" secondAttribute="trailing" id="GUM-Xk-fZN"/>
                         <constraint firstItem="ugr-zZ-jfa" firstAttribute="leading" secondItem="mkK-hE-Tq7" secondAttribute="leading" id="MOf-W7-2C7"/>
                         <constraint firstAttribute="trailing" secondItem="ToA-Y6-SMc" secondAttribute="trailing" id="Sih-tl-fdO"/>
@@ -227,6 +246,7 @@
                         <constraint firstAttribute="bottom" secondItem="ToA-Y6-SMc" secondAttribute="bottom" id="esk-xf-QfC"/>
                         <constraint firstItem="VTJ-hg-TEg" firstAttribute="leading" secondItem="mkK-hE-Tq7" secondAttribute="leading" id="fFz-9e-qfa"/>
                         <constraint firstItem="ugr-zZ-jfa" firstAttribute="top" secondItem="mkK-hE-Tq7" secondAttribute="top" id="hU1-dS-Dbn"/>
+                        <constraint firstItem="K1Z-8H-bgg" firstAttribute="top" secondItem="VTJ-hg-TEg" secondAttribute="bottom" constant="4" id="kCr-nN-lCL"/>
                         <constraint firstItem="ToA-Y6-SMc" firstAttribute="top" secondItem="ugr-zZ-jfa" secondAttribute="bottom" id="ntZ-EY-2UE"/>
                         <constraint firstItem="ugr-zZ-jfa" firstAttribute="bottom" secondItem="ceo-hc-2GB" secondAttribute="bottom" id="umi-tf-jnG"/>
                     </constraints>
@@ -247,9 +267,11 @@
         </view>
     </objects>
     <resources>
+        <image name="camera.fill" catalog="system" width="128" height="93"/>
         <image name="folder" catalog="system" width="128" height="96"/>
         <image name="folder.fill" catalog="system" width="128" height="96"/>
         <image name="iconCapturePhoto" width="80" height="80"/>
+        <image name="video.fill" catalog="system" width="128" height="81"/>
         <namedColor name="majorLightColor">
             <color red="0.53333333333333333" green="0.81568627450980391" blue="0.89803921568627454" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
@@ -258,6 +280,9 @@
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tertiaryLabelColor">
             <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29803921570000003" colorSpace="custom" customColorSpace="sRGB"/>
