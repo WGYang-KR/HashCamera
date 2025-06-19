@@ -25,7 +25,7 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
 
     
     lazy var menu = {
-        return SideMenuNavigationController(rootViewController: folderListVC)
+        return CustomSideMenuNavi(rootViewController: folderListVC)
     }()
 
     
@@ -64,6 +64,14 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         vm.thumbnailSize = self.itemSize
         
         menu.menuWidth = view.bounds.width / 3 * 2
+    }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
+    }
+    
+    override var shouldAutorotate: Bool {
+        return false
     }
     
     func initUI() {

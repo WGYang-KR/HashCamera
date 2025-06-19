@@ -80,6 +80,15 @@ class CamVC: UIViewController {
         zoomFactorBtn.layer.cornerRadius = zoomFactorBtn.bounds.height / 2
 
     }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait // 또는 .landscapeRight 등 원하는 방향만 허용
+    }
+
+    override var shouldAutorotate: Bool {
+        return false // 회전 자체를 막고 싶을 때 false
+    }
+    
     func bindAppLifeCycle() {
         
         //앱이 활성화 될때
@@ -253,7 +262,7 @@ class CamVC: UIViewController {
             guard let self else { return }
             let nextVC = PhotoListVC()
             nextVC.configure(initialSelectedFolder: camVM.selectedFolderRx.value)
-            presentFull(UINavigationController(rootViewController: nextVC), animated: true)
+            presentFull(CustomNavi(rootViewController: nextVC), animated: true)
         }.disposed(by: disposeBag)
         
         
@@ -404,9 +413,9 @@ class CamVC: UIViewController {
     }
     
     func moveSettingsView() {
-        let vc = UIHostingController(rootView: SettingsView())
+        let vc = PortraitSettingsViewController()
         vc.modalPresentationStyle = .fullScreen
-        present(vc , animated: true)
+        present(vc, animated: true)
     }
 
     //MARK: - Widget이벤트 처리

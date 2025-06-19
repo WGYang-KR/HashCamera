@@ -7,6 +7,31 @@
 
 import SwiftUI
 
+/// SettingsView를 감싸는 회전 제한 ViewController
+final class PortraitSettingsViewController: UIViewController {
+
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
+    }
+
+    override var shouldAutorotate: Bool {
+        return false
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        let settingsView = SettingsView()
+        let hostingController = UIHostingController(rootView: settingsView)
+        
+        addChild(hostingController)
+        view.addSubview(hostingController.view)
+        hostingController.view.frame = view.bounds
+        hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        hostingController.didMove(toParent: self)
+    }
+}
+
 struct SettingsView: View {
     
     @Environment(\.presentationMode) var presentationMode
