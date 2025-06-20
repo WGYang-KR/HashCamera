@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -35,7 +35,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mkK-hE-Tq7">
-                    <rect key="frame" x="0.0" y="118" width="393" height="763"/>
+                    <rect key="frame" x="0.0" y="59" width="393" height="856"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ugr-zZ-jfa" userLabel="Guide16:9">
                             <rect key="frame" x="0.0" y="0.0" width="393" height="698.66666666666663"/>
@@ -196,14 +196,14 @@
                             </constraints>
                         </view>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="ToA-Y6-SMc">
-                            <rect key="frame" x="0.0" y="698.66666666666663" width="393" height="64.333333333333371"/>
+                            <rect key="frame" x="0.0" y="698.66666666666663" width="393" height="157.33333333333337"/>
                             <subviews>
                                 <view contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="iCW-2M-bmS" userLabel="Space">
-                                    <rect key="frame" x="0.0" y="0.0" width="393" height="12.333333333333334"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="393" height="58.666666666666664"/>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </view>
                                 <segmentedControl opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="1000" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="4IY-oL-3P9">
-                                    <rect key="frame" x="136.66666666666666" y="12.333333333333371" width="119.99999999999997" height="41"/>
+                                    <rect key="frame" x="136.66666666666666" y="58.666666666666742" width="119.99999999999997" height="41"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="40" id="jkE-Th-bfg"/>
                                         <constraint firstAttribute="width" constant="120" id="xI9-zB-hzi"/>
@@ -219,7 +219,7 @@
                                     </connections>
                                 </segmentedControl>
                                 <view contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="pcO-Xj-8Hb" userLabel="Space">
-                                    <rect key="frame" x="0.0" y="52.333333333333371" width="393" height="12"/>
+                                    <rect key="frame" x="0.0" y="98.666666666666757" width="393" height="58.666666666666671"/>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </view>
                             </subviews>
@@ -282,10 +282,10 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tertiaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29803921570000003" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29803921568627451" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
