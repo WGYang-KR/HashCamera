@@ -446,7 +446,11 @@ class CamVC: UIViewController {
         doWidgetOrderIfNeeded()
     }
     @objc func widgetCameraTapped() {
-        doWidgetOrderIfNeeded()
+        Self.removeAllViewControllersAbove(self) {  [weak self] in
+            guard let self else { return }
+            let _ = camVM.doWidgetFolderSelectionIfNeeded()
+            
+        }
     }
     
     func doWidgetOrderIfNeeded(){
@@ -455,8 +459,7 @@ class CamVC: UIViewController {
             case .selectFolder:
                 break
             case .camera:
-                WidgetSettingManager.shared.widgetOrder = nil
-                Self.removeAllViewControllersAbove(self)
+                break
             case .setting, .addFolder:
                 WidgetSettingManager.shared.widgetOrder = nil
                 Self.removeAllViewControllersAbove(self) { [weak self] in

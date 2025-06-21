@@ -271,9 +271,16 @@ class CamVM: SelectSaveFolderVCDelegate {
                 WidgetSettingManager.shared.widgetSelectedFolder = nil
                 return false
             }
+        } else if let widgetOrder = WidgetSettingManager.shared.widgetOrder, widgetOrder == .camera {
+
+            selectedFolderRx.accept(Self.defaultFolder)
+            WidgetSettingManager.shared.widgetOrder = nil
+            WidgetSettingManager.shared.widgetSelectedFolder = nil
+            return true
         } else {
             //명령없거나, selectFolder 아닌경우 widgetOrder 초기화 하지 않는다.
             return false
         }
     }
+
 }
