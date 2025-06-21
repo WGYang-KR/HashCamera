@@ -61,7 +61,7 @@
 		6A73A1052C610A2D007B6CAE /* FolderListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */; };
 		6A73A1062C610A2D007B6CAE /* FolderListItemCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A73A1042C610A2D007B6CAE /* FolderListItemCell.xib */; };
 		6A73A1082C6A3DF5007B6CAE /* SystemUIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73A1072C6A3DF5007B6CAE /* SystemUIImage.swift */; };
-		6A755F782CBE3286008B5F95 /* CamVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A755F772CBE3286008B5F95 /* CamVC.xib */; };
+		6A755F782CBE3286008B5F95 /* CamVCNormal.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6A755F772CBE3286008B5F95 /* CamVCNormal.xib */; };
 		6A7A50152CE63E4F006DAA22 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6A7A50132CE63E4F006DAA22 /* Localizable.strings */; };
 		6A7A50182CE63FFD006DAA22 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7A50172CE63FF5006DAA22 /* Localization.swift */; };
 		6A7D4F652C76237C00ED0C59 /* FolderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A7D4F642C76237C00ED0C59 /* FolderService.swift */; };
@@ -181,7 +181,7 @@
 		6A73A1032C610A2D007B6CAE /* FolderListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListItemCell.swift; sourceTree = "<group>"; };
 		6A73A1042C610A2D007B6CAE /* FolderListItemCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FolderListItemCell.xib; sourceTree = "<group>"; };
 		6A73A1072C6A3DF5007B6CAE /* SystemUIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemUIImage.swift; sourceTree = "<group>"; };
-		6A755F772CBE3286008B5F95 /* CamVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CamVC.xib; sourceTree = "<group>"; };
+		6A755F772CBE3286008B5F95 /* CamVCNormal.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CamVCNormal.xib; sourceTree = "<group>"; };
 		6A7A50142CE63E4F006DAA22 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6A7A50162CE63E76006DAA22 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6A7A50172CE63FF5006DAA22 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
@@ -441,7 +441,7 @@
 			children = (
 				6AE8CFA22AF4D5A70063C8C6 /* Components */,
 				6A8B32142AE7A03000D24E49 /* CamVC.swift */,
-				6A755F772CBE3286008B5F95 /* CamVC.xib */,
+				6A755F772CBE3286008B5F95 /* CamVCNormal.xib */,
 				6A051FE92E0051F900C3DE23 /* CamVCSmall.xib */,
 				6A133E502B0655320018A769 /* CamVM.swift */,
 				6AA61ACB2AF14A5C002E3725 /* CameraModel.swift */,
@@ -630,7 +630,7 @@
 				6A0CAA9A2CA1B196006BC4D3 /* MoveToFolderListItemCell.xib in Resources */,
 				6A0CAA942CA1AF88006BC4D3 /* MoveToFolderVC.xib in Resources */,
 				6A051FEA2E0051F900C3DE23 /* CamVCSmall.xib in Resources */,
-				6A755F782CBE3286008B5F95 /* CamVC.xib in Resources */,
+				6A755F782CBE3286008B5F95 /* CamVCNormal.xib in Resources */,
 				6AA6096A2CBEAE060011BB59 /* SelectSaveFolderItemCell.xib in Resources */,
 				6A7A50152CE63E4F006DAA22 /* Localizable.strings in Resources */,
 				6A8C3AF82CF04F1900127D4F /* PrivacyInfo.xcprivacy in Resources */,

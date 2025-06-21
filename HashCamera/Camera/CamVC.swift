@@ -43,9 +43,25 @@ class CamVC: UIViewController {
     
     var captureMode: CaptureModeType = .photo
     
+    init() {
+        let xibName: String
+        
+        if UIScreen.main.bounds.height <= 736 { // iPhone SE or 8+ 이하
+            xibName = "CamVCSmall"
+        } else {
+            xibName = "CamVCNormal"
+        }
+        
+        super.init(nibName: xibName, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         initView()
         initCamera()
         bindAppLifeCycle()
