@@ -29,6 +29,7 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureFileOutputR
     private(set) var position: AVCaptureDevice.Position
     
     
+    /* 카메라 줌 */
     ///카메라 줌 배율 변경Rx
     let zoomScaleChangedRx = PublishRelay<CGFloat>()
     ///카메라의 1x 줌에 해당하는 Factor
@@ -231,14 +232,14 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureFileOutputR
     
     ///기기에서 사용가능한 최상의 카메라 장치를 반환한다.
     private func bestDevice(position: AVCaptureDevice.Position) -> AVCaptureDevice? {
-        let deviceTypes: [AVCaptureDevice.DeviceType] = [.builtInTrueDepthCamera,
-                                                         .builtInTripleCamera,
-                                                         .builtInDualWideCamera,
-                                                         .builtInDualCamera,
-                                                         .builtInWideAngleCamera,
-                                                         .builtInUltraWideCamera,
-                                                         .builtInTelephotoCamera]
-        let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: deviceTypes,
+        let videoDeviceTypes: [AVCaptureDevice.DeviceType] = [.builtInTrueDepthCamera,
+                                                              .builtInTripleCamera,
+                                                              .builtInDualWideCamera,
+                                                              .builtInDualCamera,
+                                                              .builtInWideAngleCamera,
+                                                              .builtInUltraWideCamera,
+                                                              .builtInTelephotoCamera]
+        let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: videoDeviceTypes,
                                                                 mediaType: .video,
                                                                 position: position)
         let devices = discoverySession.devices
@@ -257,20 +258,16 @@ class CameraModel: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureFileOutputR
             return
         }
         
-        for input in captureSession.inputs {
-            
+        if let videoInput {
+            captureSession.removeInput(videoInput)
             // KVO 옵저버 제거
-            if let device = (input as? AVCaptureDeviceInput)?.device{
-                device.removeObserver(self, forKeyPath: videoZoomFactorKeyPath)
-                //TODO: 초점 변경 위치 모니터링
-//                device.removeObserver(self, forKeyPath: lensPositionKeyPath)
-//                device.removeObserver(self, forKeyPath: isAdjustingFocusKeyPath)
-//                NotificationCenter.default.removeObserver(self, name: AVCaptureDevice.subjectAreaDidChangeNotification, object: device)
-            }
-        
-            captureSession.removeInput(input)
+            videoInput.device.removeObserver(self, forKeyPath: videoZoomFactorKeyPath)
         }
         
+        if let audioInput {
+            captureSession.removeInput(audioInput)
+        }
+
         do { // 카메라가 사용 가능하면 세션에 input과 output을 연결
             let videoDeviceInput =  try AVCaptureDeviceInput(device: device)
             if captureSession.canAddInput(videoDeviceInput) {
