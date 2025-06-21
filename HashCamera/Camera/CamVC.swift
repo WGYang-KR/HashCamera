@@ -74,7 +74,7 @@ class CamVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -88,6 +88,7 @@ class CamVC: UIViewController {
         super.viewWillDisappear(animated)
         
         stopCamera()
+        navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
     override func viewDidLayoutSubviews() {

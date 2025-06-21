@@ -25,7 +25,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = CamVC()
+        window?.rootViewController = CustomNavi(rootViewController: CamVC())
         window?.makeKeyAndVisible()
     }
 
