@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 import RxSwift
 import RxRelay
 
@@ -16,16 +17,15 @@ class WidgetSettingManager: ObservableObject {
     static let shared = WidgetSettingManager()
     private init() {}
 
-    @Published var allFolders: [FolderModel] = []
-    
+    var objectWillChange = ObservableObjectPublisher()
+    @Published var allFolders: [WidgetFolderSectionType: [FolderModelWrapper]] = [:]
     ///현재 보여지고 있는 폴더목록
-    @Published var selectedFolderList: [FolderModel] = WidgetSetting.folderList {
+    @Published var selectedFolderList: [FolderModelWrapper] = WidgetSetting.folderList.compactMap({$0.asWrapper}) {
         didSet {
-            //UserDefaults에 저장한다.
             WidgetSetting.folderList = selectedFolderList
-            
         }
     }
+
     
     enum WidgetOrderType {
         case selectFolder
@@ -33,9 +33,10 @@ class WidgetSettingManager: ObservableObject {
         case setting
         case addFolder
     }
+    
     ///위젯에서 수신된 명령
     var widgetOrder: WidgetOrderType?
-    var widgetSelectedFolder: FolderModel?
+    var widgetSelectedFolder: (any FolderModelProtocol)?
     
     /// Widget 폴더목록 관리를 시작한다.
     /// 1. 앱에 진입할 때마다 위젯폴더 존재하는 지 확인하여 유저디폴츠/위젯 갱신.
@@ -45,9 +46,10 @@ class WidgetSettingManager: ObservableObject {
         FolderService.shared.folderListUpdatedRx
             .bind { [weak self] updateData in
                 guard let self else { return }
-                let newFolderList = updateData.newFileList.map{FolderModel(type: .folder, url: $0)}
-                allFolders = newFolderList
-                validateFolderList(newFolderList: newFolderList)
+                let newFolderList = updateData.newFileList.map{LocalFolderModel(url: $0)}.compactMap({$0.asWrapper})
+                allFolders[.local] = newFolderList
+                objectWillChange.send()
+                validateFolderList()
             }
             .disposed(by: disBag)
         
@@ -57,24 +59,23 @@ class WidgetSettingManager: ObservableObject {
             FolderService.shared.configure(rootURL: rootURL)
         } else if FolderService.shared.isOnceFetched {
             //이미 패치된 폴더목록 사용
-            let newFolderList = FolderService.shared.folderList.map{FolderModel(type: .folder, url: $0)}
-            allFolders = newFolderList
-            validateFolderList(newFolderList: newFolderList)
+            let newFolderList = FolderService.shared.folderList.map{LocalFolderModel(url: $0)}.compactMap({$0.asWrapper})
+            allFolders[.local] = newFolderList
+            objectWillChange.send()
+            validateFolderList()
             
         }
-        
-        ///기존 폴더들 존재하는 지 검사
-        func validateFolderList(newFolderList: [FolderModel]) {
-            ///UUID 변경되었을 수 있으므로 전체 URL에서 필터한다.
-            var _selectedFolderList = [FolderModel]()
-            selectedFolderList.forEach { item in
-                if let _item = newFolderList.first(where: {$0 == item}) {
-                    _selectedFolderList.append(_item)
-                }
-            }
-            selectedFolderList = _selectedFolderList
-        }
+    
+  
     }
     
-
+    ///기존 폴더들 존재하는 지 검사
+    func validateFolderList() {
+        //TODO: UUID 변경되었을 수 있으므로 전체 URL에서 필터한다.?
+        let allFolderItems = allFolders.flatMap({$0.value})
+        let validItems = selectedFolderList.compactMap { item in
+            return allFolderItems.contains(where: {$0.isSame(as: item)}) ? item : nil
+        }
+        selectedFolderList = validItems
+    }
 }

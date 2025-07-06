@@ -11,8 +11,8 @@ class WidgetSettingVM: ObservableObject {
     
     var cancellables = Set<AnyCancellable>()
     
-    @Published var folders: [FolderModel] = []
-    @Published var selectedItems: [FolderModel] = []
+    @Published var folders: [WidgetFolderSectionType:[FolderModelWrapper]] = [:]
+    @Published var selectedItems: [FolderModelWrapper] = []
 
     ///폴더목록 관찰 시작
     func initVM() {
@@ -33,7 +33,7 @@ class WidgetSettingVM: ObservableObject {
     }
 
     ///선택/해제 로직
-    func toggleSelection(for item: FolderModel) {
+    func toggleSelection(for item: FolderModelWrapper) {
         var _seletedItems = selectedItems
         if let index = selectedItems.firstIndex(of: item) {
             // 이미 선택된 아이템은 해제
@@ -51,24 +51,15 @@ class WidgetSettingVM: ObservableObject {
 extension WidgetSettingVM {
     
     func initSampleData() {
-        folders = [.init(type: .folder,
-                         url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Diet%20Logs/")!),
-                   .init(type: .folder,
-                         url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Work/")!),
-                   .init(type: .folder,
-                         url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Idea%20Sketches/")!),
-                   .init(type: .folder,
-                         url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Receipts/")!),
-                   .init(type: .folder,
-                         url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Folder01/")!),
-                   .init(type: .folder,
-                         url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Folder02/")!),
-                   .init(type: .folder,
-                         url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Folder03/")!),
-                   .init(type: .folder,
-                         url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Folder04/")!),
-                    .init(type: .folder,
-                          url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Folder05/")!)
+        folders[.local] = [.local(.init(url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Diet%20Logs/")!)),
+                           .local(.init(url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Diet%20Logs/")!)),
+                                  .local(.init(url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Work/")!)),
+                           .local(.init(url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Idea%20Sketches/")!)),
+                           .local(.init(url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Folder01/")!)),
+                           .local(.init(url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Folder02/")!)),
+                           .local(.init(url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Folder03/")!)),
+                           .local(.init(url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Folder04/")!)),
+                           .local(.init(url: URL(string: "file:///private/var/mobile/Containers/Data/Application/E04AC083-53C5-4E12-9B3E-336BBDA17069/Documents/Folder05/")!))
         ]
     }
 }

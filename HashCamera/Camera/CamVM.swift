@@ -20,10 +20,10 @@ class CamVM: SelectSaveFolderVCDelegate {
 
     let fileManager = FileManager.default
 
-    ///폴더 감시, 조회 서비스
-    var folderList: [FolderModel] = []
+    ///폴더 목록
+    var folderMap: [FolderSectionType: [any FolderModelProtocol]] = [:]
     ///선택된 저장 폴더
-    let selectedFolderRx = BehaviorRelay<FolderModel>(value: defaultFolder)
+    let selectedFolderRx = BehaviorRelay<any FolderModelProtocol>(value: DefaultFolderModel())
     ///사진 저장 포맷
     var photoFileFormat: PhotoFileFormat {
         return CameraSetting.photoFileFormat
@@ -37,6 +37,11 @@ class CamVM: SelectSaveFolderVCDelegate {
     let recordingDuration = BehaviorRelay<String>(value: "00:00")
     
 
+    enum FolderSectionType: Int, CaseIterable {
+        case defaultFolder
+        case local
+        case google
+    }
     init() {
         initCamera()
         initFolderSelection()
@@ -135,50 +140,60 @@ class CamVM: SelectSaveFolderVCDelegate {
 
     
     //MARK: - 저장폴더
-    static var defaultFolder: FolderModel {
-        FolderModel(type: .defaultFolder, url: Utils.documentsFolderURL)
-    }
-    
     func initFolderSelection() {
 
         FolderService.shared.folderListUpdatedRx
             .bind { [weak self] updateData in
                 //업데이트 이벤트 핸들러
                 guard let self else { return }
-                folderList = updateData.newFileList.map{FolderModel(type: .folder, url: $0)}
+                guard var localFolderList = folderMap[.local] as? [LocalFolderModel] else { return }
+                localFolderList = updateData.newFileList.map{LocalFolderModel(url: $0)}
                 switch updateData.changeType {
                     case .initiate:
   
                     if doWidgetFolderSelectionIfNeeded() {
                         hcLog("doWidgetFolderSelectionIfNeeded")
                     }
-                    else if let savedSelectedFolder = CameraSetting.selectedFolder,
-                            savedSelectedFolder.type == .folder,
-                            let savedFolderURL = folderList.first(where: {$0.url.lastPathComponent == savedSelectedFolder.url.lastPathComponent})?.url {
-                        //저장된 저장 폴더 세팅 (저장 폴더 URL이 sandbox URL 변경으로 변경되어 있을 수 있으니 주의)
-                        selectedFolderRx.accept(.init(type: .folder, url: savedFolderURL))
+                    else if let selectedFolder = CameraSetting.selectedFolder {
+            
+                        if let defaultFolder = selectedFolder as? DefaultFolderModel {
+                            selectedFolderRx.accept(defaultFolder)
+                        }
+                        else if let localFolder = selectedFolder as? LocalFolderModel,
+                           let selectFolderURL = localFolderList.first(where: {$0.isSame(as: localFolder)})?.url {
+                            //선택된 폴더가 존재하며, 로컬 폴더 일때
+                            //저장된 저장 폴더 세팅 (저장 폴더 URL이 sandbox URL 변경으로 변경되어 있을 수 있으니 주의)
+                            selectedFolderRx.accept(LocalFolderModel(url: selectFolderURL))
+                        }
+                        else {
+                            //TODO: 선택된 폴더가 존재하며, 로컬폴더가 아닐때 아무동작 안해야함. (확인)
                         
+                        }
                     } else {
-                        //디폴츠 폴더.
-                        CameraSetting.selectedFolder = Self.defaultFolder
-                        selectedFolderRx.accept(Self.defaultFolder)
+                        //선택된 폴더가 없을 때 nil일 때만 디폴츠 폴더.
+                        CameraSetting.selectedFolder = DefaultFolderModel()
+                        selectedFolderRx.accept(DefaultFolderModel())
                     }
                 case .changed:
-                    //현재 선택 폴더가 존재안하면 Default폴더로 변경
-                    if selectedFolderRx.value.type == .folder,
-                       !folderList.contains(where: { $0.url == self.selectedFolderRx.value.url}) {
-                           selectedFolderRx.accept(Self.defaultFolder)
+                    //현재 선택이 로컬 폴더이고, 그 폴더가 존재안하면 Default 폴더로 변경
+                    if let selectedFolder = CameraSetting.selectedFolder,
+                       let localFolder = selectedFolder as? LocalFolderModel,
+                       !localFolderList.contains(where: {$0.isSame(as: localFolder)}) {
+                        selectedFolderRx.accept(DefaultFolderModel())
                     }
+                    
+                    
                 case .filesUpdated:
                     break
                 }
             }
             .disposed(by: disposeBag)
-        FolderService.shared.configure(rootURL: Self.defaultFolder.url)
+        
+        FolderService.shared.configure(rootURL: DefaultFolderModel().url)
     }
     
     //MARK: - SelectSaveFolderVCDelegate 저장 폴더 변경
-    func selectSaveFolderVC(_ vc: SelectSaveFolderVC, didSelectFolder folder: FolderModel) {
+    func selectSaveFolderVC(_ vc: SelectSaveFolderVC, didSelectFolder folder: any FolderModelProtocol) {
         selectedFolderRx.accept(folder)
         CameraSetting.selectedFolder = folder
     }
@@ -191,29 +206,38 @@ class CamVM: SelectSaveFolderVCDelegate {
     }
     
     private func savePhoto(photoData data: Data) -> Result<URL,SavePhotoError> {
-        let destination = selectedFolderRx.value.url
+        let selected = selectedFolderRx.value
         
-        let fileName = makePhotoFileName(fileTypeString: photoFileFormat.string)
-        let newFileURL = destination.appendingPathComponent(fileName)
-        guard let uniqueURL = makeUniqueFileURL(url: newFileURL) else { return .failure(.failToMakeUniqueName) }
-        return fileManager.createFile(atPath: uniqueURL.path, contents: data) ?  .success(uniqueURL) : .failure(.failToSaveAtPath)
+        if let localFolder = selected as? LocalFolderModel {
+            let destination = localFolder.url
+            let fileName = makePhotoFileName(fileTypeString: photoFileFormat.string)
+            let newFileURL = destination.appendingPathComponent(fileName)
+            guard let uniqueURL = makeUniqueFileURL(url: newFileURL) else { return .failure(.failToMakeUniqueName) }
+            return fileManager.createFile(atPath: uniqueURL.path, contents: data) ?  .success(uniqueURL) : .failure(.failToSaveAtPath)
+        } else {
+            //TODO: 구글 등 다른 폴더
+        }
         
     }
     // 🔹 비디오 저장 처리
     private func saveVideo(videoURL: URL) -> Result<URL, SavePhotoError> {
-        let destination = selectedFolderRx.value.url
-        let fileName = makePhotoFileName(fileTypeString: "mov")
-        let destURL = destination.appendingPathComponent(fileName)
+        let selected = selectedFolderRx.value
         
-        guard let uniqueURL = makeUniqueFileURL(url: destURL) else {
-            return .failure(.failToMakeUniqueName)
-        }
-        
-        do {
-            try fileManager.copyItem(at: videoURL, to: uniqueURL)
-            return .success(uniqueURL)
-        } catch {
-            return .failure(.failToSaveAtPath)
+        if let localFolder = selected as? LocalFolderModel {
+            let destination = localFolder.url
+            let fileName = makePhotoFileName(fileTypeString: "mov")
+            let destURL = destination.appendingPathComponent(fileName)
+            
+            guard let uniqueURL = makeUniqueFileURL(url: destURL) else {
+                return .failure(.failToMakeUniqueName)
+            }
+            
+            do {
+                try fileManager.copyItem(at: videoURL, to: uniqueURL)
+                return .success(uniqueURL)
+            } catch {
+                return .failure(.failToSaveAtPath)
+            }
         }
     }
     
@@ -255,14 +279,17 @@ class CamVM: SelectSaveFolderVCDelegate {
         guard FolderService.shared.isOnceFetched else { return false }
         
         if let widgetOrder = WidgetSettingManager.shared.widgetOrder, widgetOrder == .selectFolder{
-            if let selectedFolder = WidgetSettingManager.shared.widgetSelectedFolder,
-               let selectedFolderURL = folderList.first(where: {$0.url.lastPathComponent == selectedFolder.url.lastPathComponent})?.url{
-                //위젯에서 폴더 선택하여 진입시에 처리\
+            if let selectedFolder = WidgetSettingManager.shared.widgetSelectedFolder {
                 
-                let folder = FolderModel(type: .folder, url: selectedFolderURL)
-                CameraSetting.selectedFolder = folder
-                selectedFolderRx.accept(folder)
-                
+                //위젯에서 폴더 선택하여 진입시에 처리
+                if let localFolder = selectedFolder as? LocalFolderModel,
+                   let selectedFolder = folderMap[.local]?.first(where: {$0.isSame(as: localFolder)})
+                {
+                    CameraSetting.selectedFolder = selectedFolder
+                    selectedFolderRx.accept(selectedFolder)
+                    
+                }
+            
                 WidgetSettingManager.shared.widgetOrder = nil
                 WidgetSettingManager.shared.widgetSelectedFolder = nil
                 return true
@@ -273,7 +300,7 @@ class CamVM: SelectSaveFolderVCDelegate {
             }
         } else if let widgetOrder = WidgetSettingManager.shared.widgetOrder, widgetOrder == .camera {
 
-            selectedFolderRx.accept(Self.defaultFolder)
+            selectedFolderRx.accept(DefaultFolderModel())
             WidgetSettingManager.shared.widgetOrder = nil
             WidgetSettingManager.shared.widgetSelectedFolder = nil
             return true

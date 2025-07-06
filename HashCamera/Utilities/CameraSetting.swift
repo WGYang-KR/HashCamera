@@ -43,16 +43,25 @@ class CameraSetting {
     }
     
     ///사진 저장 폴더
-    static var selectedFolder: FolderModel? {
+    static var selectedFolder: (any FolderModelProtocol)? {
         get {
-            if let savedData = UserDefaults.standard.data(forKey: Keys.cameraSettingSelectedFolder.rawValue) {
-                return try? JSONDecoder().decode(FolderModel.self, from: savedData)
-            } else {
-                return nil
+            if let data = UserDefaults.standard.data(forKey: Keys.cameraSettingSelectedFolder.rawValue),
+               let wrapper = try? JSONDecoder().decode(FolderModelWrapper.self, from: data) {
+                return wrapper.base
             }
+            return nil
         }
         set {
-            if let encoded = try? JSONEncoder().encode(newValue) {
+            let wrapper: FolderModelWrapper?
+            if let folder = newValue as? LocalFolderModel {
+                wrapper = .local(folder)
+            } else if let folder = newValue as? GoogleDriveFolderModel {
+                wrapper = .google(folder)
+            } else {
+                wrapper = nil
+            }
+
+            if let encoded = try? JSONEncoder().encode(wrapper) {
                 UserDefaults.standard.set(encoded, forKey: Keys.cameraSettingSelectedFolder.rawValue)
             }
         }

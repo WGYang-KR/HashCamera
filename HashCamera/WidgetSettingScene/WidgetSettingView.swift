@@ -58,7 +58,7 @@ struct WidgetSettingView: View {
                     List {
                         Section(header: Spacer(minLength: 0)) {
                             
-                            ForEach(vm.folders, id: \.self) { item in
+                            ForEach(vm.folders[.local], id: \.self) { item in
                                 HStack {
                                     Image(systemName:"folder")
                                         .foregroundColor(.cyan)
@@ -68,7 +68,7 @@ struct WidgetSettingView: View {
                                     Spacer()
                                     
                                     // 선택된 아이템일 경우 별표 표시
-                                    if vm.selectedItems.contains(item) {
+                                    if vm.selectedItems.contains(where: {$0.isSame(as: item)}) {
                                         Image(systemName:"checkmark")
                                             .foregroundColor(.blue)
                                             .font(.system(size: 16))

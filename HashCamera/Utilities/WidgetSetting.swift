@@ -14,15 +14,34 @@ class WidgetSetting {
         case widgetFolderList
     }
     ///UserDefaults에 저장되어 있는 폴더 목록
-    static var folderList: [FolderModel] {
+    static var folderList: [any FolderModelProtocol] {
         get {
-            return UserDefaults.shared.getObject(forKey: Keys.widgetFolderList.rawValue, objectType: [FolderModel].self) ?? []
+            if let data = UserDefaults.standard.data(forKey: Keys.widgetFolderList.rawValue),
+               let wrapper = try? JSONDecoder().decode([FolderModelWrapper].self, from: data) {
+                return wrapper.map { $0.base }
+            }
+            return []
         }
         set {
-            UserDefaults.shared.setObject(newValue, forKey: Keys.widgetFolderList.rawValue)
+            let wrapped: [FolderModelWrapper] = newValue.compactMap { item in
+                if let folder = item as? LocalFolderModel {
+                    return .local(folder)
+                } else if let folder = item as? GoogleDriveFolderModel {
+                    return .google(folder)
+                } else {
+                    return nil
+                }
+            }
+            
+            if let encoded = try? JSONEncoder().encode(wrapped) {
+                UserDefaults.standard.set(encoded, forKey: Keys.widgetFolderList.rawValue)
+            }
+            
             WidgetCenter.shared.reloadTimelines(ofKind: Self.shortcutWidgetID)
         }
     }
+
+
 }
 
 extension UserDefaults {

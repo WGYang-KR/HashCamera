@@ -38,10 +38,10 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         }
     }
     
-    var initialSelectedFolder: FolderModel?
+    var initialSelectedFolder: LocalFolderModel?
     
     
-    func configure(initialSelectedFolder: FolderModel?) {
+    func configure(initialSelectedFolder: LocalFolderModel?) {
         self.initialSelectedFolder = initialSelectedFolder
     }
     
@@ -175,14 +175,18 @@ class PhotoListVC: UIViewController, UICollectionViewDataSource, UICollectionVie
         
         //선택 폴더 갱신시 처리
         folderListVC.vm.selectedFolderUpdated = { [weak self] folderListItemModel in
-            guard let self, let folderListItemModel else {return }
+            guard let self else { return }
+            
             //네비바 타이틀
             navigationItem.title = folderListItemModel.name
             
             setSelectionMode(false)
             
-            //vm root폴더 지정
-            vm.configure(rootFolder: folderListItemModel)
+            
+            if localFolder = folderListItemModel as? LocalFolderModel {
+                //vm root폴더 지정
+                vm.configure(rootFolder: folderListItemModel)
+            }
         }
         
         folderListVC.configure(initialSelectedFolder: initialSelectedFolder)

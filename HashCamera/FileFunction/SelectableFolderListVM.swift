@@ -15,12 +15,19 @@ class SelectableFolderListVM {
     var rootURL: URL? = URL(string: "./", relativeTo: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first)
     var thumbnailSize: CGSize = .zero
     
-    var folderList: [[FolderModel]] = [[],[]]
+    /*리팩토링 시에 참고 */
+    // folderMap의 value들만 추출하여 순서를 유지한 채 2차원 배열로 변환
+//    var folderList: [[any FolderModelProtocol]] {
+//        FolderSectionType.allCases.compactMap { folderMap[$0] }
+//    }
+    /* */
+    var folderList: [[any FolderModelProtocol]] = [[],[]]
+
     var folderListUpdated: ((FolderListUpdateData) -> Void)?
-    var selectedFolderUpdated: ((FolderModel?) -> Void)?
+    var selectedFolderUpdated: ( ((any FolderModelProtocol)?) -> Void)?
     
     ///초기 선택된 폴더
-    private var initialSelectedFolder: FolderModel?
+    private var initialSelectedFolder: (any FolderModelProtocol)?
     
     ///현재 폴더 추가 또는 수정하는 중인지 여부. 다른 객체에서 폴더 추가를 했을 경우에 선택 변경을 하지 않기 위함.
     var isEditingFolder: Bool = false
@@ -37,15 +44,15 @@ class SelectableFolderListVM {
         }
     }
     ///선택된 폴더 정보
-    var selectedFolder: FolderModel? {
+    var selectedFolder: (any FolderModelProtocol)? {
         didSet {
             selectedFolderUpdated?(selectedFolder)
         }
     }
 
-    lazy var virtualFolders: [FolderModel] = {
+    lazy var virtualFolders: [(any FolderModelProtocol)] = {
         guard let rootURL else { return [] }
-        return [.init(type: .defaultFolder, url: rootURL)]
+        return [DefaultFolderModel()]
     }()
                     
     struct FolderListUpdateData {
@@ -53,7 +60,7 @@ class SelectableFolderListVM {
         let selectedIndexPath: IndexPath?
     }
     
-    func configure(initialSelectedFolder: FolderModel?, folderListUpdated: ((FolderListUpdateData) -> Void)?) {
+    func configure(initialSelectedFolder: (any FolderModelProtocol)?, folderListUpdated: ((FolderListUpdateData) -> Void)?) {
         guard let rootURL else { return }
         self.initialSelectedFolder = initialSelectedFolder
         self.folderListUpdated = folderListUpdated

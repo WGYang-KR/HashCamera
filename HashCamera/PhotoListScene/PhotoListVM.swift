@@ -16,7 +16,7 @@ class PhotoListVM {
     private var fileService = FileService()
     private let qlThumbnailGenerator =  QLThumbnailGenerator.shared
 
-    private(set) var rootFolder: FolderModel?
+    private(set) var rootFolder: LocalFolderModel?
     var thumbnailSize: CGSize = .zero
     
     private(set) var fileList: [ImageFileModel] = []
@@ -30,7 +30,7 @@ class PhotoListVM {
     }
     
     ///파일 목록 불러오기. 파일 변경 감시 시작. 호출할 때마다 reset 된다.
-    func configure(rootFolder: FolderModel) {
+    func configure(rootFolder: LocalFolderModel) {
         self.rootFolder = rootFolder
         self.fileList = []
         self.selectedIndexPaths = []
