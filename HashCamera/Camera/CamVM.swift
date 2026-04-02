@@ -192,16 +192,22 @@ class CamVM: SelectSaveFolderVCDelegate {
     
     private func savePhoto(photoData data: Data) -> Result<URL,SavePhotoError> {
         let destination = selectedFolderRx.value.url
+        destination.includeInBackup()
         
         let fileName = makePhotoFileName(fileTypeString: photoFileFormat.string)
         let newFileURL = destination.appendingPathComponent(fileName)
         guard let uniqueURL = makeUniqueFileURL(url: newFileURL) else { return .failure(.failToMakeUniqueName) }
-        return fileManager.createFile(atPath: uniqueURL.path, contents: data) ?  .success(uniqueURL) : .failure(.failToSaveAtPath)
+        guard fileManager.createFile(atPath: uniqueURL.path, contents: data) else {
+            return .failure(.failToSaveAtPath)
+        }
+        uniqueURL.includeInBackup()
+        return .success(uniqueURL)
         
     }
     // 🔹 비디오 저장 처리
     private func saveVideo(videoURL: URL) -> Result<URL, SavePhotoError> {
         let destination = selectedFolderRx.value.url
+        destination.includeInBackup()
         let fileName = makePhotoFileName(fileTypeString: "mov")
         let destURL = destination.appendingPathComponent(fileName)
         
@@ -211,6 +217,7 @@ class CamVM: SelectSaveFolderVCDelegate {
         
         do {
             try fileManager.copyItem(at: videoURL, to: uniqueURL)
+            uniqueURL.includeInBackup()
             return .success(uniqueURL)
         } catch {
             return .failure(.failToSaveAtPath)

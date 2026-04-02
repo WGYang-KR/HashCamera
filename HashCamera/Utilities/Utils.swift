@@ -23,6 +23,37 @@ class Utils {
     
 }
 
+extension URL {
+    /// Ensures the file or directory is eligible for device backups.
+    func includeInBackup() {
+        do {
+            var values = URLResourceValues()
+            values.isExcludedFromBackup = false
+            var mutableURL = self
+            try mutableURL.setResourceValues(values)
+        } catch {
+            hcLog("Failed to update backup attribute for \(path)", error: error)
+        }
+    }
+
+    func includeChildrenInBackupIfDirectory() {
+        includeInBackup()
+        guard hasDirectoryPath else { return }
+
+        guard let enumerator = FileManager.default.enumerator(
+            at: self,
+            includingPropertiesForKeys: nil,
+            options: [.skipsHiddenFiles]
+        ) else {
+            return
+        }
+
+        for case let childURL as URL in enumerator {
+            childURL.includeInBackup()
+        }
+    }
+}
+
 
 //MARK: - 로그
 func hcLog(_ message: String?, file: String = #file, functionName: String = #function , line: UInt = #line) {
@@ -142,4 +173,3 @@ extension UserDefaults {
         }
     }
 }
-

@@ -40,6 +40,7 @@ class FolderService {
     func configure(rootURL: URL) {
         
         self.rootURL = rootURL
+        rootURL.includeChildrenInBackupIfDirectory()
         
         folderMonitor?.stopMonitoring()
         folderMonitor = FolderMonitor(folderURL: rootURL,
@@ -63,6 +64,7 @@ class FolderService {
 
         do {
             try fileManager.createDirectory(atPath: newURL.path, withIntermediateDirectories: true, attributes: nil)
+            newURL.includeInBackup()
             return .success(newURL)
         } catch {
             hcLog("\(error): \(error.localizedDescription)")
@@ -84,6 +86,7 @@ class FolderService {
         guard fileManager.fileExists(atPath: newURL.path) == false else { return .failure(.duplicatedName) }
         do {
             try fileManager.moveItem(at: originURL, to: newURL)
+            newURL.includeInBackup()
         }
         catch {
             return .failure(.system(error))
@@ -105,6 +108,7 @@ class FolderService {
         guard fileManager.fileExists(atPath: newURL.path) == false else { return .failure(.duplicatedName) }
         do {
             try fileManager.moveItem(at: originURL, to: newURL)
+            newURL.includeInBackup()
         }
         catch {
             return .failure(.system(error))
